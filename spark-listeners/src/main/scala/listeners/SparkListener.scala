@@ -4,13 +4,11 @@ import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, S
                                    SparkListenerStageCompleted, SparkListenerTaskEnd, SparkListenerTaskStart}
 import org.apache.spark.sql.SparkSession
 
-object SparkListenerExample {
+object SparkListener {
 
   def main(args: Array[String]): Unit = {
     val sparkSession = SparkSession.builder().master("local[*]").getOrCreate()
     sparkSession.sparkContext.addSparkListener(LogPrintingListener)
-    import sparkSession.implicits._
-    (0 to 100).toDF("nr").repartition(30).collect()
   }
 }
 
@@ -23,34 +21,40 @@ object LogPrintingListener extends SparkListener {
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     val appId = applicationStart.appId
     val userId = applicationStart.sparkUser
-    println(s"Application ID: ${appId.getOrElse("None")}, user ID: $userId")
+    // TODO: discuss with the team to see
+    //       if the project requires what info when application starts
   }
 
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
-    println(s"Total JVM GC time: ${jvmGCTime}")
-    println(s"Total records read: ${totalRecordRead}")
-    println(s"Total records written: ${totalRecordWritten}")
-    println(s"Stages: ${stageMap}")
+    // TODO: discuss with the team to see
+    //       if the project requires what info when application ends
   }
 
   override def onTaskStart(taskStart: SparkListenerTaskStart): Unit = {
-    println(s"Started task with the message: ${taskStart}")
+    val taskId = taskStart.taskInfo.taskId;
+    val executorId = taskStart.taskInfo.executorId;
+    // TODO: discuss with the team to see
+    //       if the project requires what info when a task starts
   }
 
   override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
     val metrics = taskEnd.taskMetrics
+
     val cpuTime = metrics.executorCpuTime;
-    println(s"CPU Time: ${cpuTime}")
     jvmGCTime += metrics.jvmGCTime
     totalRecordRead += metrics.inputMetrics.recordsRead
     totalRecordWritten += metrics.outputMetrics.recordsWritten
-    println(s"Ended task with message: ${taskEnd}")
+    // TODO: discuss with the team to see
+    //       if the project requires what info when a task ends
   }
 
   override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
     val tasks = stageCompleted.stageInfo.numTasks
     val stageId = stageCompleted.stageInfo.stageId
     stageMap += (stageId -> tasks)
+    // TODO: discuss with the team to see
+    //       if the project requires what info when a stage ends
   }
 
+  // TODO: discuss with the team to see if the project requires any other info
 }
