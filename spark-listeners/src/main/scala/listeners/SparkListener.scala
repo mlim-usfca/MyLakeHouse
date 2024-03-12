@@ -1,7 +1,7 @@
 package listeners
 
 import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart,
-                                   SparkListenerStageCompleted, SparkListenerTaskEnd, SparkListenerTaskStart}
+  SparkListenerStageCompleted, SparkListenerTaskEnd, SparkListenerTaskStart}
 import org.apache.spark.sql.SparkSession
 
 object SparkListener {
@@ -9,6 +9,10 @@ object SparkListener {
   def main(args: Array[String]): Unit = {
     val sparkSession = SparkSession.builder().master("local[*]").getOrCreate()
     sparkSession.sparkContext.addSparkListener(LogPrintingListener)
+
+    // create some Spark tasks for the listener to log
+    import sparkSession.implicits._
+    (0 to 100).toDF("nr").repartition(30).collect()
   }
 }
 
@@ -21,20 +25,21 @@ object LogPrintingListener extends SparkListener {
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     val appId = applicationStart.appId
     val userId = applicationStart.sparkUser
-    // TODO: discuss with the team to see
-    //       if the project requires what info when application starts
+    println(s"Application ID: ${appId.getOrElse("None")}, user ID: $userId")
   }
 
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
-    // TODO: discuss with the team to see
-    //       if the project requires what info when application ends
+    println(s"Total JVM GC time: ${jvmGCTime}")
+    println(s"Total records read: ${totalRecordRead}")
+    println(s"Total records written: ${totalRecordWritten}")
+    println(s"Stages: ${stageMap}")
   }
 
   override def onTaskStart(taskStart: SparkListenerTaskStart): Unit = {
     val taskId = taskStart.taskInfo.taskId;
     val executorId = taskStart.taskInfo.executorId;
-    // TODO: discuss with the team to see
-    //       if the project requires what info when a task starts
+    println(s"Started task with the message: ${taskStart}")
+    println(s"Task ID: ${taskId}, Executor ID: ${executorId}")
   }
 
   override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
@@ -44,17 +49,18 @@ object LogPrintingListener extends SparkListener {
     jvmGCTime += metrics.jvmGCTime
     totalRecordRead += metrics.inputMetrics.recordsRead
     totalRecordWritten += metrics.outputMetrics.recordsWritten
-    // TODO: discuss with the team to see
-    //       if the project requires what info when a task ends
+    println(s"CPU Time: ${cpuTime}")
+    println(s"JVM GC Time: ${jvmGCTime}")
+    println(s"Total records read: ${totalRecordRead}")
+    println(s"Total records written: ${totalRecordWritten}")
+    println(s"Ended task with message: ${taskEnd}")
   }
 
   override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
     val tasks = stageCompleted.stageInfo.numTasks
     val stageId = stageCompleted.stageInfo.stageId
     stageMap += (stageId -> tasks)
-    // TODO: discuss with the team to see
-    //       if the project requires what info when a stage ends
+    println(s"Stage ID: ${stageId}, Tasks: ${tasks}")
   }
 
-  // TODO: discuss with the team to see if the project requires any other info
 }
