@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from pyspark.sql import SparkSession
 import logging
-import pydantic
+from pydantic import BaseModel
+from fastapi import HTTPException
+import os
 
 app = FastAPI()
 
@@ -31,3 +33,71 @@ async def startup_event():
 @app.on_event("shutdown")
 async def shutdown_event():
     app.state.spark.stop()
+
+class CreateIcebergTableRequest(BaseModel):
+    table_name: str
+    data_path: str
+    database_name: str
+
+@app.post("/create_table")
+async def create_iceberg_table(request: CreateIcebergTableRequest):
+    try:
+        data_path = request.data_path
+        table_name = request.table_name
+        database_name = request.database_name
+
+        if not data_path or not table_name or not database_name:
+            raise HTTPException(404,detail="Ill-formed request: 'data_path', 'table_name', and 'database_name' cannot be empty.")
+
+        # Ensure Spark session is available
+        if not hasattr(app.state, 'spark') or app.state.spark is None:
+            raise HTTPException(status_code=500, detail="Spark session not initialized.")
+
+        spark = app.state.spark
+
+        # Validate data path existence (optional)
+        if not os.path.exists(data_path):
+            raise HTTPException(404, detail="data_path doesn't exist")
+
+        # Create the Iceberg table in append mode (if it doesn't exist)
+        spark.sql(f"CREATE DATABASE IF NOT EXISTS {database_name}")
+        spark.sql(f"DROP TABLE IF EXISTS {database_name}.{table_name}")
+        spark.sql(f"USE local.{database_name}")
+        # Load data from the parquet file
+        df = spark.read.format("parquet").load(data_path)
+
+        # Append data to the Iceberg table
+        df.write.format("iceberg").saveAsTable(f"{database_name}.{table_name}")
+
+        return {"message": f"Table '{database_name}.{table_name}' created/updated successfully."}
+
+    except Exception as e:
+        # Handle unexpected errors
+        return {"error": str(e)}
+
+
+"""
+    Endpoint to list all databases in Spark SQL.
+    Returns a list of database names.
+"""
+@app.get("/list-databases")
+async def list_databases():
+    try:
+        # Ensure Spark session is available
+        if not hasattr(app.state, 'spark') or app.state.spark is None:
+            raise HTTPException(status_code=500, detail="Spark session not initialized.")
+
+        spark = app.state.spark
+        logging.info("In List Database function")
+
+        databases = spark.catalog.listDatabases()
+        db_list = [db.name for db in databases]
+
+        if not db_list:
+            raise HTTPException(status_code=404, detail="No databases found.")
+
+        return db_list
+
+    except Exception as e:
+        # Generic exception handler, logging the error would be ideal here
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
