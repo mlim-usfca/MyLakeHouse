@@ -12,6 +12,6 @@ Run **docker-compose up --build**.
 This will fetch docker images of spark-iceberg, minio and build image for the FastAPI 
 backend server. To stop all the container run **docker-compose down**.
 ### Test communication of Spark with Minio using /check-minio endpoint
-Go to browser and login into Minio object storage using credentials given in .yml file.
+Go to browser and login into localhost:9001 using credentials admin and password as given in .yml file.
 Add a file in the "warehouse" bucket named test.txt
 Go to postman and create a GET request http://localhost:8090/check-minio and send it.
