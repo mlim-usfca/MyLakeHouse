@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pyspark.sql import SparkSession
 import logging
+import pydantic
 
 app = FastAPI()
 
