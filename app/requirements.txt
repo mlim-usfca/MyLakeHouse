@@ -2,3 +2,6 @@ fastapi
 uvicorn
 pyspark
 pydantic
+Optional
+pandas
+numpy
