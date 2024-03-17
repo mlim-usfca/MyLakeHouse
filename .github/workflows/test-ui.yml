@@ -12,7 +12,7 @@
             node-version: 21
         - name: Install dependencies
           run: |
-            cd /ui
+            cd ui/
             yarn ci
         - name: run ui tests
           run: yarn test
