@@ -1,6 +1,6 @@
-FROM node
+FROM node:21
 
-WORKDIR /app
+WORKDIR /ui
 
 COPY package.json . 
 
@@ -8,6 +8,8 @@ RUN yarn
 
 COPY . .
 
-EXPOSE 8080
+ENV PORT 3000
+
+EXPOSE $PORT
 
 CMD ["yarn", "dev"]

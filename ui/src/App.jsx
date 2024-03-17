@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Outlet } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -6,6 +6,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
+import axios from "axios"
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -19,12 +20,15 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function App() {
 
+  useEffect(() => {
+    axios.get("http://localhost:8090/test").then(data => console.log(data))
+  }, []);
+
   return (
     <>
     <CssBaseline/>
     <Container maxWidth={false} disableGutters style={{ height: '100vh' }}>
-      <Box sx={{ background: 'rgb(30,125,91)',
-background: 'linear-gradient(0deg, rgba(30,125,91,1) 0%, rgba(21,93,120,1) 100%)',
+      <Box sx={{background: 'linear-gradient(0deg, rgba(30,125,91,1) 0%, rgba(21,93,120,1) 100%)',
 height: "100%", padding: "20px 12px" }}>
         <Grid container columnSpacing={4} style={{height: "100%", width: "100%" }}>
           <Grid item xs={3}>
@@ -32,7 +36,7 @@ height: "100%", padding: "20px 12px" }}>
               <Paper style={{ background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px', 
               boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.4)', marginLeft: "1rem", height: '100%'}}>
                 {/* Your content here */}
-                Left Column
+                Left Column Test
               </Paper>
             </Box>
           </Grid>

@@ -15,12 +15,14 @@ RUN mkdir -p /app/spark/jars && \
 
 ENV IJAVA_CLASSPATH=/app/spark/jars/*
 
-COPY requirements.txt .
+COPY ./requirements.txt .
 
 RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY . ./api
 
-CMD ["uvicorn", "main:app", "--host=0.0.0.0", "--port=8090"]
+EXPOSE 8090
+
+CMD ["uvicorn", "api.main:app", "--host=0.0.0.0", "--port=8090", "--reload"]
