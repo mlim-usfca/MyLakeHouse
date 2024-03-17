@@ -8,7 +8,6 @@ import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import axios from "axios"
 
-
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
@@ -18,8 +17,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
-function App() {
-
+export const App = () => {
   useEffect(() => {
     axios.get("http://localhost:8090/test").then(data => console.log(data))
   }, []);
@@ -55,5 +53,3 @@ height: "100%", padding: "20px 12px" }}>
     </>
   );
 }
-
-export default App

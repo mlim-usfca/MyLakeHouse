@@ -1,11 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import {App} from './App.jsx'
 import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { OverViewPage } from './pages/overview/OverViewPage.jsx';
-import { GlobalConfigPage } from './pages/global-configuration/GlobalConfigPage.jsx';
+import { OverViewPage } from './components/pages/overview/OverViewPage.jsx';
+import { GlobalConfigPage } from './components/pages/global-configuration/GlobalConfigPage.jsx';
 
 const theme = createTheme({
   components: {
