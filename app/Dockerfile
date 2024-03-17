@@ -2,7 +2,8 @@ FROM python:3.11.1-slim
 
 # Install Java 17 and set environment variables
 RUN apt-get update && apt-get install -y openjdk-17-jdk curl \
-    && echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> /etc/environment
+    && echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> /etc/environment \
+    && apt-get clean
 
 WORKDIR /app
 
@@ -17,11 +18,11 @@ ENV IJAVA_CLASSPATH=/app/spark/jars/*
 
 COPY ./requirements.txt .
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && rm -rf /root/.cache/pip
 
-RUN pip install -r requirements.txt
-
-COPY . ./api
+COPY ./api ./api
 
 EXPOSE 8090
 
