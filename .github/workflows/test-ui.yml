@@ -15,4 +15,6 @@
             cd ui/
             yarn --frozen-lockfile
         - name: run ui tests
-          run: yarn test
+          run: |
+            cd ui
+            yarn test
