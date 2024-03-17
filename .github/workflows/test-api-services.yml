@@ -1,28 +1,28 @@
-name: UI Tests
+name: API Service Tests
 
 on:
   pull_request:
-    paths:
-      - 'app/api/**'
-
+    path:
+      - app/api/**
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
-      - name: Set Up Python Environment
+      - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.11.1'
+          python-version: 3.11.1
       - name: Set Up Environment
         run: |
           echo "PYTHONPATH=${{ github.workspace }}/app" >> $GITHUB_ENV
       - name: Install dependencies
         run: |
-          pip install -r app/api/requirements-dev.txt
-      - name: Run UI tests
-        run: |
-          python -m pytest app/api/test
+          cd app
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+      - name: Run tests
+        run: pytest app/api/test
 
