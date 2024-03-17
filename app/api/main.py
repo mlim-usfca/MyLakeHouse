@@ -117,7 +117,7 @@ async def list_databases():
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 """
-    Test Endpoint
+    Test Endpoint Test
 """
 @app.get("/test")
 async def test():

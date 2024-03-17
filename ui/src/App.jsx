@@ -22,6 +22,7 @@ export const App = () => {
     axios.get("http://localhost:8090/test").then(data => console.log(data))
   }, []);
 
+
   return (
     <>
     <CssBaseline/>
