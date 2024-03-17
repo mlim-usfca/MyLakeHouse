@@ -13,6 +13,6 @@
         - name: Install dependencies
           run: |
             cd ui/
-            yarn ci
+            yarn --frozen-lockfile
         - name: run ui tests
           run: yarn test
