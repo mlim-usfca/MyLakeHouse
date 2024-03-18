@@ -2,7 +2,7 @@ name: API Service Tests
 
 on:
   pull_request:
-    path:
+    paths:
       - app/api/**
 jobs:
   test:
