@@ -1,23 +1,64 @@
-name: UI Tests
+name: UI Lint & Tests
 on:
   pull_request:
     paths:
       - 'ui/**'
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Install Node
         uses: actions/setup-node@v3
         with:
           node-version: 21
+
       - name: Install dependencies
         run: |
           cd ui/
           yarn --frozen-lockfile
-      - name: RUN Tests
+
+      - name: Run linting
+        run: |
+          cd ui/
+          yarn lint
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+
+      - name: Install dependencies
+        run: |
+          cd ui/
+          yarn --frozen-lockfile
+
+      - name: Run Tests
         run: |
           cd ui
           yarn test
