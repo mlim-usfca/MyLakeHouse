@@ -98,13 +98,6 @@ services:
     volumes:
       - ./data:/home/iceberg/data  # Assuming you want to access data from the FastAPI app
       - ./app/api:/app/api
-  mongodb:
-    image: 'mongo'
-    volumes:
-      - ./data:/data/mongo-db
-    env_file:
-      - ./env/mongo.env
-    container_name: mongodb
 volumes:
   minio_data:
 networks:
