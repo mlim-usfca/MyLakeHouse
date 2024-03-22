@@ -104,42 +104,26 @@ async def list_databases():
         # Generic exception handler, logging the error would be ideal here
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-#For Testing purpose
-@app.get("/create-branch")
-async def create_branch(name: str = "BB"):
-    try:
-        spark = app.state.spark
-
-        ## CREATE A BRANCH WITH NESSIE
-        # spark.sql(f"CREATE BRANCH IF NOT EXISTS Branch1 IN local FROM main")
-        spark.sql("ALTER TABLE local.nycData2.sf CREATE BRANCH `TPP`")
-        return {"message": "Success", "response": "Branch created"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
-#For Testing purpose
-@app.get("/get-branch")
-async def get_branch():
-    try:
-        spark = app.state.spark
-
-
-        branches = spark.sql("SELECT * FROM local.nycData2.sf.refs")
-        print("Branches::", branches)
-        # branches = spark.listTables()
-        # print("Tables::", branches)
-        snapshots_json = branches.toJSON().collect()
-        for json_str in snapshots_json:
-            print(json_str)
-        # response = [{"name":branch.name,"type":branch.type} for branch in branches]
-        return {"message": "Success", "response": "response"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
+"""
+    Endpoint to list all databases, tables, branches and tags.
+    Query Params:
+        db_name = ""
+        table_name = ""
+        branch_name = ""
+    API usage:
+        API without using any Query param - returns database list.
+        API with db_name - returns tablename list within the specified database.
+        API with pass db_name and table_name- returns snapshot details from main branch along with branch list.
+        API with db_name, table_name and branch_name - returns snapshot details from specified branch along with branch list. 
+"""
 @app.get("/snapshots")
 async def get_snapshot(branch_name: str = "main", db_name: Optional[str] = None, table_name: Optional[str] = None):
-    spark = app.state.spark
     try:
+        # Ensure Spark session is available
+        if not hasattr(app.state, 'spark') or app.state.spark is None:
+            raise HTTPException(status_code=500, detail="Spark session not initialized.")
+
+        spark = app.state.spark
         response = None
         if not db_name and not table_name:
             #Return Db names
