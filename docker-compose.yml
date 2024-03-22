@@ -107,7 +107,6 @@ services:
     container_name: mongodb
 volumes:
   minio_data:
-  data:
 networks:
   iceberg_net:
     driver: bridge

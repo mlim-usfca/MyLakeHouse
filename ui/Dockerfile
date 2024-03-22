@@ -4,7 +4,8 @@ WORKDIR /ui
 
 COPY package.json . 
 
-RUN yarn
+RUN yarn \
+    && yarn cache clean
 
 COPY . .
 
