@@ -5,6 +5,7 @@ WORKDIR /ui
 COPY package.json . 
 
 RUN yarn \
+    && yarn upgrade \
     && yarn cache clean
 
 COPY . .
