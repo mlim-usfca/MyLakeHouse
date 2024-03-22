@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { OverViewPage } from './pages/overview/OverViewPage.jsx';
 import { GlobalConfigPage } from './pages/global-configuration/GlobalConfigPage.jsx';
+import { SnapshotPage } from './pages/snapshot/SnapshotPage.jsx';
 
 const theme = createTheme({
   components: {
@@ -32,7 +33,11 @@ const router = createBrowserRouter([
       {
         path: '/config',
         element: <GlobalConfigPage />,
-      }
+      },
+      {
+        path: 'snapshot/:database/:table',
+        element: <SnapshotPage/>,
+      },
     ],
   },
 ]);

@@ -4,4 +4,4 @@ docker build -t caspian-react .
 
 # Manual Start
 
-docker run --name caspian-ui --rm -d -p 5173:5173 -it caspian-react
+docker run --name caspian-ui --rm -d -p 8080:8080 -it caspian-react
