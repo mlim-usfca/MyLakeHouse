@@ -33,3 +33,29 @@ curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-03.par
 curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-02.parquet -o ./data/yellow_tripdata_2022-02.parquet
 curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-01.parquet -o ./data/yellow_tripdata_2022-01.parquet
 ```
+## API Endpoints
+
+/snapshots
+```bash
+Path: 0.0.0.0:8090/snapshots
+Description: Get databases, tables, snapshots, branches and tags.
+Method: GET
+Query Parameters:
+  db_name: 
+      Type: String
+      Description: Database name.
+      Required: False
+  table_name:
+      Type: String
+      Description: Table name.
+      Required: False
+  branch_name:
+      Type: String
+      Description: Branch name.
+      Required: False
+
+API Usage:
+    API + no query params - returns database list.
+    API + db_name - returns tablename list within the specified database.
+    API + db_name, table_name- returns snapshot details from main branch along with branch and tags list.
+```
