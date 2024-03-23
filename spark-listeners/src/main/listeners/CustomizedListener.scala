@@ -32,7 +32,7 @@ class CustomizedListener extends SparkListener {
     CustomizedListener.applicationSet.remove(curAppId)
 
     // print the HashSet after removing the ID of the application that has ended
-    println(s"Application ended (before removing the application): ${getApplicationSet}")
+    println(s"Application ended (after removing the application): ${getApplicationSet}")
   }
 
 }
