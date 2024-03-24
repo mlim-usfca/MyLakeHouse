@@ -7,6 +7,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { OverViewPage } from './pages/overview/OverViewPage.jsx';
 import { GlobalConfigPage } from './pages/global-configuration/GlobalConfigPage.jsx';
 import { SnapshotPage } from './pages/snapshot/SnapshotPage.jsx';
+import { SearchDB } from './pages/search/SearchDB.jsx';
+import { SearchTable } from './pages/search/SearchTable.jsx';
 
 const theme = createTheme({
   components: {
@@ -37,6 +39,14 @@ const router = createBrowserRouter([
       {
         path: 'snapshot/:database/:table',
         element: <SnapshotPage/>,
+      },
+      {
+        path: '/searchDB',
+        element: <SearchDB/>,
+      },
+      {
+        path: '/searchTable/:database',
+        element: <SearchTable/>,
       },
     ],
   },

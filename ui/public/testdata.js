@@ -107,3 +107,13 @@ export const tags = [
   }
 ]
 
+
+
+export const databaseList = ["DatabaseA", "DatabaseB", "DatabaseC"];
+
+
+export const tables = {
+  DatabaseA: ["Table1", "Table2", "Table3"],
+  DatabaseB: ["Table4", "Table5"],
+  DatabaseC: ["Table6", "Table7", "Table8", "Table9"]
+}
