@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pyspark.sql import SparkSession
@@ -5,6 +6,7 @@ import logging
 from pydantic import BaseModel
 from fastapi import HTTPException
 import os
+from json import loads
 
 app = FastAPI()
 
@@ -122,3 +124,63 @@ async def list_databases():
 @app.get("/test")
 async def test():
     return {"success": "Hello World"}
+
+"""
+    Endpoint to list all databases, tables, branches and tags.
+    Query Params:
+        db_name = ""
+        table_name = ""
+        branch_name = ""
+    API usage:
+        API without using any Query param - returns database list.
+        API with db_name - returns tablename list within the specified database.
+        API with pass db_name and table_name- returns snapshot details from main branch along with branch list.
+        API with db_name, table_name and branch_name - returns snapshot details from specified branch along with branch list. 
+"""
+@app.get("/snapshots")
+async def get_snapshot(branch_name: str = "main", db_name: Optional[str] = None, table_name: Optional[str] = None):
+    try:
+        # Ensure Spark session is available
+        if not hasattr(app.state, 'spark') or app.state.spark is None:
+            raise HTTPException(status_code=500, detail="Spark session not initialized.")
+
+        spark = app.state.spark
+        response = None
+        if not db_name and not table_name:
+            #Return Db names
+            databases = spark.catalog.listDatabases()
+            response = [db.name for db in databases]
+        elif db_name and not table_name:
+            #Return table names
+            tables = spark.catalog.listTables(db_name)
+            response = [table.name for table in tables]
+        elif db_name and table_name and branch_name:
+            #Return snapshot details from main branch
+            snapshots = spark.sql(f"select * from local.{db_name}.{table_name}.history h join local.{db_name}.{table_name}.snapshots s on h.snapshot_id = s.snapshot_id order by made_current_at;")
+            # Convert DataFrame to JSON string
+            snapshots_json = snapshots.toJSON().collect()  # spark dataframe
+            # Convert json string to json
+            response_data = []
+            for json_str in snapshots_json:
+                json_data = loads(json_str)
+                response_data.append(json_data)
+            #Append branch names list
+            branches = spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"BRANCH\";")
+            branches_json = branches.toJSON().collect()
+            branches_data = []
+            for brch_json_str in branches_json:
+                brch_json_data = loads(brch_json_str)
+                branches_data.append(brch_json_data)
+            # Append tag list
+            tags = spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"TAG\";")
+            tags_json = tags.toJSON().collect()
+            tags_data = []
+            for tags_json_str in tags_json:
+                tags_json_data = loads(tags_json_str)
+                tags_data.append(tags_json_data)
+            response = {"snapshots":response_data, "branches":branches_data, "tags":tags_data}
+        else:
+            raise HTTPException(status_code=404, detail="Invalid query parameters.")
+        return {"message": "Success.", "response": response}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")

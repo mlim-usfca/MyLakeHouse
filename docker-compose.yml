@@ -94,7 +94,6 @@ services:
     depends_on:
       - spark-iceberg
       - minio
-      - mongodb
     volumes:
       - ./data:/home/iceberg/data  # Assuming you want to access data from the FastAPI app
       - ./app/api:/app/api
