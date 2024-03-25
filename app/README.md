@@ -37,7 +37,7 @@ curl https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-01.par
 
 /snapshots
 ```bash
-Path: 0.0.0.0:8090/snapshots
+Path: 0.0.0.0:8090/dashboard/snapshots
 Description: Get databases, tables, snapshots, branches and tags.
 Method: GET
 Query Parameters:
