@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   spark-iceberg:
@@ -18,17 +18,17 @@ services:
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
     ports:
-      - 8888:8888
-      - 8080:8080
-      - 10000:10000
-      - 10001:10001
+      - "8888:8888"
+      - "8080:8080"
+      - "10000:10000"
+      - "10001:10001"
   rest:
     image: tabulario/iceberg-rest
     container_name: iceberg-rest
     networks:
       iceberg_net:
     ports:
-      - 8181:8181
+      - "8181:8181"
     environment:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
@@ -48,8 +48,8 @@ services:
         aliases:
           - warehouse.minio
     ports:
-      - 9001:9001
-      - 9000:9000
+      - "9001:9001"
+      - "9000:9000"
     command: ["server", "/data", "--console-address", ":9001"]
     volumes:
        - minio_data:/data
@@ -67,6 +67,18 @@ services:
     volumes:
       - ./init-minio.sh:/init-minio.sh
     entrypoint: [ "/bin/sh", "-c", "/init-minio.sh" ]
+  ui:
+    build: ./ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ui/src:/ui/src
+      - /ui/src/node_modules
+    stdin_open: true
+    tty: true
+    container_name: caspian-ui
+    depends_on:
+      - fastapi_app
   fastapi_app:
     image: caspian-back-end 
     build: ./app
@@ -81,9 +93,10 @@ services:
       - AWS_REGION=us-east-1
     depends_on:
       - spark-iceberg
-      - minio    
+      - minio
     volumes:
       - ./data:/home/iceberg/data  # Assuming you want to access data from the FastAPI app
+      - ./app/api:/app/api
 volumes:
   minio_data:
 networks:

@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pyspark.sql import SparkSession
 import logging
 from pydantic import BaseModel
@@ -8,6 +9,19 @@ import os
 from json import loads
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+)
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -103,6 +117,13 @@ async def list_databases():
     except Exception as e:
         # Generic exception handler, logging the error would be ideal here
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+"""
+    Test Endpoint Test
+"""
+@app.get("/test")
+async def test():
+    return {"success": "Hello World"}
 
 """
     Endpoint to list all databases, tables, branches and tags.

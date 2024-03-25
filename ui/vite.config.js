@@ -1,14 +1,28 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import eslintPlugin from 'vite-plugin-eslint'
+import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), eslintPlugin({
+    cache: false,
+    include: ['./src/**/*.js', './src/**/*.jsx'],
+    exclude: [],
+  }),],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    }
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './testSetup.js',
+  },
   server: {
     host: true,
-    port: 8080, // This is the port which we will use in docker
-    // Thanks @sergiomoura for the window fix
-    // add the next lines if you're using windows and hot reload doesn't work
+    port: 3000,
     watch: {
       usePolling: true
     }

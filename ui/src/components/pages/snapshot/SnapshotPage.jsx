@@ -8,10 +8,10 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useParams } from 'react-router-dom';
-import {snapshots, tags, branches} from '../../../public/testdata.js'
+import {snapshots, tags, branches} from '../../../../public/testdata.js'
 
 // Recursive function to render TreeItems
-export const renderTree = (node) => (
+const renderTree = (node) => (
   <TreeItem key={node.snapshotId} nodeId={node.snapshot_id} label={`Snapshot ${node.snapshot_id} Time ${node.committed_at}`}>
     {Array.isArray(node.children) ? node.children.map((childNode) => renderTree(childNode)) : null}
   </TreeItem>
@@ -52,7 +52,7 @@ export const SnapshotPage = () => {
       {tabValue === 1 && (
         <Box sx={{ p: 3 }}>
           <List >
-        {tags.map((tag, index) => (
+        {tags.map((tag) => (
           <ListItem button key={tag.name}>
             <ListItemText primary={tag.name} secondary={`Snapshot ID: ${tag.snapshot_id}`} />
           </ListItem>
@@ -63,7 +63,7 @@ export const SnapshotPage = () => {
       {tabValue === 2 && (
         <Box sx={{ p: 3 }}>
           <List >
-        {branches.map((branch, index) => (
+        {branches.map((branch) => (
           <ListItem button key={branch.name}>
             <ListItemText primary={branch.name} secondary={`Snapshot ID: ${branch.snapshot_id}`} />
           </ListItem>
