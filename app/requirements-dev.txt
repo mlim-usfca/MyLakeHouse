@@ -4,3 +4,4 @@ pyspark
 pydantic
 pytest
 httpx
+fastapi_router_controller
