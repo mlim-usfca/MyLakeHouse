@@ -7,8 +7,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { SnapshotPage } from './components/pages/snapshot/SnapshotPage.jsx';
 import { OverViewPage } from './components/pages/overview/OverViewPage.jsx';
 import { GlobalConfigPage } from './components/pages/global-configuration/GlobalConfigPage.jsx';
-import { SearchDB } from './pages/search/SearchDB.jsx';
-import { SearchTable } from './pages/search/SearchTable.jsx';
+import { SearchDB } from './components/pages/search/SearchDB.jsx';
+import { SearchTable } from './components/pages/search/SearchTable.jsx';
 const theme = createTheme({
   components: {
     MuiGrid2: {
