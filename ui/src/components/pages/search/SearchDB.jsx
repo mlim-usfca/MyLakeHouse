@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { Link, useParams  } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 import {SearchBar} from './SearchBar.jsx';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
-import {tables} from '../../../public/testdata.js'
+import {databaseList} from '../../../../public/testdata.js'
 
-export const SearchTable = () => {
-  let { database } = useParams();
-  // We will call our backend api and give them the db name as parameter to get the table name list later
-  const initialList = tables[database];
+export const SearchDB = () => {
+  // We will call our backend api to get the database name list later
+  const initialList = databaseList;
   const [searchResults, setSearchResults] = useState(initialList);
-
 
   const handleSearch = (searchTerm) => {
     // Perform search logic here
@@ -27,14 +25,14 @@ export const SearchTable = () => {
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Typography variant="p" component="p" sx={{ textAlign: 'left' }}>
-        {database}/Search for Table
+        Search for Database
       </Typography>
       <SearchBar onSearch={handleSearch} />
       <List>
         {searchResults.map((result, index) => (
           <ListItem key={index}>
             <ListItemText primary={result} />
-            <Link to={`/table/${database}/${result}`}>Enter Table</Link>
+            <Link to={`/searchtable/${result}`}>Enter Database</Link>
           </ListItem>
         ))}
       </List>
