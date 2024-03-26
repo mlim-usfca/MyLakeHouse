@@ -5,3 +5,4 @@ pydantic
 Optional
 pandas
 numpy
+fastapi_router_controller
