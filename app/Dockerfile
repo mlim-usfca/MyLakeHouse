@@ -2,7 +2,8 @@ FROM python:3.11.1-slim
 
 # Install Java 17 and set environment variables
 RUN apt-get update && apt-get install -y openjdk-17-jdk curl \
-    && echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> /etc/environment
+    && echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> /etc/environment \
+    && apt-get clean
 
 WORKDIR /app
 
@@ -15,12 +16,14 @@ RUN mkdir -p /app/spark/jars && \
 
 ENV IJAVA_CLASSPATH=/app/spark/jars/*
 
-COPY requirements.txt .
+COPY ./requirements.txt .
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && rm -rf /root/.cache/pip
 
-RUN pip install -r requirements.txt
+COPY ./api ./api
 
-COPY . .
+EXPOSE 8090
 
-CMD ["uvicorn", "main:app", "--host=0.0.0.0", "--port=8090"]
+CMD ["uvicorn", "api.main:app", "--host=0.0.0.0", "--port=8090", "--reload"]

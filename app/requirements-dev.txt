@@ -2,7 +2,6 @@ fastapi
 uvicorn
 pyspark
 pydantic
-Optional
-pandas
-numpy
+pytest
+httpx
 fastapi_router_controller

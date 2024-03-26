@@ -1,0 +1,50 @@
+name: UI Lint & Tests
+on:
+  pull_request:
+    paths:
+      - 'ui/**'
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: 'Install Node'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: |
+          cd ui/
+          yarn --frozen-lockfile
+
+      - name: Run linting
+        run: |
+          cd ui/
+          yarn lint
+
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: |
+          cd ui/
+          yarn --frozen-lockfile
+
+      - name: Run Tests
+        run: |
+          cd ui
+          yarn test
