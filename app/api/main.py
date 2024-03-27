@@ -1,9 +1,9 @@
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 from fastapi import FastAPI
-import api.controller       #runs __init__ file in controllers folder
+import api.controller      #runs __init__ file in controllers folder
 from fastapi_router_controller import Controller, ControllersTags
-from api.utils.SparkConnection import SparkConnection
+from .utils.SparkConnection import SparkConnection
 
 app = FastAPI(
     title="DataLake",

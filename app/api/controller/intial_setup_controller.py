@@ -2,9 +2,9 @@ from fastapi_router_controller import Controller
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 import logging
-from api.service.intial_setup_service import IntialSetupService
-from api.schema.create_iceberg_table_request_schema import CreateIcebergTableRequest
-from api.utils.SparkConnection import SparkConnection
+from ..service.intial_setup_service import IntialSetupService
+from ..schema.create_iceberg_table_request_schema import CreateIcebergTableRequest
+from ..utils.SparkConnection import SparkConnection
 
 
 # defining the fastapi router

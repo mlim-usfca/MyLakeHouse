@@ -1,10 +1,10 @@
 from typing import Optional
 from fastapi_router_controller import Controller
 from fastapi import APIRouter, Depends
-from api.utils.SparkConnection import SparkConnection
+from ..utils.SparkConnection import SparkConnection
 from fastapi import HTTPException
 import logging
-from api.service.dashboard_service import DashboardService
+from ..service.dashboard_service import DashboardService
 
 
 # defining the fastapi router
