@@ -10,7 +10,7 @@ import logging
 router = APIRouter(prefix='/tp')
 # create a controller descriptor and pass the router to bind
 controller = Controller(router, openapi_tag={
-    'name': 'table_properties-controller',
+    'name': 'table-properties-controller',
 })
 
 @controller.use()
@@ -18,17 +18,15 @@ controller = Controller(router, openapi_tag={
 @controller.resource()
 class TablePropertiesController():
     def __init__(self, table_properties_service:  TableProperties = Depends()):
-        spark_conn_obj = SparkConnection()
-        self.spark = spark_conn_obj.get_spark_session()
         self.table_properties_service = table_properties_service
 
 
     """
-            Endpoint to list all databases in Spark SQL.
-            Returns a list of database names.
+            Endpoint to test PyIceberg installation.
     """
-    @controller.route.get(
-        '/catalog')
+    @controller.route.get('/catalog',
+                            tags=['table-properties-controller'],
+                            description="Endpoint to test PyIceberg Installation")
     def test_pyiceberg(self):
         try:
             status_code, data = self.table_properties_service.getCatalog()
