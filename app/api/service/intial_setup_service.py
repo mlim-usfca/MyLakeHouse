@@ -1,6 +1,6 @@
-from api.utils.SparkConnection import SparkConnection
+from ..utils.SparkConnection import SparkConnection
 import os
-from api.schema.create_iceberg_table_request_schema import CreateIcebergTableRequest
+from ..schema.create_iceberg_table_request_schema import CreateIcebergTableRequest
 import logging
 
 

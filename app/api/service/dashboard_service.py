@@ -1,4 +1,4 @@
-from api.utils.SparkConnection import SparkConnection
+from ..utils.SparkConnection import SparkConnection
 import logging
 from json import loads
 
