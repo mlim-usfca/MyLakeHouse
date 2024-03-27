@@ -3,11 +3,10 @@ import listeners.CustomizedListener;
 import scala.collection.Iterator;
 import scala.collection.immutable.Set;
 import io.prometheus.client.CollectorRegistry;
-import io.prometheus.client.exporter.PushGateway;
 
 import java.io.IOException;
 
-public class PushGatewayer {
+public class PushGateway {
     public static void main(String[] args) {
         Set<String> applicationSet = CustomizedListener.getApplicationSet();
         System.out.println(applicationSet);
@@ -30,7 +29,7 @@ public class PushGatewayer {
         }
 
         // Push metrics to the Pushgateway
-        PushGateway pushGateway = new PushGateway("http://pushgateway.example.com:9091");
+        io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("http://localhost:9091");
         try {
             pushGateway.pushAdd(registry, "my_job");
             System.out.println("Successfully pushed my_job");
