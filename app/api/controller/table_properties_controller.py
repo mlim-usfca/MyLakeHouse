@@ -3,10 +3,9 @@ from fastapi import APIRouter, Depends
 from ..service.table_properties_service import TableProperties
 from fastapi import HTTPException
 import logging
-from ..schema.table_properties_schema import TablePropertiesRequest
 
 # defining the fastapi router
-router = APIRouter(prefix='/tp')
+router = APIRouter(prefix='/props')
 # create a controller descriptor and pass the router to bind
 controller = Controller(router, openapi_tag={
     'name': 'table-properties-controller',
@@ -38,17 +37,38 @@ class TablePropertiesController():
             logging.error("Error: TableProperties: /catalog:",error)
             return HTTPException(status_code=500, detail="Internal server error.")
 
-    @controller.route.post('/readProps',
+    """
+           Endpoint to get all the table properties.
+    """
+    @controller.route.get('/getTableProps',
                           tags=['table-properties-controller'],
-                          description='GetRead Properties of a table')
+                          description='Get all Properties of a table')
 
-    def get_read_properties(self, request : TablePropertiesRequest):
+    def get_read_properties(self, db_name : str, table_name : str):
         try:
-            status_code, data = self.table_properties_service.getReadProperties(request)
+            status_code, data = self.table_properties_service.getTableProperties(db_name, table_name)
             if status_code == 200:
                 return data
             else:
                 return HTTPException(status_code=status_code, detail=data)
         except Exception as error:
-            logging.error("Error: TablePropertiesController: /tp/readProp:", error)
+            logging.error("Error: TablePropertiesController: /props/getTableProps:", error)
+            return HTTPException(status_code=500, detail="Internal server error.")
+
+    """
+            Endpoint to get all the current Catalog Properties. 
+    """
+    @controller.route.get('/getCatalogProps',
+                           tags=['table-properties-controller'],
+                           description='Get all Properties of the current catalog')
+    def get_read_properties(self):
+        try:
+            status_code, data = self.table_properties_service.getCatalogProperties()
+            if status_code == 200:
+
+                return data
+            else:
+                return HTTPException(status_code=status_code, detail=data)
+        except Exception as error:
+            logging.error("Error: TablePropertiesController: /props/getCatalogProps:", error)
             return HTTPException(status_code=500, detail="Internal server error.")
