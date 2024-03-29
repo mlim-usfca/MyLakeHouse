@@ -1,11 +1,11 @@
-package listeners
+package com.mylakehouse
 
-import listeners.CustomizedListener.getApplicationSet
+import com.mylakehouse.CustomizedListener.getApplicationSet
 import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart}
 
 import scala.collection.mutable
 
-// this object contains all static variables and methods that are shared among all instances of the CustomizedListener class
+// this object contains all static variables and methods that are shared among all instances of the com.mylakehouse.CustomizedListener class
 object CustomizedListener {
   // create a mutable HashSet to store the ID of applications that are currently running
   private val applicationSet = mutable.Set.empty[String]
