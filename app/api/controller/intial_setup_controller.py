@@ -4,7 +4,6 @@ from fastapi import HTTPException
 import logging
 from ..service.intial_setup_service import IntialSetupService
 from ..schema.create_iceberg_table_request_schema import CreateIcebergTableRequest
-from ..utils.SparkConnection import SparkConnection
 
 
 # defining the fastapi router
@@ -21,8 +20,6 @@ controller = Controller(router, openapi_tag={
 @controller.resource()
 class InitialSetupController():
     def __init__(self, initial_setup_service: IntialSetupService = Depends()):
-        spark_conn_obj = SparkConnection()
-        self.spark = spark_conn_obj.get_spark_session()
         self.initial_setup_service = initial_setup_service
 
     """
