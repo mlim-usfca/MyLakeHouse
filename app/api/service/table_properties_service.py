@@ -6,6 +6,7 @@ class TableProperties():
     def __init__(self):
         spark_conn_obj = SparkConnection()
         self.spark = spark_conn_obj.get_spark_session()
+        # Need to ask for the catalog log from configuration file instead of hardcoding.
         self.catalog = load_catalog('local')
 
     def getCatalog(self):
