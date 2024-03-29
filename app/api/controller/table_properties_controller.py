@@ -44,7 +44,7 @@ class TablePropertiesController():
                           tags=['table-properties-controller'],
                           description='Get all Properties of a table')
 
-    def get_read_properties(self, db_name : str, table_name : str):
+    def get_table_properties(self, db_name : str, table_name : str):
         try:
             status_code, data = self.table_properties_service.getTableProperties(db_name, table_name)
             if status_code == 200:
@@ -61,7 +61,7 @@ class TablePropertiesController():
     @controller.route.get('/getCatalogProps',
                            tags=['table-properties-controller'],
                            description='Get all Properties of the current catalog')
-    def get_read_properties(self):
+    def get_catalog_properties(self):
         try:
             status_code, data = self.table_properties_service.getCatalogProperties()
             if status_code == 200:
