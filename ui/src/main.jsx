@@ -9,6 +9,7 @@ import { OverViewPage } from './components/pages/overview/OverViewPage.jsx';
 import { GlobalConfigPage } from './components/pages/global-configuration/GlobalConfigPage.jsx';
 import { SearchDB } from './components/pages/search/SearchDB.jsx';
 import { SearchTable } from './components/pages/search/SearchTable.jsx';
+import {TableSettings} from "@/components/pages/tables/TableSettings.jsx";
 const theme = createTheme({
   components: {
     MuiGrid2: {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: '/searchTable/:database',
         element: <SearchTable/>,
+      },
+      {
+        path: '/searchTable/:database/properties',
+        element: <TableSettings/>,
       },
     ],
   },
