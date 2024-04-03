@@ -40,3 +40,21 @@ class InitialSetupController():
         except Exception as error:
             logging.error("Error: InitialSetupController: /create_table:", error)
             return HTTPException(status_code=500, detail="Internal server error.")
+
+    @controller.route.post(
+        '/create_toy_db',
+        tags=['intial-setup-controller'],
+        summary='Creates a toy database: toyDb and two mini tables  local.toyDb.taxis1, local.toyDb.taxis2 and \
+                inserts some records in these to have a snapshot history. For testing purposes only. The script sleeps for 60 secs \
+                to create tables 1 minute apart.')
+    def create_toy_iceberg_table(self):
+        try:
+            status_code, data = self.initial_setup_service.create_toy_iceberg_database()
+            if status_code == 200:
+                return {"message": "Created toy database successfully"}
+            else:
+                return HTTPException(status_code=status_code, detail="data")
+        except Exception as error:
+            logging.error("Error: InitialSetupController: /create_toy_db")
+            return HTTPException(status_code=500, detail="Internal server error.")
+
