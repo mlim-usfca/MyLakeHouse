@@ -72,3 +72,24 @@ class DashboardController():
         except Exception as e:
             logging.error("Error: DashboardController: /snapshots:", e)
             return HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+    """
+                Endpoint to list all tables in Spark SQL.
+                Returns a list of table names in a database.
+        """
+
+    @controller.route.get(
+        '/list-tables',
+        tags=['dashboard-controller'],
+        summary='List Tables at Database scope.')
+    def list_databases(self, db_name: str):
+        try:
+            status_code, data = self.dashboard_service.list_tables(db_name)
+
+            if status_code == 200:
+                return data
+            else:
+                return HTTPException(status_code=status_code, detail=data)
+        except Exception as error:
+            logging.error("Error: DashboardController: /list-tables:", error)
+            return HTTPException(status_code=500, detail="Internal server error.")
