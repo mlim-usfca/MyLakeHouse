@@ -1,3 +1,5 @@
+package listeners;
+
 import io.prometheus.client.Gauge;
 import listeners.CustomizedListener;
 import scala.collection.Iterator;
@@ -7,9 +9,8 @@ import io.prometheus.client.CollectorRegistry;
 import java.io.IOException;
 
 public class PushGateway {
-    public static void main(String[] args) {
-        Set<String> applicationSet = CustomizedListener.getApplicationSet();
-        System.out.println(applicationSet);
+    public static void push(Set<String> applicationSet) {
+        System.out.println("pushgateway + " + applicationSet);
 
         // Create a CollectorRegistry
         CollectorRegistry registry = new CollectorRegistry();
@@ -28,13 +29,17 @@ public class PushGateway {
             gauge.labels(element).set(1);
         }
 
+        System.out.println(registry);
         // Push metrics to the Pushgateway
-        io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("http://localhost:9091");
+        io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("127.0.0.1:9091");
+
         try {
             pushGateway.pushAdd(registry, "my_job");
             System.out.println("Successfully pushed my_job");
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error pushing metrics to Pushgateway:");
+            e.printStackTrace();
+            System.out.println("Error message: " + e.getMessage());
         }
     }
 }
