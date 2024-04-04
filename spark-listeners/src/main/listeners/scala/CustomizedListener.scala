@@ -1,5 +1,6 @@
 package listeners
 
+import listeners.PushGateway
 import listeners.CustomizedListener.getApplicationSet
 import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart}
 
@@ -20,6 +21,7 @@ class CustomizedListener extends SparkListener {
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     curAppId = applicationStart.appId.get
     CustomizedListener.applicationSet.add(curAppId)
+    PushGateway.push(CustomizedListener.getApplicationSet)
 
     // print the HashSet after adding the ID of the application that has started
     println(s"Application started: ${getApplicationSet}")
@@ -30,6 +32,7 @@ class CustomizedListener extends SparkListener {
     println(s"Application ended (before removing the application): ${getApplicationSet}")
 
     CustomizedListener.applicationSet.remove(curAppId)
+    PushGateway.push(CustomizedListener.getApplicationSet)
 
     // print the HashSet after removing the ID of the application that has ended
     println(s"Application ended (after removing the application): ${getApplicationSet}")
