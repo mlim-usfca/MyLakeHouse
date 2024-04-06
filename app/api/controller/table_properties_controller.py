@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends
 from ..service.table_properties_service import TableProperties
 from fastapi import HTTPException
 import logging
+from ..schema.alter_iceberg_table_request import ChangeIcebergTableProperties, UnsetIcebergTableProperties
 
 # defining the fastapi router
 router = APIRouter(prefix='/props')
@@ -65,10 +66,45 @@ class TablePropertiesController():
         try:
             status_code, data = self.table_properties_service.getCatalogProperties()
             if status_code == 200:
-
                 return data
             else:
                 return HTTPException(status_code=status_code, detail=data)
         except Exception as error:
             logging.error("Error: TablePropertiesController: /props/getCatalogProps:", error)
+            return HTTPException(status_code=500, detail="Internal server error.")
+
+
+    """
+             Endpoint to alter Table Properties
+    """
+    @controller.route.post('/alterTableProps',
+                           tags=['table-properties-controller'],
+                           description='Alter the properties of the table specified')
+    def alter_table_properties(self, request: ChangeIcebergTableProperties):
+        try:
+            status_code, data = self.table_properties_service.alter_table_properties(request)
+            if status_code == 200:
+                return data
+            else:
+                return HTTPException(status_code=status_code, detail=data)
+        except Exception as error:
+            logging.info("Error: TablePropertiesController: /props/alterTableProps:", error)
+            return HTTPException(status_code=500, detail="Internal server error.")
+
+
+    """
+            Endpoint to unset Table Properties
+    """
+    @controller.route.post('/unsetTableProps',
+                           tags=['table-properties-controller'],
+                           description='Unset the properties of the table specified')
+    def unset_table_properties(self, request: UnsetIcebergTableProperties):
+        try:
+            status_code, data = self.table_properties_service.unset_table_properties(request)
+            if status_code == 200:
+                return data
+            else:
+                return HTTPException(status_code=status_code, detail=data)
+        except Exception as error:
+            logging.info("Error: TablePropertiesController: /props/unsetTableProps:", error)
             return HTTPException(status_code=500, detail="Internal server error.")

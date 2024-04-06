@@ -2,6 +2,7 @@ from pyiceberg.catalog import load_catalog
 from ..utils.SparkConnection import SparkConnection
 import logging
 from fastapi import HTTPException
+from ..schema.alter_iceberg_table_request import  ChangeIcebergTableProperties, UnsetIcebergTableProperties
 class TableProperties():
     def __init__(self):
         spark_conn_obj = SparkConnection()
@@ -63,4 +64,71 @@ class TableProperties():
         except Exception as exception:
             logging.error(f"Error in getProperties: {exception}")
             raise HTTPException(status_code=500, detail=str(exception))
+
+
+    def alter_table_properties(self, request: ChangeIcebergTableProperties):
+        """
+                Alter table properties using Spark SQL.
+
+                Parameters:
+                - dbname: Database name as a string
+                - table_name: Table name as a string
+                - properties: Dictionary of properties to alter, in the format of [{'propertytype.name': value}, ...]
+                """
+        # Iterate over the properties dictionary
+        db_name = request.db_name
+        table_name = request.table_name
+        properties = request.properties
+
+        if not db_name or not table_name:
+            return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
+
+        if not properties or properties == []:
+            return 404, f"No properties specified to alter for the table {db_name}.{table_name}"
+
+        try:
+            print(f"In alter table properties for table {db_name}.{table_name}")
+            for prop in properties:
+                for key, value in prop.items():
+                    # Generate and execute the ALTER TABLE command to set each property
+                    alter_command = f"ALTER TABLE {db_name}.{table_name} SET TBLPROPERTIES ('{key}' = '{value}')"
+                    self.spark.sql(alter_command)
+                    print(f"Executed: {alter_command}")
+            return 200, "Table properties altered successfully."
+
+        except Exception as error:
+            return 500, error
+
+
+    def unset_table_properties(self, request: UnsetIcebergTableProperties):
+        """
+                Unset table properties using Spark SQL.
+
+                Parameters:
+                - dbname: Database name as a string
+                - table_name: Table name as a string
+                - properties: Dictionary of properties to alter, in the format of [{'propertytype.name': value}, ...]
+                """
+        # Iterate over the properties dictionary
+        db_name = request.db_name
+        table_name = request.table_name
+        properties = request.properties
+
+        if not db_name or not table_name:
+            return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
+
+        if not properties or properties == []:
+            return 404, f"No properties specified to unset for the table {db_name}.{table_name}"
+
+        try:
+            logging.info(f"In unset table properties for table {db_name}.{table_name}")
+            for prop in properties:
+                # Generate and execute the ALTER TABLE command to set each property
+                unset_command = f"ALTER TABLE {db_name}.{table_name} UNSET TBLPROPERTIES ('{prop}')"
+                self.spark.sql(unset_command)
+                logging.info(f"Executed: {unset_command}")
+
+            return 200, "Table properties unset successfully."
+        except Exception as error:
+            return 500, error
 
