@@ -33,21 +33,22 @@ export const SnapshotPage = () => {
   const [branches, setBranches] = useState([]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8090/dashboard/snapshots?branch_name=main&db_name=${database}&table_name=${table}`);
+        const { snapshots, tags, branches } = response.data.response;
+        console.log(response.data.response)
+        setSnapshots(snapshots);
+        setTags(tags);
+        setBranches(branches);
+      } catch (error) {
+        console.error('Error fetching snapshots, tags, and branches:', error);
+      }
+    };
     fetchData();
-  }, [fetchData]);
+  },[database, table]);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get(`http://localhost:8090/dashboard/snapshots?branch_name=main&db_name=${database}&table_name=${table}`);
-      const { snapshots, tags, branches } = response.data.response;
-      console.log(response.data.response)
-      setSnapshots(snapshots);
-      setTags(tags);
-      setBranches(branches);
-    } catch (error) {
-      console.error('Error fetching snapshots, tags, and branches:', error);
-    }
-  };
+  
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
