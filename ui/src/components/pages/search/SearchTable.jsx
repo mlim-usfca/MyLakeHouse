@@ -1,25 +1,36 @@
-import React, { useState } from 'react';
-import { Link, useParams  } from 'react-router-dom'; // Import Link from react-router-dom
-import {SearchBar} from './SearchBar.jsx';
+import React, { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { SearchBar } from './SearchBar.jsx';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
-import {tables} from '../../../../public/testdata.js'
+import axios from 'axios'; // Import axios
 
 export const SearchTable = () => {
-  let { database } = useParams();
-  // We will call our backend api and give them the db name as parameter to get the table name list later
-  const initialList = tables[database];
-  const [searchResults, setSearchResults] = useState(initialList);
+  const { database } = useParams();
+  const [tableList, setTableList] = useState([]);
+  const [searchResults, setSearchResults] = useState([]);
 
+  useEffect(() => {
+    fetchTableList(database);
+  }, [database]);
+
+  const fetchTableList = async (dbName) => {
+    try {
+      const response = await axios.get(`http://localhost:8090/dashboard/list-tables/?db_name=${dbName}`);
+      console.log(response.data);
+      setTableList(response.data); // Update table list state
+      setSearchResults(response.data); // Initialize search results with the fetched data
+    } catch (error) {
+      console.error('Error fetching table list:', error);
+    }
+  };
 
   const handleSearch = (searchTerm) => {
-    // Perform search logic here
     console.log('Searching for:', searchTerm);
-    // Update search results
-    const filteredResults = initialList.filter(item =>
-      item.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredResults = tableList.filter(item =>
+      item.table_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSearchResults(filteredResults);
   };
@@ -27,19 +38,21 @@ export const SearchTable = () => {
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Typography variant="p" component="p" sx={{ textAlign: 'left' }}>
-        {database}/Search for Table
+        {database} / Search for Table
       </Typography>
       <SearchBar onSearch={handleSearch} />
       <List>
         {searchResults.map((result, index) => (
           <ListItem key={index}>
-            <ListItemText primary={result} />
-            <Link to={`/table/${database}/${result}`}>Enter Table</Link>
+            <ListItemText primary={result.table_name} />
+            <Link to={`/table/${database}/${result.table_name}`}>Enter Table</Link>
           </ListItem>
         ))}
       </List>
     </Box>
   );
 };
+
+
 
 
