@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -15,17 +15,69 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import {useParams} from "react-router-dom";
+import axios from "axios";
+import {updateProp} from "@/services/table-properties/service.js"
 
 
 
 export const TableSettings = () => {
 
-    const [data] = useState(properties)
+    const { db, tbl } = useParams();
+    const [data, setData] = useState(properties)
     const [filteredData, setFilteredData] = useState(data)
+    useEffect(() => {
+        axios.get(`http://localhost:8090/props/getTableProps?db_name=${db}&table_name=${tbl}`)
+            .then(data => {
+                console.log(data.data)
+
+                setData( prevState => {
+                    Object.entries(data?.data).forEach(([name, value]) => {
+                        const prop = prevState.find(p => p.property === name)
+                        if (prop) {
+                            prop.value = value;
+                        }
+                    })
+                    return [...prevState]
+                })
+                setFilteredData( prevState => {
+                    Object.entries(data?.data).forEach(([name, value]) => {
+                        const prop = prevState.find(p => p.property === name)
+                        if (prop) {
+                            prop.value = value;
+                        }
+                    })
+                    return [...prevState]
+                })
+            })
+    }, [db, tbl]);
     const handleSearch = ({target: {value}}) => {
         console.log(value)
         setFilteredData(data.filter(p => p.property.includes(value)))
     };
+
+    const onChange = async (e) => {
+        const {name, value} = e.target
+        const res = await updateProp({db, tbl, props: [{[name]: value}]});
+
+        console.log(res)
+
+        setData(prevState => {
+            const prop = prevState.find(p => p.property === name)
+            if (prop) {
+                prop.value = value;
+            }
+            return [...prevState]
+        })
+
+        setFilteredData(prevState => {
+            const prop = prevState.find(p => p.property === name)
+            if (prop) {
+                prop.value = value;
+            }
+            return [...prevState]
+        })
+    }
 
     return <Box sx={{width: '100%', padding: 2}}>
         <Typography className="glass-text" variant="subtitle2" align="right"
@@ -71,8 +123,9 @@ export const TableSettings = () => {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
+                                        name={row.property}
                                         value={row.value ? row.value.toString() : "null"}
-                                        // onChange={handleChange}
+                                        onChange={onChange}
                                     >
                                         {row.options.map((op) => {
                                            return <MenuItem key={row.property + "-" + op} value={op}>{op}</MenuItem>
