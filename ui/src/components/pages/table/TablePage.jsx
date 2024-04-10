@@ -21,7 +21,7 @@ export const TablePage = () => {
         <Link to={`/snapshot/${database}/${table}`}>View Snapshots</Link>
       </Typography>
       <Typography variant="body1" component="p">
-        <Link to={`/tableproperties/${database}/${table}`}>View Table Properties</Link>
+        <Link to={`/${database}/${table}/properties`}>View Table Properties</Link>
       </Typography>
     </Box>
   );

@@ -20,8 +20,8 @@ export const SearchDB = () => {
     try {
       const response = await axios.get('http://localhost:8090/dashboard/list-databases');
       console.log(response);
-      setDatabaseList(response.data.db_list); // Update database list state
-      setSearchResults(response.data.db_list); // Initialize search results with the fetched data
+      setDatabaseList(response.data.db_list ?? []); // Update database list state
+      setSearchResults(response.data.db_list ?? []); // Initialize search results with the fetched data
     } catch (error) {
       console.error('Error fetching database list:', error);
     }
