@@ -1,20 +1,66 @@
 import com.mylakehouse.CustomizedListener
 import org.apache.spark.sql.SparkSession
+import org.scalatest.funsuite.AnyFunSuite
 
-object CustomizedListenerTest {
-  def main(args: Array[String]): Unit = {
-    // create a Spark session
-    val sparkSession = SparkSession.builder()
+class CustomizedListenerTest extends AnyFunSuite {
+  // test whether the applicationSet is updated correctly
+  test("applicationSet") {
+    // Create a SparkSession
+    val spark = SparkSession.builder()
+      .appName("TestApp")
       .master("local[*]")
-      .config("spark.extraListeners", "com.mylakehouse.CustomizedListener") // ensures that the listener is instantiated before the Spark context is created
+      .config("spark.extraListeners", "com.mylakehouse.CustomizedListener")
       .getOrCreate()
 
     // register the instantiated listener object with the Spark context
     val customizedListener_1 = new CustomizedListener
-    sparkSession.sparkContext.addSparkListener(customizedListener_1)
+    spark.sparkContext.addSparkListener(customizedListener_1)
 
     // create 1 application for Spark to do and for customized listener to log
-    import sparkSession.implicits._
+    import spark.implicits._
     (0 to 100).toDF("nr").repartition(30).collect()
+  }
+
+  // test whether the queryMap is updated correctly
+  test("queryMap") {
+    // Create a SparkSession
+    val spark = SparkSession.builder()
+      .appName("TestApp")
+      .master("local[*]")
+      .config("spark.extraListeners", "com.mylakehouse.CustomizedListener")
+      .getOrCreate()
+
+    // Create a sample dataset
+    val data = Seq(
+      (1, "John", 25),
+      (2, "Alice", 30),
+      (3, "Bob", 35)
+    )
+
+    val df = spark.createDataFrame(data).toDF("id", "name", "age")
+    df.createOrReplaceTempView("people")
+
+    // Execute multiple SQL queries concurrently
+    val query1 = spark.sql("SELECT * FROM people WHERE age > 30")
+    val query2 = spark.sql("SELECT name, age FROM people")
+    val query3 = spark.sql("SELECT COUNT(*) FROM people")
+
+    // Collect the results
+    val result1 = query1.collect()
+    val result2 = query2.collect()
+    val result3 = query3.collect()
+
+    // Print the results
+    println("Query 1 results:")
+    result1.foreach(println)
+
+    println("Query 2 results:")
+    result2.foreach(println)
+
+    println("Query 3 results:")
+    result3.foreach(println)
+
+    // Stop the Spark session
+    spark.stop()
   }
 }
