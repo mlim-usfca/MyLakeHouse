@@ -15,8 +15,13 @@ RUN mkdir -p /app/spark/jars && \
     curl "https://repo1.maven.org/maven2/software/amazon/awssdk/url-connection-client/2.17.257/url-connection-client-2.17.257.jar" -Lo /app/spark/jars/url-connection-client-2.17.257.jar
 
 ENV IJAVA_CLASSPATH=/app/spark/jars/*
+ENV PYICEBERG_CATALOG__LOCAL__URI=http://rest:8181
+ENV PYICEBERG_CATALOG__LOCAL__S3__ACCESS_KEY_ID=admin
+ENV PYICEBERG_CATALOG__LOCAL__S3__SECRET_ACCESS_KEY=password
+ENV PYICEBERG_CATALOG__LOCAL__S3__ENDPOINT=http://minio:9000
 
 COPY ./requirements.txt .
+COPY ./.pyiceberg.yaml  .
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \

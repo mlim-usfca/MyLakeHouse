@@ -1,7 +1,7 @@
-from api.utils.SparkConnection import SparkConnection
+from ..utils.SparkConnection import SparkConnection
 import logging
 from json import loads
-
+from zoneinfo import ZoneInfo
 
 class DashboardService():
     def __init__(self):
@@ -77,3 +77,44 @@ class DashboardService():
         except Exception as error:
             logging.error("Error: DashboardService: get_snapshot:", error)
             return 500, error;
+
+
+    def list_tables(self, db_name):
+        if not db_name:
+            return 404, "Database name cannot be empty or null"
+        try:
+            # Ensure Spark session is available
+            if self.spark is None:
+                return 500, "Spark session not initialized."
+
+            spark = self.spark
+            logging.info("In List Tables function")
+            tables = spark.catalog.listTables(db_name)
+            result = []
+            for table in tables:
+                table_name = table.name
+                # Construct the query to access the snapshots table of the current table
+                snapshot_query = f"SELECT * FROM {db_name}.{table_name}.snapshots ORDER BY committed_at DESC LIMIT 1"
+
+                # Execute the query
+                snapshot_df = spark.sql(snapshot_query)
+
+                # Collect the result. Be cautious with `collect()` for larger datasets.
+                last_snapshot = snapshot_df.collect()
+
+                if last_snapshot:  # Check if there is at least one snapshot
+                    # Extract and convert the committed_at datetime to a human-readable format
+                    last_updated_timestamp_utc = last_snapshot[0]['committed_at']
+                    if last_updated_timestamp_utc.tzinfo is None:
+                        last_updated_timestamp_utc = last_updated_timestamp_utc.replace(tzinfo=ZoneInfo("UTC"))
+
+                    last_updated_timestamp_pst = last_updated_timestamp_utc.astimezone(ZoneInfo("America/Los_Angeles"))
+                    human_readable_last_updated = last_updated_timestamp_pst.strftime('%Y-%m-%d at %H:%M %Z')
+                    result.append({"table_name": table_name, "last_updated": human_readable_last_updated})
+                else:
+                    logging.info(f"No snapshots found for table {table_name}")
+                    result.append({"table_name": table_name, "last_updated": None})
+            return 200, result
+        except Exception as error:
+            logging.error(f"Error: DashboardService: list_tables: {error}")
+            return 500, error

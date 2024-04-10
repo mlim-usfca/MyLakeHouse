@@ -6,3 +6,4 @@ Optional
 pandas
 numpy
 fastapi_router_controller
+pyiceberg[pyarrow,duckdb]
