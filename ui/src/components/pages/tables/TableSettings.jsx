@@ -29,8 +29,6 @@ export const TableSettings = () => {
     useEffect(() => {
         axios.get(`http://localhost:8090/props/getTableProps?db_name=${db}&table_name=${tbl}`)
             .then(data => {
-                console.log(data.data)
-
                 setData( prevState => {
                     Object.entries(data?.data).forEach(([name, value]) => {
                         const prop = prevState.find(p => p.property === name)
@@ -52,7 +50,6 @@ export const TableSettings = () => {
             })
     }, [db, tbl]);
     const handleSearch = ({target: {value}}) => {
-        console.log(value)
         setFilteredData(data.filter(p => p.property.includes(value)))
     };
 

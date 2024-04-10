@@ -34,9 +34,9 @@ export const properties = [
   {
     "property": "read.parquet.vectorization.enabled",
     "description": "Controls whether Parquet vectorized reads are used",
-    "value": true,
+    "value": "true",
     "unit": "",
-    "options": [true],
+    "options": ["true", "false"],
     "type": "read"
   },
   {
@@ -50,9 +50,9 @@ export const properties = [
   {
     "property": "read.orc.vectorization.enabled",
     "description": "Controls whether orc vectorized reads are used",
-    "value": false,
+    "value": "false",
     "unit": "",
-    "options": [false],
+    "options": ["true", "false"],
     "type": "read"
   },
   {
@@ -123,9 +123,9 @@ export const properties = [
   {
     "property": "write.parquet.compression-level",
     "description": "Parquet compression level",
-    "value": null,
+    "value": "null",
     "unit": "",
-    "options": [null],
+    "options": ["null"],
     "type": "write"
   },
   {
@@ -133,7 +133,7 @@ export const properties = [
     "description": "Hint to parquet to write a bloom filter for the column: col1",
     "value": "(not set)",
     "unit": "",
-    "options": [null],
+    "options": ["(not set)"],
     "type": "write"
   },
   {
@@ -155,9 +155,9 @@ export const properties = [
   {
     "property": "write.avro.compression-level",
     "description": "Avro compression level",
-    "value": null,
+    "value": "null",
     "unit": "",
-    "options": [null],
+    "options": ["null"],
     "type": "write"
   },
   {
@@ -197,7 +197,7 @@ export const properties = [
     "description": "Comma separated list of column names for which a Bloom filter must be created",
     "value": "(not set)",
     "unit": "",
-    "options": [null],
+    "options": ["(not set)"],
     "type": "write"
   },
   {
@@ -211,9 +211,9 @@ export const properties = [
   {
     "property": "write.location-provider.impl",
     "description": "Optional custom implementation for LocationProvider",
-    "value": null,
+    "value": "null",
     "unit": "",
-    "options": [null],
+    "options": ["null"],
     "type": "write"
   },
   {
@@ -291,9 +291,9 @@ export const properties = [
   {
     "property": "write.wap.enabled",
     "description": "Enables write-audit-publish writes",
-    "value": false,
+    "value": "false",
     "unit": "",
-    "options": [false],
+    "options": ["true", "false"],
     "type": "write"
   },
   {
@@ -307,9 +307,9 @@ export const properties = [
   {
     "property": "write.metadata.delete-after-commit.enabled",
     "description": "Controls whether to delete the oldest tracked version metadata files after commit",
-    "value": false,
+    "value": "false",
     "unit": "",
-    "options": [false],
+    "options": ["true", "false"],
     "type": "write"
   },
   {
@@ -323,17 +323,17 @@ export const properties = [
   {
     "property": "write.spark.fanout.enabled",
     "description": "Enables the fanout writer in Spark that does not require data to be clustered; uses more memory",
-    "value": false,
+    "value": "false",
     "unit": "",
-    "options": [false],
+    "options": ["true", "false"],
     "type": "write"
   },
   {
     "property": "write.object-storage.enabled",
     "description": "Enables the object storage location provider that adds a hash component to file paths",
-    "value": false,
+    "value": "false",
     "unit": "",
-    "options": [false],
+    "options": ["true", "false"],
     "type": "write"
   },
   {
