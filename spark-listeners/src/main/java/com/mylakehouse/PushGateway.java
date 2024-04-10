@@ -1,7 +1,6 @@
-package listeners;
+package com.mylakehouse;
 
 import io.prometheus.client.Gauge;
-import listeners.CustomizedListener;
 import scala.collection.Iterator;
 import scala.collection.immutable.Set;
 import io.prometheus.client.CollectorRegistry;
@@ -37,8 +36,6 @@ public class PushGateway {
             pushGateway.pushAdd(registry, "my_job");
             System.out.println("Successfully pushed my_job");
         } catch (IOException e) {
-            System.out.println("Error pushing metrics to Pushgateway:");
-            e.printStackTrace();
             System.out.println("Error message: " + e.getMessage());
         }
     }
