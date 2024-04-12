@@ -5,12 +5,12 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { SnapshotPage } from './components/pages/snapshot/SnapshotPage.jsx';
-import { OverViewPage } from './components/pages/overview/OverViewPage.jsx';
 import { GlobalConfigPage } from './components/pages/global-configuration/GlobalConfigPage.jsx';
 import { SearchDB } from './components/pages/search/SearchDB.jsx';
 import { SearchTable } from './components/pages/search/SearchTable.jsx';
 import {TableSettings} from "@/components/pages/tables/TableSettings.jsx";
 import { TablePage } from './components/pages/table/TablePage.jsx';
+import {RecentViewProvider} from "@/contexts/recent-view-history.jsx";
 
 const theme = createTheme({
   components: {
@@ -32,15 +32,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <OverViewPage />,
+        element: <SearchDB />,
       },
       {
         path: '/config',
         element: <GlobalConfigPage />,
-      },
-      {
-        path: '/searchDB',
-        element: <SearchDB/>,
       },
       {
         path: '/searchTable/:database',
@@ -66,8 +62,10 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ThemeProvider theme={theme}>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
-  </ThemeProvider>
+    <RecentViewProvider>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
+    </RecentViewProvider>
+</ThemeProvider>
 )

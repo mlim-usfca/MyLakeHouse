@@ -18,6 +18,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import {useParams} from "react-router-dom";
 import axios from "axios";
 import {updateProp} from "@/services/table-properties/service.js"
+import Grid from "@mui/material/Unstable_Grid2";
 
 
 
@@ -77,23 +78,35 @@ export const TableSettings = () => {
     }
 
     return <Box sx={{width: '100%', padding: 2}}>
-        <Typography className="glass-text" variant="subtitle2" align="right"
-                    sx={{paddingRight: 1, fontSize: 16, marginBottom: 4}}>
+        <Typography className="glass-text" variant="subtitle2" align="right" >
             Table Properties
         </Typography>
-        <TextField
-            sx={{marginBottom: 2}}
-            variant="outlined"
-            placeholder="Search..."
-            onChange={handleSearch}
-            InputProps={{
-                endAdornment: (
-                    <IconButton aria-label="search">
-                        <SearchIcon />
-                    </IconButton>
-                ),
-            }}
-        />
+
+        <Box sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
+                <Grid xs={8}>
+                    <TextField
+                        sx={{marginBottom: 2}}
+                        variant="outlined"
+                        placeholder="Search..."
+                        onChange={handleSearch}
+                        InputProps={{
+                            endAdornment: (
+                                <IconButton aria-label="search">
+                                    <SearchIcon />
+                                </IconButton>
+                            ),
+                        }}
+                    />
+                </Grid>
+                <Grid xs={4}>
+                    <Typography className="glass-text" variant="subtitle2" align="right"
+                                sx={{fontSize: 24, marginBottom: 4}}>
+                        {`${db}.${tbl}`}
+                    </Typography>
+                </Grid>
+            </Grid>
+        </Box>
         <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
             padding: '16px',
             maxHeight: '800px',

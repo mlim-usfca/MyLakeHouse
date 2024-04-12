@@ -12,10 +12,14 @@ import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import PublicIcon from '@mui/icons-material/Public';
 import SearchIcon from '@mui/icons-material/Search';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 // import { styled } from '@mui/material/styles';
 import axios from "axios"
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
+import {useRecentView, useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
+import IconButton from "@mui/material/IconButton";
 
 
 // const Item = styled(Paper)(({ theme }) => ({
@@ -31,6 +35,10 @@ export const App = () => {
 
     const [selectedIndex, setSelectedIndex] = React.useState(1);
     const navigate = useNavigate();
+    const recentView = useRecentView();
+    const recentViewDispatch = useRecentViewDispatch();
+
+    console.log(recentView, "recent view")
 
     const handleListItemClick = (
         event,
@@ -72,7 +80,7 @@ export const App = () => {
 
                                 }}>
                                     <Typography className="glass-text" variant="subtitle2" align="right"
-                                                sx={{paddingRight: 1, fontSize: 16}}>
+                                                sx={{padding: "8px 16px 0 0", fontSize: 16}}>
                                         Caspian
                                     </Typography>
                                     <Box sx={{width: '100%', bgcolor: 'transparent'}}>
@@ -102,6 +110,17 @@ export const App = () => {
                                                 <ListItemText primary="Recent Activity"/>
                                             </ListItemButton>
                                             <Divider/>
+                                            {recentView?.tables?.map(rc => {
+                                                return  <ListItemButton key={"rc-view-" + rc.table}
+                                                    onClick={(event) => navigate(`/table/${rc.db}/${rc.table}`)}
+                                                >
+                                                    <ListItemText primary={`${rc.db}.${rc.table}`}/>
+                                                    <IconButton onClick={() => recentViewDispatch({type: "remove", value: {db: rc.db, table: rc.table}})}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </ListItemButton>
+                                            })}
+
                                         </List>
                                     </Box>
                                 </Paper>

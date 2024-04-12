@@ -36,7 +36,7 @@ export const SearchDB = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
+    <Box sx={{ width: '100%', typography: 'body1', padding: 2 }}>
       <Typography variant="p" component="p" sx={{ textAlign: 'left' }}>
         Search for Database
       </Typography>

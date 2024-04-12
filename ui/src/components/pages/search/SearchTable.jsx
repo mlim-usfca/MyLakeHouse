@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import {Link, useNavigate, useParams} from 'react-router-dom';
 import { SearchBar } from './SearchBar.jsx';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
+import ListItemButton from "@mui/material/ListItemButton";
+import {useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
+import IconButton from "@mui/material/IconButton";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 
 export const SearchTable = () => {
   const { database } = useParams();
   const [tableList, setTableList] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
-
+  const navigate = useNavigate();
+  const recentViewDispatch = useRecentViewDispatch()
   useEffect(() => {
     fetchTableList(database);
   }, [database]);
@@ -36,16 +41,27 @@ export const SearchTable = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
+    <Box sx={{ width: '100%', typography: 'body1', padding: 2 }}>
       <Typography variant="p" component="p" sx={{ textAlign: 'left' }}>
         {database} / Search for Table
       </Typography>
       <SearchBar onSearch={handleSearch} />
       <List>
         {searchResults.map((result, index) => (
-          <ListItem key={index}>
+          <ListItem key={index}
+                    secondaryAction={
+                      <ListItemButton
+                          onClick={() => {
+                            recentViewDispatch({ type: "add", value: { db: database, table: result.table_name } })
+                            navigate(`/table/${database}/${result.table_name}`)
+                          }}
+                      >
+                        <ListItemText primary="Enter Table"/>
+                        <NavigateNextIcon />
+                      </ListItemButton>
+                    }
+          >
             <ListItemText primary={result.table_name} />
-            <Link to={`/table/${database}/${result.table_name}`}>Enter Table</Link>
           </ListItem>
         ))}
       </List>
