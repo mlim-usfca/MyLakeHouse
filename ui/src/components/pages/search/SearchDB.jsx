@@ -37,9 +37,9 @@ export const SearchDB = () => {
 
   return (
     <Box sx={{ width: '100%', typography: 'body1', padding: 2 }}>
-      <Typography variant="p" component="p" sx={{ textAlign: 'left' }}>
-        Search for Database
-      </Typography>
+        <Typography className="glass-text" variant="subtitle2" align="right" sx={{paddingRight: 2, fontSize: 40}}>
+            Search For Database
+        </Typography>
       <SearchBar onSearch={handleSearch} />
       <List>
         {searchResults.map((result, index) => (
