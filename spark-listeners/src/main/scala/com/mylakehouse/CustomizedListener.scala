@@ -27,18 +27,22 @@ class CustomizedListener extends SparkListener {
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     curAppId = applicationStart.appId.get
     CustomizedListener.applicationSet.add(curAppId)
-    PushGateway.pushApplication(CustomizedListener.getApplicationSet)
 
     // print the HashSet after adding the ID of the application that has started
     println(s"Application started: ${getApplicationSet}")
+
+    // push it to PushGateway
+    PushGateway.pushApplication(CustomizedListener.getApplicationSet)
   }
 
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
     CustomizedListener.applicationSet.remove(curAppId)
-    PushGateway.pushApplication(CustomizedListener.getApplicationSet)
 
     // print the HashSet after removing the ID of the application that has ended
     println(s"Application ended: ${getApplicationSet}")
+
+    // push it to PushGateway
+    PushGateway.pushApplication(CustomizedListener.getApplicationSet)
   }
 
   // override the onOtherEvent method to capture SQL-query events
@@ -52,22 +56,28 @@ class CustomizedListener extends SparkListener {
   private def onExecutionStart(event: SparkListenerSQLExecutionStart): Unit = {
     val queryId = event.executionId
     CustomizedListener.queryMap.put(queryId, curAppId)
-    PushGateway.pushQuery(CustomizedListener.getQueryMap)
+
     println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId")
 
     // print all entries in HashMap after adding the query that has started
     println(s"HashMap after adding the query: ${CustomizedListener.getQueryMap}")
+
+    // push it to PushGateway
+    PushGateway.pushQuery(CustomizedListener.getQueryMap)
   }
 
   // when a SQL query ends, remove it from the queryMap
   private def onExecutionEnd(event: SparkListenerSQLExecutionEnd): Unit = {
     val queryId = event.executionId
     CustomizedListener.queryMap.remove(queryId)
-    PushGateway.pushQuery(CustomizedListener.getQueryMap)
+
     println(s"----------Query ended: Query ID: $queryId")
 
     // print all entries in HashMap after removing the query that has ended
     println(s"HashMap after removing the query: ${CustomizedListener.getQueryMap}")
+
+    // push it to PushGateway
+    PushGateway.pushQuery(CustomizedListener.getQueryMap)
   }
 
 }
