@@ -10,6 +10,15 @@ class TableMetadata():
         # Need to ask for the catalog log from configuration file instead of hardcoding.
         self.catalog = load_catalog('local')
 
+    def decode_byte_array(self, byte_array):
+        try:
+            return int.from_bytes(byte_array, byteorder='little', signed=True)
+        except:
+            try:
+                return byte_array.decode('utf-8')
+            except UnicodeDecodeError:
+                return str(byte_array)
+
     def getTableSchema(self, db_name, table_name):
         """
             Retrieves the schema of a specified table in a given database using Spark. It logs the process,
@@ -46,7 +55,7 @@ class TableMetadata():
                    jsonObj = field.jsonValue()
                    for key, val in jsonObj.items():
                        # metadata field is empty
-                       if key is not "metadata":
+                       if key != "metadata":
                            fieldVals[key] = val
                    returnVal.append(fieldVals)
                return 200, returnVal
@@ -151,11 +160,37 @@ class TableMetadata():
                                             null_value_counts, nan_value_counts, lower_bounds, upper_bounds \
                                             FROM local.{db_name}.{table_name}.all_data_files LIMIT {limit} OFFSET {offset}")
 
+            table = self.spark.table(f'local.{db_name}.{table_name}')
+            colNames = table.columns
+
             if not files:
                 return 404, f"Cannot get any data files for table {db_name}.{table_name}"
-
+            result = []
             for row in files.collect():
-                return row
+                # Initialize the dictionary with simple fields
+                row_dict = {
+                    'file_path': row.file_path,
+                    'file_format': row.file_format,
+                    'record_count': row.record_count,
+                    'file_size_in_bytes': row.file_size_in_bytes
+                }
+                # Adjust index for 0-based list index by subtracting 1 from the data structure keys
+                null_value_counts = {colNames[k - 1]: v for k, v in row['null_value_counts'].items()}
+                nan_value_counts = {colNames[k - 1]: v for k, v in row['nan_value_counts'].items()}
+
+                # Process bounds, decode byte arrays, adjust index
+                lower_bounds = {colNames[k - 1]: self.decode_byte_array(v) for k, v in row['lower_bounds'].items()}
+                upper_bounds = {colNames[k - 1]: self.decode_byte_array(v) for k, v in row['upper_bounds'].items()}
+
+                # Add processed dictionaries to the result
+                row_dict['null_value_counts'] = null_value_counts
+                row_dict['nan_value_counts'] = nan_value_counts
+                row_dict['lower_bounds'] = lower_bounds
+                row_dict['upper_bounds'] = upper_bounds
+
+                result.append(row_dict)
+
+            return 200, result
         except Exception as error:
             logging.info(f"Error in getDataFiles: {error}")
             return 500, error
