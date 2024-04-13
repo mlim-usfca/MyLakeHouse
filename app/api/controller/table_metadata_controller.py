@@ -52,3 +52,19 @@ def get_all_datafiles(self, db_name: str, table_name: str, limit: int = 25, offs
         logging.error("Error: TableMetadatController: /metadata/getDataFiles: ", error)
         return HTTPException(status_code=500, detail="Internal Server error")
 
+
+
+@controller.route.get('/getTableInfo',
+                      tags=['table-metadata-controller'],
+                      description='Returns a dictionary of varioud information about table like its location, current snapshot id, \
+                                  last updated at timestamp, owner etc')
+def get_table_info(self, db_name: str, table_name: str):
+    try:
+        status_code, data = self.table_metadata_service.getTableInfo(db_name, table_name)
+        if status_code == 200:
+            return data
+        else:
+            return HTTPException(status_code=status_code, detail=data)
+    except Exception as error:
+        logging.error("Error: TableMetadataController: /metadata/getTableInfo:", error)
+        return HTTPException(status_code=500, detail="Internal server error.")
