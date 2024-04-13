@@ -16,6 +16,9 @@ class TableMetadata():
             return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
         try:
             table = self.spark.table(f'local.{db_name}.{table_name}')
+            tableC = self.catalog.load_table(f'{db_name}.{table_name}')
+            logging.info(tableC.location())
+
             schema = table.schema
             if not schema:
                 return 404, f"Cannot fetch the schema of table {db_name}.{table_name}"
@@ -32,4 +35,23 @@ class TableMetadata():
                return 200, returnVal
         except Exception as error:
             logging.info(f"Error in getTableSchema: {error}")
+            return 500, error
+
+
+    def getDataFiles(self, db_name, table_name, limit, offset):
+        logging.info("In Get Data files service")
+        if not db_name or not table_name:
+            return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
+        try:
+            files = self.spark.sql(f"SELECT file_path, file_format, record_count, file_size_in_bytes,\
+                                            null_value_counts, nan_value_counts, lower_bounds, upper_bounds \
+                                            FROM local.{db_name}.{table_name}.all_data_files LIMIT {limit} OFFSET {offset}")
+
+            if not files:
+                return 404, f"Cannot get any data files for table {db_name}.{table_name}"
+
+            for row in files.collect():
+                return row
+        except Exception as error:
+            logging.info(f"Error in getDataFiles: {error}")
             return 500, error
