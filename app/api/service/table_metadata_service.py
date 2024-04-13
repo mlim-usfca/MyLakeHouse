@@ -3,6 +3,7 @@ from ..utils.SparkConnection import SparkConnection
 import logging
 from zoneinfo import ZoneInfo
 from datetime import datetime, timezone
+import struct
 class TableMetadata():
     def __init__(self):
         spark_conn_obj = SparkConnection()
@@ -11,13 +12,34 @@ class TableMetadata():
         self.catalog = load_catalog('local')
 
     def decode_byte_array(self, byte_array):
+        """
+            Decodes a bytearray into a more human-readable format. Attempts to interpret the bytearray as various data types,
+            starting with integer, followed by float (if the length is appropriate), then string, and defaults to a string
+            representation of the bytearray if all conversions fail.
+
+            Args:
+                byte_array (bytearray): The bytearray to decode.
+
+            Returns:
+                int or float or str: The decoded data as an integer, float, or string, depending on what the bytearray most likely represents.
+
+            Raises:
+                None explicitly raised, but any unexpected types or data errors will result in the raw bytearray being converted to a string.
+            """
         try:
-            return int.from_bytes(byte_array, byteorder='little', signed=True)
-        except:
+            # Attempt to decode as double (float64)
+            return struct.unpack('<d', byte_array)[0]
+        except struct.error:
             try:
-                return byte_array.decode('utf-8')
-            except UnicodeDecodeError:
-                return str(byte_array)
+                # Next, try to decode as a 32-bit signed integer
+                return int.from_bytes(byte_array, byteorder='little', signed=True)
+            except:
+                try:
+                    # Try decoding as UTF-8 string
+                    return byte_array.decode('utf-8')
+                except UnicodeDecodeError:
+                    # Return byte array as a string if all else fails
+                    return str(byte_array)
 
     def getTableSchema(self, db_name, table_name):
         """
