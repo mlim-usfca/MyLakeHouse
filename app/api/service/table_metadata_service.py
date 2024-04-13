@@ -1,8 +1,8 @@
 from pyiceberg.catalog import load_catalog
 from ..utils.SparkConnection import SparkConnection
 import logging
-from fastapi import HTTPException
-
+from zoneinfo import ZoneInfo
+from datetime import datetime, timezone
 class TableMetadata():
     def __init__(self):
         spark_conn_obj = SparkConnection()
@@ -16,8 +16,6 @@ class TableMetadata():
             return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
         try:
             table = self.spark.table(f'local.{db_name}.{table_name}')
-            tableC = self.catalog.load_table(f'{db_name}.{table_name}')
-            logging.info(tableC.location())
 
             schema = table.schema
             if not schema:
@@ -35,6 +33,69 @@ class TableMetadata():
                return 200, returnVal
         except Exception as error:
             logging.info(f"Error in getTableSchema: {error}")
+            return 500, error
+
+
+    def getTableInfo(self, db_name, table_name):
+        logging.info("In Get Table Info service")
+        if not db_name or not table_name:
+            return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
+        try:
+            table = self.catalog.load_table(f'{db_name}.{table_name}')
+            returnDict = {}
+            #Table Location
+            location = table.location()
+            if location and len(location) > 0:
+                returnDict["TableLocation"] = location
+
+            #Table UUID
+            table_uuid = table.metadata.table_uuid.__str__()
+            if table_uuid:
+                returnDict["TableUUID"] = table_uuid
+
+            #Table Properties: Owner and Created At
+            properties = table.metadata.properties
+            for key, val in properties.items():
+                if key == "owner":
+                    returnDict["Owner"] = val
+                if key == "created-at":
+                    created_at_timestamp_utc = val
+                    # Convert string to datetime object
+                    try:
+                        created_at_timestamp_utc = datetime.fromisoformat(
+                                                    created_at_timestamp_utc.replace('Z', '+00:00'))
+                        if created_at_timestamp_utc.tzinfo is None:
+                            created_at_timestamp_utc = created_at_timestamp_utc.replace(tzinfo=ZoneInfo("UTC"))
+
+                        created_at_timestamp_utc = created_at_timestamp_utc.astimezone(ZoneInfo("America/Los_Angeles"))
+                        human_readable_created_at = created_at_timestamp_utc.strftime('%Y-%m-%d at %H:%M %Z')
+                        returnDict["Created-At"] = human_readable_created_at
+                    except Exception as error:
+                        logging.info(f"Cannot convert the created at time string to PDT timestamp : {error}")
+
+            #Table Current Snapshot Id
+            currentSnapshotId = table.metadata.current_snapshot_id
+            if currentSnapshotId:
+                returnDict["CurrentSnapshotId"] = currentSnapshotId
+
+            #Table Last Updated At
+            last_updated_timestamp_utc = table.metadata.last_updated_ms
+            try:
+                last_updated_seconds = last_updated_timestamp_utc / 1000.0
+                # Create a UTC datetime object from the timestamp
+                utc_datetime = datetime.fromtimestamp(last_updated_seconds, timezone.utc)
+                # Convert the datetime object to the PDT timezone
+                pdt_datetime = utc_datetime.astimezone(ZoneInfo('America/Los_Angeles'))
+                # Format the datetime object to a human-readable form in PDT
+                readable_date_pdt = pdt_datetime.strftime('%Y-%m-%d %H:%M:%S %Z')
+                # Example of using it in a dictionary
+                returnDict["LastUpdatedAt"] = readable_date_pdt
+            except Exception as error:
+                logging.info(f"Cannot convert the last updated time in milliseconds to PDT timestamp : {error}")
+
+            return 200, returnDict
+        except Exception as error:
+            logging.info(f"Error in getTableInfo {error}")
             return 500, error
 
 
