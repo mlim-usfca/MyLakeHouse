@@ -11,10 +11,29 @@ class TableMetadata():
         self.catalog = load_catalog('local')
 
     def getTableSchema(self, db_name, table_name):
+        """
+            Retrieves the schema of a specified table in a given database using Spark. It logs the process,
+            checks for valid input, queries the table schema, and formats it into a list of dictionaries excluding metadata.
+
+            Args:
+                db_name (str): The name of the database containing the table.
+                table_name (str): The name of the table whose schema is to be fetched.
+
+            Returns:
+                tuple:
+                    - First element is an integer (HTTP status code)
+                    - Second element is either a list of dictionaries (each representing a field in the table schema) or a string error message.
+
+            Raises:
+                Exception: Captures and logs any exception that occurs within the method, then returns a 500 status with the error message.
+        """
         logging.info("In Get Table Schema service")
         if not db_name or not table_name:
-            return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
+            return 404, f"Ill-formed request: 'table_name', and 'database_name' cannot be empty."
         try:
+            if not self.spark.catalog.tableExists(f'{db_name}.{table_name}'):
+                return 404, f"The specified table {db_name}.{table_name} does not exist"
+
             table = self.spark.table(f'local.{db_name}.{table_name}')
 
             schema = table.schema
@@ -38,9 +57,30 @@ class TableMetadata():
 
     def getTableInfo(self, db_name, table_name):
         logging.info("In Get Table Info service")
+        """
+            Retrieves comprehensive information about a specified table in a given database, including location,
+            UUID, properties like owner and creation time, current snapshot ID, and the last update time. It formats
+            time-related data to Pacific Daylight Time (PDT) and handles all data fetching and conversions with robust
+            error checking and logging.
+
+            Args:
+                db_name (str): The name of the database containing the table.
+                table_name (str): The name of the table from which information is to be retrieved.
+
+            Returns:
+                tuple:
+                    - First element is an integer (HTTP status code): 
+                    - Second element is either a dictionary containing key information about the table.
+
+            Raises:
+                Exception: Captures and logs any exception that occurs within the method, then returns a 500 status with the error message.
+            """
         if not db_name or not table_name:
             return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
         try:
+            if not self.spark.catalog.tableExists(f'{db_name}.{table_name}'):
+                return 404, f"The specified table {db_name}.{table_name} does not exist"
+
             table = self.catalog.load_table(f'{db_name}.{table_name}')
             returnDict = {}
             #Table Location
@@ -50,7 +90,7 @@ class TableMetadata():
 
             #Table UUID
             table_uuid = table.metadata.table_uuid.__str__()
-            if table_uuid:
+            if table_uuid and len(table_uuid) > 0 :
                 returnDict["TableUUID"] = table_uuid
 
             #Table Properties: Owner and Created At
@@ -104,6 +144,9 @@ class TableMetadata():
         if not db_name or not table_name:
             return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
         try:
+            if not self.spark.catalog.tableExists(f'{db_name}.{table_name}'):
+                return 404, f"The specified table {db_name}.{table_name} does not exist"
+
             files = self.spark.sql(f"SELECT file_path, file_format, record_count, file_size_in_bytes,\
                                             null_value_counts, nan_value_counts, lower_bounds, upper_bounds \
                                             FROM local.{db_name}.{table_name}.all_data_files LIMIT {limit} OFFSET {offset}")
