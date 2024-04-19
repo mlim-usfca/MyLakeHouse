@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: caspian-fast-api-service
+  labels:
+    app: fast-api
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: arn:aws:acm:us-east-1:767398033833:certificate/8b2a65f8-a091-4983-9906-8f3400cb8441
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+spec:
+  selector:
+    app: fast-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8090
+    - name: https
+      port: 443
+      targetPort: 8090
+      protocol: TCP
+  type: LoadBalancer

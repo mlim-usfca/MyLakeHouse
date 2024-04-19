@@ -1,16 +1,16 @@
-FROM node:21
+FROM node:20-alpine
 
 WORKDIR /ui
 
 COPY package.json . 
 
 RUN yarn \
-    && yarn upgrade \
     && yarn cache clean
 
 COPY . .
 
-ENV PORT 3000
+ARG PORT=3000
+ENV PORT=$PORT
 
 EXPOSE $PORT
 

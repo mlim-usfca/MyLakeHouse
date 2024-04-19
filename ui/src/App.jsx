@@ -44,9 +44,9 @@ export const App = () => {
         event,
         index,
     ) => {
-        if (index === 1 && selectedIndex !== 1) {
+        if (index === 1) {
             navigate("/config")
-        } else if (index === 0 && selectedIndex !== 0) {
+        } else if (index === 0) {
             navigate("/")
         }
         setSelectedIndex(index);
