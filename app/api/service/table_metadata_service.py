@@ -197,7 +197,7 @@ class TableMetadata():
             if not schema:
                 return 404, f"Cannot fetch the schema of table {db_name}.{table_name}. Cannot process the request further"
 
-            #Create a map of column names and its types
+            #Create a map of column names and its types. This is to be used in decoding byte arrays and response formatting
             colNamesTypeMap = {}
             for field in schema.fields:
                 jsonObj = field.jsonValue()
