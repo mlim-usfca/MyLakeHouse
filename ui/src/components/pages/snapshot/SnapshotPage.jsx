@@ -66,8 +66,8 @@ export const SnapshotPage = () => {
   console.log(snapshotTree)
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
-      <Typography variant="p" component="p" sx={{ textAlign: 'left' }}>
+    <Box sx={{ width: '100%', padding: 2}}>
+        <Typography className="glass-text" variant="subtitle2" align="right" >
         Snapshots {database} / {table}
       </Typography>
       <Tabs value={tabValue} onChange={handleTabChange} aria-label="snapshot tabs">
