@@ -31,6 +31,9 @@ class TableProperties():
         if not database_name or not table_name:
             return 404, "Ill-formed request: 'table_name', and 'database_name' cannot be empty."
         try:
+            if not self.spark.catalog.tableExists(f'{database_name}.{table_name}'):
+                return 404, f"The specified table {database_name}.{table_name} does not exist"
+
             table = self.catalog.load_table(f'{database_name}.{table_name}')
             logging.info(f"GetTableProperties: Loaded table correctly: {table.name()}")
             # Assuming properties is a dictionary of table properties
@@ -87,6 +90,9 @@ class TableProperties():
             return 404, f"No properties specified to alter for the table {db_name}.{table_name}"
 
         try:
+            if not self.spark.catalog.tableExists(f'{db_name}.{table_name}'):
+                return 404, f"The specified table {db_name}.{table_name} does not exist"
+
             print(f"In alter table properties for table {db_name}.{table_name}")
             for prop in properties:
                 for key, value in prop.items():
@@ -121,6 +127,9 @@ class TableProperties():
             return 404, f"No properties specified to unset for the table {db_name}.{table_name}"
 
         try:
+            if not self.spark.catalog.tableExists(f'{db_name}.{table_name}'):
+                return 404, f"The specified table {db_name}.{table_name} does not exist"
+
             logging.info(f"In unset table properties for table {db_name}.{table_name}")
             for prop in properties:
                 # Generate and execute the ALTER TABLE command to set each property
