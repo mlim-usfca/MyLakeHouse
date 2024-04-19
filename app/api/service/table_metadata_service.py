@@ -11,35 +11,44 @@ class TableMetadata():
         # Need to ask for the catalog log from configuration file instead of hardcoding.
         self.catalog = load_catalog('local')
 
-    def decode_byte_array(self, byte_array):
+    def decode_byte_array(self, byte_array, type_hint):
         """
-            Decodes a bytearray into a more human-readable format. Attempts to interpret the bytearray as various data types,
-            starting with integer, followed by float (if the length is appropriate), then string, and defaults to a string
-            representation of the bytearray if all conversions fail.
+        Decodes a bytearray into a specified type if possible, and attempts other types if the initial conversion fails.
+        The function takes a type hint that influences the initial decoding attempt.
 
-            Args:
-                byte_array (bytearray): The bytearray to decode.
+        Args:
+            byte_array (bytearray): The bytearray to decode.
+            type_hint (str): A hint to the type that the bytearray should be interpreted as ('int', 'long', 'float', or 'double').
 
-            Returns:
-                int or float or str: The decoded data as an integer, float, or string, depending on what the bytearray most likely represents.
+        Returns:
+            int, float, or str: The decoded data as an integer, float, or string, depending on what the bytearray most likely represents.
 
-            Raises:
-                None explicitly raised, but any unexpected types or data errors will result in the raw bytearray being converted to a string.
-            """
+        Raises:
+            None explicitly raised, but any unexpected types or data errors will result in the raw bytearray being converted to a string.
+        """
         try:
-            # Attempt to decode as double (float64)
-            return struct.unpack('<d', byte_array)[0]
+            if type_hint in ('int', 'long'):
+                # Attempt to decode as a 32-bit signed integer (or smaller)
+                return int.from_bytes(byte_array, byteorder='little', signed=True)
+            elif type_hint in ('double', 'float'):
+                # Attempt to decode as double (float64)
+                return struct.unpack('<d', byte_array)[0]
+        except (struct.error, ValueError, OverflowError):
+            pass  # Proceed to other decodings if specific type hint conversion fails
+
+        try:
+            # If specific hint failed, try both common numeric conversions
+            try:
+                return int.from_bytes(byte_array, byteorder='little', signed=True)
+            except ValueError:
+                return struct.unpack('<d', byte_array)[0]
         except struct.error:
             try:
-                # Next, try to decode as a 32-bit signed integer
-                return int.from_bytes(byte_array, byteorder='little', signed=True)
-            except:
-                try:
-                    # Try decoding as UTF-8 string
-                    return byte_array.decode('utf-8')
-                except UnicodeDecodeError:
-                    # Return byte array as a string if all else fails
-                    return str(byte_array)
+                # Finally, try decoding as UTF-8 string
+                return byte_array.decode('utf-8')
+            except UnicodeDecodeError:
+                # Return byte array as a string if all else fails
+                return str(byte_array)
 
     def getTableSchema(self, db_name, table_name):
         """
@@ -183,10 +192,26 @@ class TableMetadata():
                                             FROM local.{db_name}.{table_name}.all_data_files LIMIT {limit} OFFSET {offset}")
 
             table = self.spark.table(f'local.{db_name}.{table_name}')
-            colNames = table.columns
+
+            schema = table.schema
+            if not schema:
+                return 404, f"Cannot fetch the schema of table {db_name}.{table_name}. Cannot process the request further"
+
+            #Create a map of column names and its types
+            colNamesTypeMap = {}
+            for field in schema.fields:
+                jsonObj = field.jsonValue()
+                colNamesTypeMap[jsonObj['name']] = jsonObj['type']
+
+            logging.info(f"Column Names Type Map in getDataFiles function: {colNamesTypeMap}")
+
+            colNames = list(colNamesTypeMap.keys())
+            #ToDo: Used in decoding of byte arrays
+            #colTypes = list(colNamesTypeMap.values())
 
             if not files:
                 return 404, f"Cannot get any data files for table {db_name}.{table_name}"
+
             result = []
             for row in files.collect():
                 # Initialize the dictionary with simple fields
@@ -201,14 +226,16 @@ class TableMetadata():
                 nan_value_counts = {colNames[k - 1]: v for k, v in row['nan_value_counts'].items()}
 
                 # Process bounds, decode byte arrays, adjust index
-                lower_bounds = {colNames[k - 1]: self.decode_byte_array(v) for k, v in row['lower_bounds'].items()}
-                upper_bounds = {colNames[k - 1]: self.decode_byte_array(v) for k, v in row['upper_bounds'].items()}
+                # ToDo: Decoding byte arrays for lower bounds and upper bounds is challenging. Will take this in different PR!!
+                #lower_bounds = {colNames[k - 1]: self.decode_byte_array(v, colTypes[k-1]) for k, v in row['lower_bounds'].items()}
+                #upper_bounds = {colNames[k - 1]: self.decode_byte_array(v, colTypes[k-1]) for k, v in row['upper_bounds'].items()}
 
                 # Add processed dictionaries to the result
                 row_dict['null_value_counts'] = null_value_counts
                 row_dict['nan_value_counts'] = nan_value_counts
-                row_dict['lower_bounds'] = lower_bounds
-                row_dict['upper_bounds'] = upper_bounds
+                # ToDo: Set upper and lower bounds in the result
+                #row_dict['lower_bounds'] = lower_bounds
+                #row_dict['upper_bounds'] = upper_bounds
 
                 result.append(row_dict)
 
