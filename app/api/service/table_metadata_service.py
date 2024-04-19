@@ -233,7 +233,7 @@ class TableMetadata():
                 # Add processed dictionaries to the result
                 row_dict['null_value_counts'] = null_value_counts
                 row_dict['nan_value_counts'] = nan_value_counts
-                # ToDo: Set upper and lower bounds in the result
+                # ToDo: Set upper and lower bounds in the result if decided to add these!
                 #row_dict['lower_bounds'] = lower_bounds
                 #row_dict['upper_bounds'] = upper_bounds
 
