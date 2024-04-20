@@ -28,7 +28,6 @@ class DashboardService():
             logging.error("Error: DashboardService: list_databases:", error)
             return 500, error;
 
-
     def get_snapshot(self, branch_name, db_name, table_name):
         try:
             # Ensure Spark session is available
@@ -78,7 +77,6 @@ class DashboardService():
             logging.error("Error: DashboardService: get_snapshot:", error)
             return 500, error;
 
-
     def list_tables(self, db_name):
         if not db_name:
             return 404, "Database name cannot be empty or null"
@@ -118,3 +116,4 @@ class DashboardService():
         except Exception as error:
             logging.error(f"Error: DashboardService: list_tables: {error}")
             return 500, error
+
