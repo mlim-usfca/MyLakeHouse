@@ -48,6 +48,10 @@ public class PushGateway {
     private static void removeAppIdx(int idx) {
         appIDbool[idx] = false;
 
+        if (appIDbool.length <= 10) {
+            return;
+        }
+
         // if the second half of it is empty then shrink the array
         for (int i = appIDbool.length - 1; i > appIDbool.length / 2; i--) {
             if (appIDbool[i]) {
@@ -93,6 +97,10 @@ public class PushGateway {
     private static void removeQueryIdx(int idx) {
         queryIDbool[idx] = false;
 
+        if (queryIDbool.length <= 10) {
+            return;
+        }
+
         // if the second half of it is empty then shrink the array
         for (int i = queryIDbool.length - 1; i > queryIDbool.length / 2; i--) {
             if (queryIDbool[i]) {
@@ -108,23 +116,26 @@ public class PushGateway {
     }
 
     public static void pushApplication(Set<String> applicationSet) {
+        // System.out.println("Got set : " + applicationSet);
+
         // Create a CollectorRegistry
         CollectorRegistry registry = new CollectorRegistry();
 
         if (applicationSet.size() == 0) {
             // Create an empty Gauge metric
             Gauge gauge = Gauge.build()
-                    .name("query_metric")
+                    .name("app_metric")
                     .help("An empty gauge")
                     .register(registry);
             appMap = new HashMap<>();
             appIDbool = new boolean[10];
         } else {
+            // System.out.println("else Got set : " + applicationSet);
             // Create a Gauge metric
             Gauge gauge = Gauge.build()
-                    .name("query_metric")
-                    .help("metric of query ID")
-                    .labelNames("query ID")
+                    .name("app_metric")
+                    .help("metric of app ID")
+                    .labelNames("app_ID")
                     .register(registry);
 
             // add another map to record which query is not running anymore
@@ -135,7 +146,7 @@ public class PushGateway {
             while (iterator.hasNext()) {
                 String element = iterator.next();
                 int idx = getAppIdx(element);
-                gauge.labels(element).set(idx);
+                gauge.labels(element).set(idx + 1);
 
                 appMapTemp.put(element, idx);
                 appMap.remove(element); // the rest will be queries not running anymore
@@ -148,14 +159,18 @@ public class PushGateway {
             appMap = appMapTemp;
         }
 
-        // Push metrics to the Pushgateway
         io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
 
+//        System.out.println("getAppIdx - appIDbool");
+//        for (boolean id : appIDbool) {
+//            System.out.println(id);
+//        }
+
         try {
-            pushGateway.pushAdd(registry, "queryID");
-            System.out.println("Successfully pushed queryID with set + " + applicationSet);
+            pushGateway.pushAdd(registry, "application_ID");
+            System.out.println("Successfully pushed application ID with set + " + applicationSet);
         } catch (IOException e) {
-            System.out.println("Error message: " + e.getMessage());
+            System.out.println("Failed to push application. Error message: " + e.getMessage());
         }
     }
 
@@ -188,7 +203,7 @@ public class PushGateway {
                 String query = String.valueOf(entry.getKey());
                 String app = entry.getValue();
                 int idx = getQueryIdx(query);
-                gauge.labels(query, app).set(idx);
+                gauge.labels(query, app).set(idx + 1);
 
                 queryMapTemp.put(query, idx);
                 queryMap.remove(query); // the rest will be queries not running anymore
@@ -200,7 +215,12 @@ public class PushGateway {
             }
             queryMap = queryMapTemp;
         }
-        
+
+//        System.out.println("getQueryIdx - queryIDbool");
+//        for (boolean id : queryIDbool) {
+//            System.out.println(id);
+//        }
+
         // Push metrics to the Pushgateway
         io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
 
@@ -208,7 +228,7 @@ public class PushGateway {
             pushGateway.pushAdd(registry, "query_Application_ID");
             System.out.println("Successfully pushed query_Application_ID with map" + queryAppMap);
         } catch (IOException e) {
-            System.out.println("Error message: " + e.getMessage());
+            System.out.println("Failed to push query-application. Error message: " + e.getMessage());
         }
     }
 }
