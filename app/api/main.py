@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from .controller import dashboard_controller     #runs __init__ file in controllers folder
 from fastapi_router_controller import Controller, ControllersTags
 from .utils.SparkConnection import SparkConnection
+from .utils.CronScheduler import CronScheduler
+
 
 app = FastAPI(
     title="DataLake",
@@ -31,6 +33,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 async def startup_event():
     spark_conn = SparkConnection()
     spark_conn.create_spark_session()
+    # CronScheduler()
 
 @app.on_event("shutdown")
 async def shutdown_event():

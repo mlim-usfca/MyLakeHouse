@@ -57,4 +57,3 @@ class InitialSetupController():
         except Exception as error:
             logging.error("Error: InitialSetupController: /create_toy_db")
             return HTTPException(status_code=500, detail="Internal server error.")
-
