@@ -3,7 +3,6 @@ import logging
 from json import loads
 from zoneinfo import ZoneInfo
 
-
 class DashboardService():
     def __init__(self):
         spark_conn_obj = SparkConnection()
@@ -118,59 +117,3 @@ class DashboardService():
             logging.error(f"Error: DashboardService: list_tables: {error}")
             return 500, error
 
-    def expire_snapshot(self, db_name, table_name, snapshot_id):
-        try:
-            # Ensure Spark session is available
-            if self.spark is None:
-                return 500, "Spark session not initialized."
-
-            if not snapshot_id and not db_name and not table_name:
-                return 404, "snapshot_id, db_name and table_name cannot be empty or null."
-
-            expire_query = f'CALL local.system.expire_snapshots(table= > \'{db_name}.{table_name}\', snapshot_ids => ARRAY({snapshot_id}));'
-            self.spark.sql(expire_query)
-            return 200, "Snapshot expired successfully."
-        except Exception as error:
-            logging.error(f"Error: DashboardService: expire_snapshot: {error}")
-            return 500, error
-
-    def get_snapshot_by_id(self, db_name, table_name, snapshot_id):
-        try:
-            # Ensure Spark session is available
-            if self.spark is None:
-                return 500, "Spark session not initialized."
-
-            if not db_name and not table_name and not snapshot_id:
-                return 404, "Missing query parameters."
-
-            # Return snapshot details from main branch
-            # snapshots = self.spark.sql(f'select * from local.{db_name}.{table_name}.snapshots where snapshot_id = {snapshot_id};')
-            get_snapshot_query = f'select * from local.{db_name}.{table_name}.history h join local.{db_name}.{table_name}.snapshots s on h.snapshot_id = s.snapshot_id order by made_current_at;'
-            snapshots = self.spark.sql(get_snapshot_query)
-            # Convert DataFrame to JSON string
-            snapshots_json = snapshots.toJSON().collect()  # spark dataframe
-            # Convert json string to json
-            response_data = []
-            for json_str in snapshots_json:
-                json_data = loads(json_str)
-                if str(json_data['snapshot_id']) == snapshot_id:
-                    response_data.append(json_data)
-            # Append branch names list
-            branches = self.spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"BRANCH\";")
-            branches_json = branches.toJSON().collect()
-            branches_data = []
-            for brch_json_str in branches_json:
-                brch_json_data = loads(brch_json_str)
-                branches_data.append(brch_json_data)
-            # Append tag list
-            tags = self.spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"TAG\";")
-            tags_json = tags.toJSON().collect()
-            tags_data = []
-            for tags_json_str in tags_json:
-                tags_json_data = loads(tags_json_str)
-                tags_data.append(tags_json_data)
-            response = {"snapshots": response_data, "branches": branches_data, "tags": tags_data}
-            return 200, response
-        except Exception as error:
-            logging.error("Error: DashboardService: get_snapshot_by_id:", error)
-            return 500, error;
