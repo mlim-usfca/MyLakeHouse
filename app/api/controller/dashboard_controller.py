@@ -76,8 +76,7 @@ class DashboardController():
     """
                 Endpoint to list all tables in Spark SQL.
                 Returns a list of table names in a database.
-        """
-
+    """
     @controller.route.get(
         '/list-tables',
         tags=['dashboard-controller'],
@@ -92,4 +91,44 @@ class DashboardController():
                 return HTTPException(status_code=status_code, detail=data)
         except Exception as error:
             logging.error("Error: DashboardController: /list-tables:", error)
+            return HTTPException(status_code=500, detail="Internal server error.")
+
+    """
+        Endpoint to expire a snapshot.
+    """
+    @controller.route.get(
+        '/expire-snapshot',
+        tags=['dashboard-controller'],
+        summary='Expire snapshot.')
+    def expire_snapshot(self, db_name: str, table_name: str, snapshot_id: str):
+        try:
+            status_code, response = self.dashboard_service.expire_snapshot(db_name, table_name, snapshot_id)
+
+            if status_code == 200:
+                return response
+            else:
+                return HTTPException(status_code=status_code, detail=response)
+
+        except Exception as error:
+            logging.error("Error: DashboardController: /expire-snapshot:", error)
+            return HTTPException(status_code=500, detail="Internal server error.")
+
+    """
+        Endpoint to get a snapshot.
+    """
+    @controller.route.get(
+        '/snapshot',
+        tags=['dashboard-controller'],
+        summary='Return a snapshot.')
+    def get_snapshot_by_id(self, db_name: str, table_name: str, snapshot_id: str):
+        try:
+            status_code, response = self.dashboard_service.get_snapshot_by_id(db_name, table_name, snapshot_id)
+
+            if status_code == 200:
+                return response
+            else:
+                return HTTPException(status_code=status_code, detail=response)
+
+        except Exception as error:
+            logging.error("Error: DashboardController: /snapshot:", error)
             return HTTPException(status_code=500, detail="Internal server error.")
