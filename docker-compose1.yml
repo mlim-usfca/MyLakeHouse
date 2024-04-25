@@ -1,7 +1,6 @@
 version: '3'
 services:
   spark-master:
-    build: ./spark
     image: spark-image
     networks:
       iceberg_net:
@@ -16,7 +15,6 @@ services:
     entrypoint: ["./start-master.sh"]  # Specify entry point for master
 
   spark-worker:
-    build: ./spark
     image: spark-image
     networks:
       iceberg_net:
@@ -33,7 +31,6 @@ services:
       - spark-master
 
   spark-worker2:
-    build: ./spark
     image: spark-image
     networks:
       iceberg_net:
@@ -77,6 +74,11 @@ services:
     ports:
       - "3001:3000"
     restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    volumes:
+      - grafana:/var/lib/grafana
 
   rest:
     image: tabulario/iceberg-rest
@@ -123,8 +125,11 @@ services:
     volumes:
       - ./init-minio.sh:/init-minio.sh
     entrypoint: [ "/bin/sh", "-c", "/init-minio.sh" ]
+    
 volumes:
   minio_data:
+  grafana:
+
 networks:
   iceberg_net:
     driver: bridge
