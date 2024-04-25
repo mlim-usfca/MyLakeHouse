@@ -83,7 +83,11 @@ export const SnapshotPage = () => {
   return (
     <Box sx={{ width: '100%', padding: 2}}>
         <Typography className="glass-text" variant="subtitle2" align="right" >
-        Snapshots {database} / {table}
+        Snapshots 
+      </Typography>
+      <Typography className="glass-text" variant="subtitle2" align="right"
+                                sx={{fontSize: 24, marginBottom: 4}}>
+        {database} / {table}
       </Typography>
       <Tabs value={tabValue} onChange={handleTabChange} aria-label="snapshot tabs">
         <Tab label="Snapshots" />
