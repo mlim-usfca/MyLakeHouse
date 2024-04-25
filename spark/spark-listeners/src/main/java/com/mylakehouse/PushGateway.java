@@ -2,6 +2,7 @@ package com.mylakehouse;
 
 import io.prometheus.client.Gauge;
 import scala.Long;
+import scala.Tuple3;
 import scala.collection.Iterator;
 import scala.collection.JavaConverters;
 import scala.collection.immutable.Set;
@@ -9,6 +10,7 @@ import io.prometheus.client.CollectorRegistry;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PushGateway {
@@ -161,11 +163,6 @@ public class PushGateway {
 
         io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
 
-//        System.out.println("getAppIdx - appIDbool");
-//        for (boolean id : appIDbool) {
-//            System.out.println(id);
-//        }
-
         try {
             pushGateway.pushAdd(registry, "application_ID");
             System.out.println("Successfully pushed application ID with set + " + applicationSet);
@@ -216,17 +213,55 @@ public class PushGateway {
             queryMap = queryMapTemp;
         }
 
-//        System.out.println("getQueryIdx - queryIDbool");
-//        for (boolean id : queryIDbool) {
-//            System.out.println(id);
-//        }
-
         // Push metrics to the Pushgateway
         io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
 
         try {
             pushGateway.pushAdd(registry, "query_Application_ID");
             System.out.println("Successfully pushed query_Application_ID with map" + queryAppMap);
+        } catch (IOException e) {
+            System.out.println("Failed to push query-application. Error message: " + e.getMessage());
+        }
+    }
+
+    public static void pushSQLQuery(scala.collection.immutable.Map<String, Tuple3<String, Long, String>> scalaMap) {
+        System.out.println("pushgateway + scalaMap : " + scalaMap);
+        Map<String, Tuple3<String, Long, String>> sqlDurationMap = JavaConverters.mapAsJavaMap(scalaMap);
+        // Create a CollectorRegistry
+        CollectorRegistry registry = new CollectorRegistry();
+
+        if (sqlDurationMap.size() == 0) {
+            // Create an empty Gauge metric
+            Gauge gauge = Gauge.build()
+                    .name("query_app_metric")
+                    .help("An empty gauge")
+                    .register(registry);
+        } else {
+            // Create a Gauge metric
+            Gauge gauge = Gauge.build()
+                    .name("sql_query_duration")
+                    .help("metric of query ID with corresponding application ID")
+                    .labelNames("SQL_context", "application", "error_message")
+                    .register(registry);
+
+            // Set the value of the Gauge metric
+            for (Map.Entry<String, Tuple3<String, Long, String>> entry : sqlDurationMap.entrySet()) {
+                String sqlQuery = entry.getKey();
+                Tuple3<String, Long, String> info = entry.getValue();
+                String appID = info._1();
+                double duration = Double.parseDouble(String.valueOf(info._2()));
+                String errorMsg = info._3();
+
+                gauge.labels(sqlQuery, appID, errorMsg).set(duration);
+            }
+        }
+
+        // Push metrics to the Pushgateway
+        io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
+
+        try {
+            pushGateway.pushAdd(registry, "sql_duration");
+            System.out.println("Successfully pushed sql_duration with map" + sqlDurationMap);
         } catch (IOException e) {
             System.out.println("Failed to push query-application. Error message: " + e.getMessage());
         }
