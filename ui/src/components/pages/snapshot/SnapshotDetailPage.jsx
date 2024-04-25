@@ -53,9 +53,13 @@ export const SnapshotDetail = () => {
       <Typography className="glass-text" variant="subtitle2" align="right" >
         Snapshot {id}
       </Typography>
+      <Typography className="glass-text" variant="subtitle2" align="right"
+                                sx={{fontSize: 24, marginBottom: 4}}>
+        {database} / {table}
+      </Typography>
       <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
             padding: '16px',
-            maxHeight: '600px',
+            maxHeight: '550px',
             scrollBehavior: 'smooth'}}>
         <Table aria-label="Snapshot Details">
           <TableHead>

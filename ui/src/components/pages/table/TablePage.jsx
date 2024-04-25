@@ -62,7 +62,7 @@ export const TablePage = () => {
           </Typography>
           <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
               padding: '16px',
-              maxHeight: '800px',
+              maxHeight: '400px',
               scrollBehavior: 'smooth'}}>
             <Table aria-label="schema table">
               <TableHead>
