@@ -107,7 +107,7 @@ export const SnapshotPage = () => {
         <Box sx={{ p: 3 }}>
           <List >
         {tags.map((tag) => (
-          <ListItem button key={tag.name}>
+          <ListItem button key={tag.name} onClick={() => handleDoubleClick(tag.snapshot_id)}>
             <ListItemText primary={tag.name} secondary={`Snapshot ID: ${tag.snapshot_id}`} />
           </ListItem>
         ))}
@@ -118,7 +118,7 @@ export const SnapshotPage = () => {
         <Box sx={{ p: 3 }}>
           <List >
         {branches.map((branch) => (
-          <ListItem button key={branch.name}>
+          <ListItem button key={branch.name} onClick={() => handleDoubleClick(branch.snapshot_id)}>
             <ListItemText primary={branch.name} secondary={`Snapshot ID: ${branch.snapshot_id}`} />
           </ListItem>
         ))}
