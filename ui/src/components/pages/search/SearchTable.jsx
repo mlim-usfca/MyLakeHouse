@@ -10,6 +10,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import {useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
 import IconButton from "@mui/material/IconButton";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { backend } from '@/services/service.js';
 
 export const SearchTable = () => {
   const { database } = useParams();
@@ -23,7 +24,7 @@ export const SearchTable = () => {
 
   const fetchTableList = async (dbName) => {
     try {
-      const response = await axios.get(`http://localhost:8090/dashboard/list-tables/?db_name=${dbName}`);
+      const response = await axios.get(backend + `dashboard/list-tables/?db_name=${dbName}`);
       console.log(response.data);
       setTableList(response.data); // Update table list state
       setSearchResults(response.data); // Initialize search results with the fetched data
