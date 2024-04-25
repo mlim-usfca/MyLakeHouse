@@ -9,6 +9,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { backend } from '@/services/service';
 
 export const SnapshotPage = () => {
   let { database, table } = useParams();
@@ -46,7 +47,7 @@ export const SnapshotPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/dashboard/snapshots?branch_name=main&db_name=${database}&table_name=${table}`);
+        const response = await axios.get(backend + `dashboard/snapshots?branch_name=main&db_name=${database}&table_name=${table}`);
         const { snapshots, tags, branches } = response.data.response;
         console.log(response.data.response)
         setSnapshots(snapshots);
