@@ -69,6 +69,15 @@ services:
       - "9091:9091"
     restart: always
 
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    networks:
+      iceberg_net:
+    ports:
+      - "3001:3000"
+    restart: always
+
   rest:
     image: tabulario/iceberg-rest
     container_name: iceberg-rest
