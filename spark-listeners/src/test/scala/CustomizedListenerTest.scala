@@ -11,14 +11,6 @@ class CustomizedListenerTest extends AnyFunSuite {
       .master("local[*]")
       .config("spark.extraListeners", "com.mylakehouse.CustomizedListener")
       .getOrCreate()
-
-    // register the instantiated listener object with the Spark context
-    val customizedListener_1 = new CustomizedListener
-    spark.sparkContext.addSparkListener(customizedListener_1)
-
-    // create 1 application for Spark to do and for customized listener to log
-    import spark.implicits._
-    (0 to 100).toDF("nr").repartition(30).collect()
   }
 
   // test whether the queryMap is updated correctly
@@ -29,6 +21,8 @@ class CustomizedListenerTest extends AnyFunSuite {
       .master("local[*]")
       .config("spark.extraListeners", "com.mylakehouse.CustomizedListener")
       .getOrCreate()
+
+    spark.listenerManager.register(new CustomizedListener)
 
     // Create a sample dataset
     val data = Seq(
@@ -51,14 +45,14 @@ class CustomizedListenerTest extends AnyFunSuite {
     val result3 = query3.collect()
 
     // Print the results
-    println("Query 1 results:")
-    result1.foreach(println)
+    //    println("Query 1 results:")
+    //    result1.foreach(println)
 
-    println("Query 2 results:")
-    result2.foreach(println)
+    //    println("Query 2 results:")
+    //    result2.foreach(println)
 
-    println("Query 3 results:")
-    result3.foreach(println)
+    //    println("Query 3 results:")
+    //    result3.foreach(println)
 
     // Stop the Spark session
     spark.stop()
