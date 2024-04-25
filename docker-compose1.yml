@@ -1,0 +1,121 @@
+version: '3'
+services:
+  spark-master:
+    build: ./spark
+    image: spark-image
+    networks:
+      iceberg_net:
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    hostname: spark-master
+    entrypoint: ["./start-master.sh"]  # Specify entry point for master
+
+  spark-worker:
+    build: ./spark
+    image: spark-image
+    networks:
+      iceberg_net:
+    ports:
+      - "8081:8081"
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    entrypoint: ["./start-worker.sh"]  # Specify entry point for worker
+    depends_on:
+      - spark-master
+
+  spark-worker2:
+    build: ./spark
+    image: spark-image
+    networks:
+      iceberg_net:
+    ports:
+      - "8082:8081"
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    entrypoint: ["./start-worker.sh"]
+    depends_on:
+      - spark-master
+
+  prometheus:
+    image: prom/prometheus
+    networks:
+      iceberg_net:
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/prometheus
+    command:
+      - '--config.file=/prometheus/prometheus.yml'
+    restart: always
+
+  pushgateway:
+    image: prom/pushgateway
+    networks:
+      iceberg_net:
+    ports:
+      - "9091:9091"
+    restart: always
+
+  rest:
+    image: tabulario/iceberg-rest
+    container_name: iceberg-rest
+    networks:
+      iceberg_net:
+    ports:
+      - "8181:8181"
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+      - CATALOG_WAREHOUSE=s3a://warehouse/
+      - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
+      - CATALOG_S3_ENDPOINT=http://minio:9000
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DOMAIN=minio
+    networks:
+      iceberg_net:
+        aliases:
+          - warehouse.minio
+    ports:
+      - "9001:9001"
+      - "9000:9000"
+    command: ["server", "/data", "--console-address", ":9001"]
+    volumes:
+       - minio_data:/data
+  mc:
+    depends_on:
+      - minio
+    image: minio/mc
+    container_name: mc
+    networks:
+      iceberg_net:
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    volumes:
+      - ./init-minio.sh:/init-minio.sh
+    entrypoint: [ "/bin/sh", "-c", "/init-minio.sh" ]
+volumes:
+  minio_data:
+networks:
+  iceberg_net:
+    driver: bridge

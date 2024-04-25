@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  ui:
+    build: ./ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./ui/src:/ui/src
+      - /ui/src/node_modules
+    stdin_open: true
+    tty: true
+    container_name: caspian-ui
+    depends_on:
+      - fastapi_app
+  fastapi_app:
+    image: caspian-back-end 
+    build: ./app
+    container_name: fastapi_app
+    ports:
+      - "8090:8090"
+    networks:
+      iceberg_net:
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    volumes:
+      - ./data:/home/iceberg/data  # Assuming you want to access data from the FastAPI app
+      - ./app/api:/app/api
+volumes:
+  minio_data:
+networks:
+  iceberg_net:
+    driver: bridge
