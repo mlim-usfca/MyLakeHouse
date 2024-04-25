@@ -44,8 +44,11 @@ export const SearchTable = () => {
   return (
     <Box sx={{ width: '100%', typography: 'body1', padding: 2 }}>
         <Typography className="glass-text" variant="subtitle2" align="right" >
-            {database}/Search For Table
+          Search For Table
         </Typography>
+        <Typography className="glass-text" variant="subtitle2" align="right" sx={{ fontSize: 24, marginBottom: 4 }}>
+          {database}
+      </Typography>
       <SearchBar onSearch={handleSearch} />
       <List>
         {searchResults.map((result, index) => (
