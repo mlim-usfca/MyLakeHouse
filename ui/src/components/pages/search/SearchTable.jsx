@@ -5,12 +5,10 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
-import axios from 'axios';
 import ListItemButton from "@mui/material/ListItemButton";
 import {useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
-import IconButton from "@mui/material/IconButton";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { backend } from '@/services/service.js';
+import { getTableList } from '@/services/search/services.js';
 
 export const SearchTable = () => {
   const { database } = useParams();
@@ -24,10 +22,10 @@ export const SearchTable = () => {
 
   const fetchTableList = async (dbName) => {
     try {
-      const response = await axios.get(backend + `dashboard/list-tables/?db_name=${dbName}`);
-      console.log(response.data);
-      setTableList(response.data); // Update table list state
-      setSearchResults(response.data); // Initialize search results with the fetched data
+      const response = await getTableList(dbName);
+      console.log(response);
+      setTableList(response); // Update table list state
+      setSearchResults(response); // Initialize search results with the fetched data
     } catch (error) {
       console.error('Error fetching table list:', error);
     }

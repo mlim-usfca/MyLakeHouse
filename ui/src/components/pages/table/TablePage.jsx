@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer,Paper} from '@mui/material';
-import axios from 'axios';
-import { backend } from '@/services/service';
+import { fetchData } from '@/services/table/service';
 
 export const TablePage = () => {
   const { database, table } = useParams();
@@ -11,27 +10,16 @@ export const TablePage = () => {
 
   useEffect(() => {
     fetchTableInfo(database, table);
-    fetchSchema(database, table);
   }, [database, table]);
 
   const fetchTableInfo = async (database, table ) => {
     try {
       console.log(table);
-      const response = await axios.get(backend + `metadata/getTableInfo?db_name=${database}&table_name=${table}`)
-      console.log(response.data);
-      setTableInfo(response.data); // Update table list state)
+      const { tableInfoData, schemaData } = await fetchData(database, table);
+      setTableInfo(tableInfoData);
+      setSchema(schemaData); 
     } catch (error) {
       console.error('Error fetching table info:', error);
-    }
-  };
-  const fetchSchema = async (database, table ) => {
-    try {
-      console.log(table);
-      const response = await axios.get(backend + `metadata/getSchema?db_name=${database}&table_name=${table}`)
-      console.log(response.data);
-      setSchema(response.data); // Update table list state)
-    } catch (error) {
-      console.error('Error fetching table schema:', error);
     }
   };
 
