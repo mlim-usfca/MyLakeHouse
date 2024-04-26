@@ -19,7 +19,9 @@ import {useParams} from "react-router-dom";
 import axios from "axios";
 import {updateProp} from "@/services/table-properties/service.js"
 import Grid from "@mui/material/Unstable_Grid2";
-
+import {useToastMessageDispatch} from "@/contexts/message.jsx";
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
 
 
 export const TableSettings = () => {
@@ -27,6 +29,7 @@ export const TableSettings = () => {
     const { db, tbl } = useParams();
     const [data, setData] = useState(properties)
     const [filteredData, setFilteredData] = useState(data)
+    const toastDispatch = useToastMessageDispatch()
     useEffect(() => {
         axios.get(`http://localhost:8090/props/getTableProps?db_name=${db}&table_name=${tbl}`)
             .then(data => {
@@ -58,7 +61,17 @@ export const TableSettings = () => {
         const {name, value} = e.target
         const res = await updateProp({db, tbl, props: [{[name]: value}]});
 
-        console.log(res)
+        if (res?.data === "Table properties altered successfully.") {
+            toastDispatch({type: "success", value: {
+                msg: res.data,
+                    delay: 3000,
+                }})
+        } else {
+            toastDispatch({type: "error", value: {
+                    msg: res.data,
+                    delay: 3000,
+                }})
+        }
 
         setData(prevState => {
             const prop = prevState.find(p => p.property === name)
@@ -77,12 +90,12 @@ export const TableSettings = () => {
         })
     }
 
-    return <Box sx={{width: '100%', padding: 2}}>
+    return <Box sx={{ width: '100%', padding: 2, height: '100%', overflow: "hidden" }}>
         <Typography className="glass-text" variant="subtitle2" align="right" >
             Table Properties
         </Typography>
 
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1}}>
             <Grid container spacing={2}>
                 <Grid xs={8}>
                     <TextField
@@ -107,47 +120,75 @@ export const TableSettings = () => {
                 </Grid>
             </Grid>
         </Box>
-        <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
-            padding: '16px',
-            maxHeight: '800px',
-            scrollBehavior: 'smooth'}}>
-        <Table sx={{minWidth: 650}} aria-label="simple table">
-            <TableHead>
-                <TableRow>
-                    <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>Property</TableCell>
-                    <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left">Config</TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {filteredData.map((row) => (
-                    <TableRow
-                        key={row.property}
-                        sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                    >
-                        <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">
-                            {row.property}
-                        </TableCell>
-                        <TableCell align="left" sx={{ minWidth: 120, borderBottom: "1px solid rgba(0, 0, 0, .1)" }}>
-                            <Box>
-                                <FormControl fullWidth>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        name={row.property}
-                                        value={row.value ? row.value.toString() : "null"}
-                                        onChange={onChange}
-                                    >
-                                        {row.options.map((op) => {
-                                           return <MenuItem key={row.property + "-" + op} value={op}>{op}</MenuItem>
-                                        })}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
-    </TableContainer>
+        <Box sx={{ flexGrow: 5 }}>
+            <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
+                maxHeight: "calc(100vh - 200px)",
+                scrollBehavior: 'smooth'}}>
+                <Table sx={{minWidth: 650}} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>
+                                <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
+                                    Property
+                                </Typography>
+                            </TableCell>
+                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left">
+                                <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
+                                    Configuration
+                                </Typography>
+                            </TableCell>
+                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left"></TableCell>
+                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left"></TableCell>
+
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filteredData.map((row) => (
+                            <TableRow
+                                key={row.property}
+                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                            >
+                                <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">
+                                    <Typography fontSize={14} className="glass-text-12" variant="subtitle2" align="left" >
+                                        {row.property}
+                                        <Tooltip title={row.description} placement="right">
+                                            <IconButton aria-label="search">
+                                                <InfoIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="left" sx={{ minWidth: 120, borderBottom: "1px solid rgba(0, 0, 0, .1)" }}>
+                                    <Box>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                name={row.property}
+                                                value={row.value ? row.value.toString() : "null"}
+                                                renderValue={(selected) => (
+                                                    <Typography fontSize={16} className="glass-text-12" variant="subtitle2" align="right" >
+                                                        {selected}
+                                                    </Typography>
+                                                )}
+                                                onChange={onChange}
+                                            >
+                                                {row.options.map((op) => {
+                                                    return <MenuItem key={row.property + "-" + op} value={op}>{op}</MenuItem>
+                                                })}
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
+                                </TableCell>
+                                <TableCell align="left" sx={{ minWidth: 120, borderBottom: "1px solid rgba(0, 0, 0, .1)" }}>
+                                </TableCell>
+                                <TableCell align="left" sx={{ minWidth: 120, borderBottom: "1px solid rgba(0, 0, 0, .1)" }}>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Box>
     </Box>
 }
