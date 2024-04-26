@@ -4,7 +4,7 @@ import {
   Paper, Button, Collapse, TablePagination
 } from '@mui/material';
 
-export const DataFilesTable = ({ database, table }) => {
+export const DataFilesTable = ({ database, table, setCollapsed }) => {
   const [dataFiles, setDataFiles] = useState([]);
   const [currentPage, setCurrentPage] = useState(1); // Start with page 1
   const [open, setOpen] = useState(false);
@@ -33,31 +33,31 @@ export const DataFilesTable = ({ database, table }) => {
   };
 
   return (
-    <Box sx={{ marginBottom: 4 }}>
+    <Box sx={{ marginBottom: 2 }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 2, justifyContent: 'space-between' }}>
-            <Typography variant="h5" gutterBottom>
+        <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
                 Data File Paths
             </Typography>
-            <Button onClick={() => setOpen(!open)} variant="contained" sx={{ marginBottom: 2 }}>
+            <Button onClick={() => {setOpen(!open), setCollapsed(open)}} variant="contained" sx={{ marginBottom: 2 }}>
                 {open ? 'Hide Details' : 'Show Details'}
             </Button>
         </Box>
         <Collapse in={open} timeout="auto" unmountOnExit>
-            <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', width: '100%', padding: '16px', maxHeight: '400px', scrollBehavior: 'smooth' }}>
+            <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', width: '100%', padding: '16px', maxHeight: "calc(100vh - 500px)", scrollBehavior: 'smooth' }}>
               <Table aria-label="data files table">
                 <TableHead>
                   <TableRow>
-                    <TableCell>File Path</TableCell>
-                    <TableCell align="right">File Size (Bytes)</TableCell>
-                    <TableCell align="right">Format</TableCell>
+                    <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>File Path</TableCell>
+                    <TableCell align="right" sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>File Size (Bytes)</TableCell>
+                    <TableCell align="right" sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>Format</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {dataFiles.map((file, index) => (
                     <TableRow key={index}>
-                      <TableCell>{file.file_path}</TableCell>
-                      <TableCell align="right">{file.file_size_in_bytes}</TableCell>
-                      <TableCell align="right">{file.file_format}</TableCell>
+                      <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>{file.file_path}</TableCell>
+                      <TableCell align="right" sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>{file.file_size_in_bytes}</TableCell>
+                      <TableCell align="right" sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>{file.file_format}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

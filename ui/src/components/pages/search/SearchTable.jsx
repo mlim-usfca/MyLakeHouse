@@ -40,7 +40,7 @@ export const SearchTable = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1', padding: 2 }}>
+    <Box sx={{ width: '100%', padding: 2 }}>
         <Typography className="glass-text" variant="subtitle2" align="right" >
           Search For Table
         </Typography>
@@ -48,25 +48,22 @@ export const SearchTable = () => {
           {database}
       </Typography>
       <SearchBar onSearch={handleSearch} />
+      <Box sx={{ width: '100%', paddingLeft: 2 }}>
       <List>
         {searchResults.map((result, index) => (
-          <ListItem key={index}
-                    secondaryAction={
-                      <ListItemButton
-                          onClick={() => {
-                            recentViewDispatch({ type: "add", value: { db: database, table: result.table_name } })
-                            navigate(`/table/${database}/${result.table_name}`)
-                          }}
-                      >
-                        <ListItemText primary="Enter Table"/>
-                        <NavigateNextIcon />
-                      </ListItemButton>
-                    }
-          >
-            <ListItemText primary={result.table_name} />
+          <ListItem key={index}>
+             <Link
+                  onClick={() => {
+                    recentViewDispatch({ type: "add", value: { db: database, table: result.table_name } })
+                    navigate(`/table/${database}/${result.table_name}`)
+                  }}
+              >
+                {result.table_name}
+            </Link>
           </ListItem>
         ))}
       </List>
+      </Box>
     </Box>
   );
 };

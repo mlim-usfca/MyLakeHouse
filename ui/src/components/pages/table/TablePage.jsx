@@ -8,6 +8,7 @@ export const TablePage = () => {
   const { database, table } = useParams();
   const [tableInfo, setTableInfo] = useState({});
   const [schema, setSchema] = useState([]);
+  const [collapsed, setCollapsed] = useState(true);
 
   useEffect(() => {
     fetchTableInfo(database, table);
@@ -24,34 +25,33 @@ export const TablePage = () => {
     }
   };
 
-
   return (
-    <Box sx={{ width: '100%', paddingLeft: 4, paddingRight: 4 }}>
+    <Box sx={{ width: '100%', padding: 2, height: '100%', overflow: "hidden" }}>
       <Typography className="glass-text" variant="subtitle2" align="right" sx={{ fontSize: 24, marginBottom: 4 }}>
           {table} in {database}
       </Typography>
       <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between'}}>
-
     
         {/* Display table summary information */}
         <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h5" gutterBottom>
+        <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
                     Table Info
           </Typography>
           {Object.entries(tableInfo).map(([key, value]) => (
-            <Typography key={key} variant="body1" gutterBottom>
+            <Typography key={key} fontSize={14} className="glass-text-12" variant="subtitle2" align="left" >
               {key}: {value}
             </Typography>
           ))}
         </Box>
 
-        <Box sx={{ marginBottom: 4 }}>
-        <Typography variant="h5" gutterBottom>
+        <Box sx={{ marginBottom: 2}}>
+          <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
+          
                     Table Schema
           </Typography>
           <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
               padding: '16px',
-              maxHeight: '400px',
+              maxHeight: collapsed ? '400px' : '100px',
               scrollBehavior: 'smooth'}}>
             <Table aria-label="schema table">
               <TableHead>
@@ -75,10 +75,12 @@ export const TablePage = () => {
         </Box>
       </Box>
 
-      <Box sx={{ width: '100%', borderBottom: '1px solid', marginBottom: 4 }} />
+      <Box sx={{ width: '100%', borderBottom: '1px solid', marginBottom: 2 }} />
+      
       <DataFilesTable
         database={database}
         table={table}
+        setCollapsed = {setCollapsed}
       />
   
       {/* Links to snapshots and table properties */}
