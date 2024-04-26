@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer,Paper} from '@mui/material';
 import { fetchData } from '@/services/table/service';
+import { DataFilesTable } from './DataFiles';
 
 export const TablePage = () => {
   const { database, table } = useParams();
@@ -75,6 +76,10 @@ export const TablePage = () => {
       </Box>
 
       <Box sx={{ width: '100%', borderBottom: '1px solid', marginBottom: 4 }} />
+      <DataFilesTable
+        database={database}
+        table={table}
+      />
   
       {/* Links to snapshots and table properties */}
       <Box sx={{ display: 'flex',flexDirection: 'row', alignItems: 'flex-start', gap: 2  }}>
