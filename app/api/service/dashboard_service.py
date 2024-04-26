@@ -55,6 +55,9 @@ class DashboardService():
                 response_data = []
                 for json_str in snapshots_json:
                     json_data = loads(json_str)
+                    json_data['snapshot_id'] = str(json_data['snapshot_id'])
+                    if 'parent_id' in json_data:
+                        json_data['parent_id'] = str(json_data['parent_id'])
                     response_data.append(json_data)
                 # Append branch names list
                 branches = spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"BRANCH\";")
@@ -62,6 +65,8 @@ class DashboardService():
                 branches_data = []
                 for brch_json_str in branches_json:
                     brch_json_data = loads(brch_json_str)
+                    if 'snapshot_id' in brch_json_data:
+                        brch_json_data['snapshot_id'] = str(brch_json_data['snapshot_id'])
                     branches_data.append(brch_json_data)
                 # Append tag list
                 tags = spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"TAG\";")
@@ -154,6 +159,9 @@ class DashboardService():
             for json_str in snapshots_json:
                 json_data = loads(json_str)
                 if str(json_data['snapshot_id']) == snapshot_id:
+                    json_data['snapshot_id'] = str(json_data['snapshot_id'])
+                    if 'parent_id' in json_data:
+                        json_data['parent_id'] = str(json_data['parent_id'])
                     response_data.append(json_data)
             # Append branch names list
             branches = self.spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"BRANCH\";")
@@ -161,6 +169,8 @@ class DashboardService():
             branches_data = []
             for brch_json_str in branches_json:
                 brch_json_data = loads(brch_json_str)
+                if 'snapshot_id' in brch_json_data:
+                    brch_json_data['snapshot_id'] = str(brch_json_data['snapshot_id'])
                 branches_data.append(brch_json_data)
             # Append tag list
             tags = self.spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"TAG\";")
