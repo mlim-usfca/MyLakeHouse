@@ -5,9 +5,9 @@ const MessageContext = createContext(null);
 const MessageDispatchContext = createContext(null);
 
 const initialMessage = {
-    isOpen: true,
-        type: "test",
-    msg: "hello",
+    isOpen: false,
+        type: "",
+    msg: "",
     delay: 3000
 };
 
