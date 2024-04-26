@@ -71,6 +71,16 @@ button:focus-visible {
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 
+.glass-text-12 {
+  background: transparent;
+  color: transparent; /* Transparent text */
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
 .shape {
   position: absolute;
   top: 50%;

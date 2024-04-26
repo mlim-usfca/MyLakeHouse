@@ -20,25 +20,21 @@ import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 import {useRecentView, useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
 import IconButton from "@mui/material/IconButton";
+import Snackbar from '@mui/material/Snackbar';
+import {Slide} from "@mui/material";
+import {useToastMessage, useToastMessageDispatch} from "@/contexts/message.jsx";
 
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-//   ...theme.typography.body2,
-//   padding: theme.spacing(1),
-//   textAlign: 'center',
-//   color: theme.palette.text.secondary,
-// }));
-
+function SlideTransition(props) {
+    return <Slide {...props} direction="up" />;
+}
 
 export const App = () => {
-
+    const toastMsgProps = useToastMessage();
+    const toastDispatch = useToastMessageDispatch();
     const [selectedIndex, setSelectedIndex] = React.useState(1);
     const navigate = useNavigate();
     const recentView = useRecentView();
     const recentViewDispatch = useRecentViewDispatch();
-
-    console.log(recentView, "recent view")
 
     const handleListItemClick = (
         event,
@@ -92,7 +88,7 @@ export const App = () => {
                                                 <ListItemIcon>
                                                     <SearchIcon/>
                                                 </ListItemIcon>
-                                                <ListItemText primary="Search"/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary="Search"/>
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 1}
@@ -101,20 +97,20 @@ export const App = () => {
                                                 <ListItemIcon>
                                                     <PublicIcon/>
                                                 </ListItemIcon>
-                                                <ListItemText primary="Globlal Settings"/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary="Globlal Settings"/>
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 2}
                                                 onClick={(event) => handleListItemClick(event, 2)}
                                             >
-                                                <ListItemText primary="Recent Activity"/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary="Recent Activity"/>
                                             </ListItemButton>
                                             <Divider/>
                                             {recentView?.tables?.map(rc => {
                                                 return  <ListItemButton key={"rc-view-" + rc.table}
                                                     onClick={(event) => navigate(`/table/${rc.db}/${rc.table}`)}
                                                 >
-                                                    <ListItemText primary={`${rc.db}.${rc.table}`}/>
+                                                    <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={`${rc.db}.${rc.table}`}/>
                                                     <IconButton onClick={() => recentViewDispatch({type: "remove", value: {db: rc.db, table: rc.table}})}>
                                                         <DeleteIcon />
                                                     </IconButton>
@@ -142,6 +138,19 @@ export const App = () => {
                     </Grid>
                 </Box>
             </Container>
+            { toastMsgProps.isOpen &&
+                <Snackbar
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    open={toastMsgProps.isOpen}
+                    onClose={() => {
+                        toastDispatch({type: "reset", value: {}})
+                    }}
+                    TransitionComponent={SlideTransition}
+                    message={toastMsgProps.msg}
+                    key={"slide"}
+                    autoHideDuration={toastMsgProps.delay}
+                />
+            }
         </>
     );
 }
