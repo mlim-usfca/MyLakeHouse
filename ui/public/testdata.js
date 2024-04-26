@@ -117,3 +117,22 @@ export const tables = {
   DatabaseB: ["Table4", "Table5"],
   DatabaseC: ["Table6", "Table7", "Table8", "Table9"]
 }
+
+export const snapshotDetail = {
+  made_current_at: "2024-04-18T19:24:21.767Z",
+  snapshot_id: 8104528337525736000,
+  is_current_ancestor: true,
+  committed_at: "2024-04-18T19:24:21.767Z",
+  operation: "append",
+  manifest_list: "s3a://warehouse/toyDb/taxis1/metadata/snap-8104528337525736285-1-83f1833a-2cb4-4a46-8233-c59e263efc26.avro",
+  summary: {
+    "total-equality-deletes": "0",
+    "changed-partition-count": "0",
+    "total-position-deletes": "0",
+    "total-files-size": "0",
+    "total-records": "0",
+    "total-delete-files": "0",
+    "total-data-files": "0",
+    "spark.app.id": "local-1713468174582"
+  }
+};

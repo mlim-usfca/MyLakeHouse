@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
-import axios from 'axios'; 
+import { getDatabaseList } from '@/services/search/services.js';
 
 export const SearchDB = () => {
   const [databaseList, setDatabaseList] = useState([]);
@@ -18,10 +18,10 @@ export const SearchDB = () => {
 
   const fetchDatabaseList = async () => {
     try {
-      const response = await axios.get('http://localhost:8090/dashboard/list-databases');
+      const response =await getDatabaseList();
       console.log(response);
-      setDatabaseList(response.data.db_list ?? []); // Update database list state
-      setSearchResults(response.data.db_list ?? []); // Initialize search results with the fetched data
+      setDatabaseList(response.db_list ?? []); // Update database list state
+      setSearchResults(response.db_list ?? []); // Initialize search results with the fetched data
     } catch (error) {
       console.error('Error fetching database list:', error);
     }

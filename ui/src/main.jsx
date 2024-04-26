@@ -5,6 +5,7 @@ import './index.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { SnapshotPage } from './components/pages/snapshot/SnapshotPage.jsx';
+import { SnapshotDetail } from './components/pages/snapshot/SnapshotDetailPage.jsx';
 import { GlobalConfigPage } from './components/pages/global-configuration/GlobalConfigPage.jsx';
 import { SearchDB } from './components/pages/search/SearchDB.jsx';
 import { SearchTable } from './components/pages/search/SearchTable.jsx';
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: 'snapshot/:database/:table',
         element: <SnapshotPage/>,
+      },
+      {
+        path: 'snapshotDetails/:database/:table/:id',
+        element: <SnapshotDetail/>,
       },
       {
         path: '/:db/:tbl/properties',

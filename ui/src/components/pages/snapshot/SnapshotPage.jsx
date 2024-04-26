@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -7,17 +7,8 @@ import { Tabs, Tab, Box, Typography } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-
-// Recursive function to render TreeItems
-const renderTree = (nodes) => (
-  nodes.map((node) => (
-    <TreeItem key={node.snapshot_id} nodeId={node.snapshot_id} label={`Snapshot ${node.snapshot_id}`}>
-      {node.children && renderTree(node.children)}
-    </TreeItem>
-  ))
-);
+import { useParams, useNavigate } from 'react-router-dom';
+import { getSnapshotList } from '@/services/snapshot/services';
 
 export const SnapshotPage = () => {
   let { database, table } = useParams();
@@ -32,12 +23,31 @@ export const SnapshotPage = () => {
   const [tags, setTags] = useState([]);
   const [branches, setBranches] = useState([]);
 
+  const navigate = useNavigate();
+
+  const handleDoubleClick = (snapshotId) => {
+    navigate(`/snapshotDetails/${database}/${table}/${snapshotId}`);
+  };
+
+  // Recursive function to render TreeItems
+  const renderTree = (nodes) => {
+    return nodes.map((node) => (
+      <TreeItem
+        key={node.snapshot_id}
+        nodeId={node.snapshot_id}
+        label={`Snapshot ${node.snapshot_id}`}
+        onDoubleClick={() => handleDoubleClick(node.snapshot_id)}
+      >
+        {node.children && renderTree(node.children)}
+      </TreeItem>
+    ));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8090/dashboard/snapshots?branch_name=main&db_name=${database}&table_name=${table}`);
-        const { snapshots, tags, branches } = response.data.response;
-        console.log(response.data.response)
+        const data = await getSnapshotList(database, table);
+        const { snapshots, tags, branches } = data.response;
         setSnapshots(snapshots);
         setTags(tags);
         setBranches(branches);
@@ -54,21 +64,28 @@ export const SnapshotPage = () => {
     setTabValue(newValue);
   };
 
-  const buildSnapshotTree = (snapshots, parentId = undefined) => {
-    const children = snapshots.filter(snapshot => snapshot.parent_id === parentId);
-    return children.map(child => ({
-      ...child,
-      children: buildSnapshotTree(snapshots, child.snapshot_id)
-    }));
-  };
+  const snapshotTree = useMemo(() => {
+    const buildSnapshotTree = (snapshots, parentId = undefined) => {
+      const children = snapshots.filter(snapshot => snapshot.parent_id === parentId);
+      return children.map(child => ({
+        ...child,
+        children: buildSnapshotTree(snapshots, child.snapshot_id)
+      }));
+    };
 
-  const snapshotTree = buildSnapshotTree(snapshots);
+    return buildSnapshotTree(snapshots);
+  }, [snapshots]);
+
   console.log(snapshotTree)
 
   return (
     <Box sx={{ width: '100%', padding: 2}}>
         <Typography className="glass-text" variant="subtitle2" align="right" >
-        Snapshots {database} / {table}
+        Snapshots 
+      </Typography>
+      <Typography className="glass-text" variant="subtitle2" align="right"
+                                sx={{fontSize: 24, marginBottom: 4}}>
+        {database} / {table}
       </Typography>
       <Tabs value={tabValue} onChange={handleTabChange} aria-label="snapshot tabs">
         <Tab label="Snapshots" />
@@ -88,7 +105,7 @@ export const SnapshotPage = () => {
         <Box sx={{ p: 3 }}>
           <List >
         {tags.map((tag) => (
-          <ListItem button key={tag.name}>
+          <ListItem button key={tag.name} onClick={() => handleDoubleClick(tag.snapshot_id)}>
             <ListItemText primary={tag.name} secondary={`Snapshot ID: ${tag.snapshot_id}`} />
           </ListItem>
         ))}
@@ -99,7 +116,7 @@ export const SnapshotPage = () => {
         <Box sx={{ p: 3 }}>
           <List >
         {branches.map((branch) => (
-          <ListItem button key={branch.name}>
+          <ListItem button key={branch.name} onClick={() => handleDoubleClick(branch.snapshot_id)}>
             <ListItemText primary={branch.name} secondary={`Snapshot ID: ${branch.snapshot_id}`} />
           </ListItem>
         ))}
