@@ -17,9 +17,6 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: './ui/yarn.lock'
 
-      - name: List files in UI directory
-        run: ls -la .
-
       - name: Install dependencies
         run: |
           cd ui/
