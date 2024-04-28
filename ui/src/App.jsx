@@ -23,19 +23,21 @@ import IconButton from "@mui/material/IconButton";
 import Snackbar from '@mui/material/Snackbar';
 import {Slide} from "@mui/material";
 import {useToastMessage, useToastMessageDispatch} from "@/contexts/message.jsx";
+import { useTranslation } from "react-i18next";
+import Button from "@mui/material/Button";
 
 function SlideTransition(props) {
     return <Slide {...props} direction="up" />;
 }
 
 export const App = () => {
+    const {t, i18n} = useTranslation();
     const toastMsgProps = useToastMessage();
     const toastDispatch = useToastMessageDispatch();
     const [selectedIndex, setSelectedIndex] = React.useState(1);
     const navigate = useNavigate();
     const recentView = useRecentView();
     const recentViewDispatch = useRecentViewDispatch();
-
     const handleListItemClick = (
         event,
         index,
@@ -73,7 +75,7 @@ export const App = () => {
                                     marginLeft: "1rem",
                                     height: '100%',
                                     backdropFilter:"blur(8px)",
-
+                                    display: "flex", flexDirection: "column",
                                 }}>
                                     <Typography className="glass-text" variant="subtitle2" align="right"
                                                 sx={{padding: "8px 16px 0 0", fontSize: 16}}>
@@ -88,7 +90,7 @@ export const App = () => {
                                                 <ListItemIcon>
                                                     <SearchIcon/>
                                                 </ListItemIcon>
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary="Search"/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("searchMenu")}/>
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 1}
@@ -116,8 +118,25 @@ export const App = () => {
                                                     </IconButton>
                                                 </ListItemButton>
                                             })}
-
                                         </List>
+                                    </Box>
+                                    <Box sx={{padding: "8px", fontSize: 16, marginTop: "auto", textAlign: "right", display: "flex", alignItems: "center", justifyContent: "right"}}>
+                                        <Button href="#text-buttons" onClick={() => i18n.changeLanguage("en")}>
+                                            <Typography className="glass-text" variant="subtitle2" align="right"
+                                                        sx={{ fontSize: 16}}>
+                                                EN
+                                            </Typography>
+                                        </Button>
+                                        <Typography className="glass-text" variant="subtitle2" align="center"
+                                                    sx={{fontSize: 16, width: "content"}}>
+                                            /
+                                        </Typography>
+                                        <Button href="#text-buttons" onClick={() => i18n.changeLanguage("es")}>
+                                            <Typography className="glass-text" variant="subtitle2" align="right"
+                                                        sx={{ fontSize: 16}}>
+                                                ES
+                                            </Typography>
+                                        </Button>
                                     </Box>
                                 </Paper>
                             </Box>
