@@ -1,5 +1,6 @@
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+import os
 from fastapi import FastAPI
 from .controller import dashboard_controller     #runs __init__ file in controllers folder
 from fastapi_router_controller import Controller, ControllersTags
@@ -16,7 +17,7 @@ app = FastAPI(
 
 origins = [
     "http://localhost",
-    "http://localhost:3000",
+    os.environ.get("HOST", "http://localhost:3000")
 ]
 
 app.add_middleware(

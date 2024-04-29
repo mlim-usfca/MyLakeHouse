@@ -31,7 +31,7 @@ export const TableSettings = () => {
     const [filteredData, setFilteredData] = useState(data)
     const toastDispatch = useToastMessageDispatch()
     useEffect(() => {
-        axios.get(`http://localhost:8090/props/getTableProps?db_name=${db}&table_name=${tbl}`)
+        axios.get(`${process.env.HOST}/props/getTableProps?db_name=${db}&table_name=${tbl}`)
             .then(data => {
                 setData( prevState => {
                     Object.entries(data?.data).forEach(([name, value]) => {

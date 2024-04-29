@@ -5,6 +5,8 @@ services:
     build: ./ui
     ports:
       - "3000:3000"
+    environment:
+      - HOST=http://localhost:8090
     volumes:
       - ./ui/src:/ui/src
       - /ui/src/node_modules
@@ -25,6 +27,7 @@ services:
       - AWS_ACCESS_KEY_ID=admin
       - AWS_SECRET_ACCESS_KEY=password
       - AWS_REGION=us-east-1
+      - HOST=http://localhost:8090
 networks:
   iceberg_net:
     driver: bridge

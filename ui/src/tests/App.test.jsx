@@ -8,7 +8,7 @@ import {MessageProvider} from "@/contexts/message.jsx";
 
 const mock = new MockAdapter(axios);
 
-mock.onGet('http://localhost:8090/test').reply(200, { data: 'Mocked response' });
+mock.onGet(`${process.env.HOST}/test`).reply(200, { data: 'Mocked response' });
 
 test('renders content', () => {
     render(<MessageProvider>

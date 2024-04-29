@@ -49,7 +49,7 @@ export const App = () => {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:8090/test").then(data => console.log(data))
+        axios.get(`${process.env.HOST}/test`).then(data => console.log(data))
     }, []);
 
 
