@@ -49,7 +49,7 @@ export const App = () => {
     };
 
     useEffect(() => {
-        axios.get(`${process.env.HOST}/test`).then(data => console.log(data))
+        axios.get(`${import.meta.env.VITE_HOST}/test`).then(data => console.log(data))
     }, []);
 
 
