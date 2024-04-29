@@ -44,7 +44,7 @@ export const SearchDB = () => {
       <Box sx={{ width: '100%', paddingLeft: 2 }}>
         <List>
           {searchResults.map((result, index) => (
-            <ListItem key={index}>
+            <ListItem key={"db-"+index}>
               <Link to={`/searchtable/${result}`}>{result}</Link>
             </ListItem>
           ))}

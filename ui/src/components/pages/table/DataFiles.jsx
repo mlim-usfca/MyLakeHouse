@@ -43,7 +43,7 @@ export const DataFilesTable = ({ database, table, setCollapsed }) => {
             </Button>
         </Box>
         <Collapse in={open} timeout="auto" unmountOnExit>
-            <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', width: '100%', padding: '16px', maxHeight: "calc(100vh - 500px)", scrollBehavior: 'smooth' }}>
+            <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', width: '100%', padding: '16px', maxHeight: "400", scrollBehavior: 'smooth' }}>
               <Table aria-label="data files table">
                 <TableHead>
                   <TableRow>

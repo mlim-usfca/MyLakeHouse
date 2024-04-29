@@ -51,7 +51,7 @@ export const SearchTable = () => {
       <Box sx={{ width: '100%', paddingLeft: 2 }}>
       <List>
         {searchResults.map((result, index) => (
-          <ListItem key={index}>
+          <ListItem key={database+"-tb-"+index}>
              <Link
                   onClick={() => {
                     recentViewDispatch({ type: "add", value: { db: database, table: result.table_name } })
