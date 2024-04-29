@@ -22,6 +22,7 @@ ENV PYICEBERG_CATALOG__LOCAL__S3__ENDPOINT=http://minio:9000
 
 COPY ./requirements.txt .
 COPY ./.pyiceberg.yaml  .
+COPY ./config.json .
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \

@@ -8,8 +8,9 @@ class TableMetadata():
     def __init__(self):
         spark_conn_obj = SparkConnection()
         self.spark = spark_conn_obj.get_spark_session()
+        self.catalog_name = spark_conn_obj.get_catalog()
         # Need to ask for the catalog log from configuration file instead of hardcoding.
-        self.catalog = load_catalog('local')
+        self.catalog = load_catalog(self.catalog_name)
 
     def decode_byte_array(self, byte_array, type_hint):
         """
@@ -74,7 +75,7 @@ class TableMetadata():
             if not self.spark.catalog.tableExists(f'{db_name}.{table_name}'):
                 return 404, f"The specified table {db_name}.{table_name} does not exist"
 
-            table = self.spark.table(f'local.{db_name}.{table_name}')
+            table = self.spark.table(f'{self.catalog_name}.{db_name}.{table_name}')
 
             schema = table.schema
             if not schema:
@@ -189,9 +190,9 @@ class TableMetadata():
 
             files = self.spark.sql(f"SELECT file_path, file_format, record_count, file_size_in_bytes,\
                                             null_value_counts, nan_value_counts, lower_bounds, upper_bounds \
-                                            FROM local.{db_name}.{table_name}.all_data_files LIMIT {limit} OFFSET {offset}")
+                                            FROM {self.catalog_name}.{db_name}.{table_name}.all_data_files LIMIT {limit} OFFSET {offset}")
 
-            table = self.spark.table(f'local.{db_name}.{table_name}')
+            table = self.spark.table(f'{self.catalog_name}.{db_name}.{table_name}')
 
             schema = table.schema
             if not schema:

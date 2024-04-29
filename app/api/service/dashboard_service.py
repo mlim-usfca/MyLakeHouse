@@ -7,6 +7,7 @@ class DashboardService():
     def __init__(self):
         spark_conn_obj = SparkConnection()
         self.spark = spark_conn_obj.get_spark_session()
+        self.catalog = spark_conn_obj.get_catalog()
 
     def list_databases(self):
         try:
@@ -47,7 +48,7 @@ class DashboardService():
             elif db_name and table_name and branch_name:
                 # Return snapshot details from main branch
                 snapshots = spark.sql(
-                    f"select * from local.{db_name}.{table_name}.history h join local.{db_name}.{table_name}.snapshots s on h.snapshot_id = s.snapshot_id order by made_current_at;")
+                    f"select * from {self.catalog}.{db_name}.{table_name}.history h join {self.catalog}.{db_name}.{table_name}.snapshots s on h.snapshot_id = s.snapshot_id order by made_current_at;")
                 # Convert DataFrame to JSON string
                 snapshots_json = snapshots.toJSON().collect()  # spark dataframe
                 # Convert json string to json
@@ -56,14 +57,14 @@ class DashboardService():
                     json_data = loads(json_str)
                     response_data.append(json_data)
                 # Append branch names list
-                branches = spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"BRANCH\";")
+                branches = spark.sql(f"SELECT * FROM {self.catalog}.{db_name}.{table_name}.refs where type = \"BRANCH\";")
                 branches_json = branches.toJSON().collect()
                 branches_data = []
                 for brch_json_str in branches_json:
                     brch_json_data = loads(brch_json_str)
                     branches_data.append(brch_json_data)
                 # Append tag list
-                tags = spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"TAG\";")
+                tags = spark.sql(f"SELECT * FROM {self.catalog}.{db_name}.{table_name}.refs where type = \"TAG\";")
                 tags_json = tags.toJSON().collect()
                 tags_data = []
                 for tags_json_str in tags_json:
