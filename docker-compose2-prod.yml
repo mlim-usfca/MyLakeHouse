@@ -6,7 +6,7 @@ services:
       context: ./ui
       dockerfile: ./Dockerfile.prod
     ports:
-      - "3000:3000"
+      - "80:3000"
     command: ["npx", "http-server", "./dist", "-p", "3000"]
     volumes:
       - ./ui/src:/ui/src
