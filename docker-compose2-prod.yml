@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  ui:
+    build:
+      context: ./ui
+      dockerfile: ./Dockerfile.prod
+    ports:
+      - "3000:3000"
+    command: ["npx", "http-server", "./dist", "-p", "3000"]
+    volumes:
+      - ./ui/src:/ui/src
+      - /ui/src/node_modules
+    container_name: caspian-ui
+    depends_on:
+      - fastapi_app
+  fastapi_app:
+    image: caspian-back-end 
+    build: ./app
+    container_name: fastapi_app
+    ports:
+      - "8090:8090"
+    networks:
+      iceberg_net:
+    environment:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+networks:
+  iceberg_net:
+    driver: bridge
