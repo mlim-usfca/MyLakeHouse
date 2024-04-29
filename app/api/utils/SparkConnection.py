@@ -16,12 +16,10 @@ class SparkConnection(object):
         return cls.instance
 
     def create_spark_session(self):
-        spark_builder = SparkSession.builder.appName("IcebergApp")
+        #Use SparkConf object
         conf = SparkConf().setAppName("IcebergApp")
-        # Build the SparkSession with configurations
         for key, value in self.config["sparkConfig"].items():
-            #logging.info(f'{key}     {value}')
-            #spark_builder = spark_builder.config(key, value)
+            #logging.info(f'{key}: {value}')
             conf.set(key, value)
         # Now create the SparkSession
         self.spark = SparkSession.builder.config(conf=conf).getOrCreate()
