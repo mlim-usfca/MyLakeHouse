@@ -152,3 +152,12 @@ class DemoIcebergTables():
         except Exception as error:
             logging.info(error)
             return 500, "Internal Server Error"
+
+    def create_demo_databases(self):
+        try:
+            self.create_wildlife_database()
+            self.create_car_sales_table()
+            return 200, "OK"
+        except Exception as error:
+            logging.info(error)
+            return 500, "Internal Server Error"
