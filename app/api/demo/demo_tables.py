@@ -157,7 +157,7 @@ class DemoIcebergTables():
         try:
             self.create_wildlife_database()
             self.create_car_sales_table()
-            return 200, "OK"
+            return 200, "Created demo databases successfully!"
         except Exception as error:
             logging.info(error)
             return 500, "Internal Server Error"
