@@ -2,7 +2,7 @@ import {React, useState, useEffect} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,  Box, Typography, Button} from '@mui/material';
 import axios from 'axios';
-import { snapshotDetail } from '../../../../public/testdata.js';
+import { snapshotDetail } from '../../../assets/testdata.js';
 
 export const SnapshotDetail = () => {
   const { database, table, id } = useParams();
