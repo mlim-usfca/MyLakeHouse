@@ -117,6 +117,5 @@ class IcebergMaintainence(object):
                     # 2. Call remove_orphan_files  query on the table.
                     delete_orphan_files_query = f'CALL {self.catalog}.system.remove_orphan_files(table => \'{db}.{table_name}\');'
                     self.spark.sql(delete_orphan_files_query)
-            logging.info("Remove orphans ended")
         except Exception as error:
             logging.error("Error message:", error)
