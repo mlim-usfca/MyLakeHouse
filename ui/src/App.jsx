@@ -25,6 +25,10 @@ import {Slide} from "@mui/material";
 import {useToastMessage, useToastMessageDispatch} from "@/contexts/message.jsx";
 import { useTranslation } from "react-i18next";
 import Button from "@mui/material/Button";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 function SlideTransition(props) {
     return <Slide {...props} direction="up" />;
@@ -99,13 +103,13 @@ export const App = () => {
                                                 <ListItemIcon>
                                                     <PublicIcon/>
                                                 </ListItemIcon>
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary="Globlal Settings"/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("globalSettings")}/>
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 2}
                                                 onClick={(event) => handleListItemClick(event, 2)}
                                             >
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary="Recent Activity"/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("recentActivity")}/>
                                             </ListItemButton>
                                             <Divider/>
                                             {recentView?.tables?.map(rc => {
@@ -121,22 +125,19 @@ export const App = () => {
                                         </List>
                                     </Box>
                                     <Box sx={{padding: "8px", fontSize: 16, marginTop: "auto", textAlign: "right", display: "flex", alignItems: "center", justifyContent: "right"}}>
-                                        <Button href="#text-buttons" onClick={() => i18n.changeLanguage("en")}>
-                                            <Typography className="glass-text" variant="subtitle2" align="right"
-                                                        sx={{ fontSize: 16}}>
-                                                EN
-                                            </Typography>
-                                        </Button>
-                                        <Typography className="glass-text" variant="subtitle2" align="center"
-                                                    sx={{fontSize: 16, width: "content"}}>
-                                            /
-                                        </Typography>
-                                        <Button href="#text-buttons" onClick={() => i18n.changeLanguage("es")}>
-                                            <Typography className="glass-text" variant="subtitle2" align="right"
-                                                        sx={{ fontSize: 16}}>
-                                                ES
-                                            </Typography>
-                                        </Button>
+                                        <FormControl>
+                                            <Select
+                                                variant="standard"
+                                                value={i18n.language}
+                                                onChange={(e) => i18n.changeLanguage(e.target.value)}
+                                            >
+                                                <MenuItem value="en">English</MenuItem>
+                                                <MenuItem value="es">Spanish</MenuItem>
+                                                <MenuItem value="fr">French</MenuItem>
+                                                <MenuItem value="cn">Chinese</MenuItem>
+                                                <MenuItem value="it">Italian</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                     </Box>
                                 </Paper>
                             </Box>
