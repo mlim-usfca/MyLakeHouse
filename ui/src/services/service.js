@@ -1,1 +1,1 @@
-export const DEV = "http://localhost:8090/"
+export const DEV = `${import.meta.env.VITE_HOST}/`

@@ -51,7 +51,7 @@ export const App = () => {
     };
 
     useEffect(() => {
-        axios.get("http://localhost:8090/test").then(data => console.log(data))
+        axios.get(`${import.meta.env.VITE_HOST}/test`).then(data => console.log(data))
     }, []);
 
 

@@ -9,6 +9,7 @@ class IntialSetupService():
     def __init__(self):
         spark_conn_obj = SparkConnection()
         self.spark = spark_conn_obj.get_spark_session()
+        self.catalog = spark_conn_obj.get_catalog()
 
     def create_iceberg_table(self, request: CreateIcebergTableRequest):
         try:
@@ -32,7 +33,7 @@ class IntialSetupService():
             # Create the Iceberg table in append mode (if it doesn't exist)
             spark.sql(f"CREATE DATABASE IF NOT EXISTS {database_name}")
             spark.sql(f"DROP TABLE IF EXISTS {database_name}.{table_name}")
-            spark.sql(f"USE local.{database_name}")
+            spark.sql(f"USE {self.catalog}.{database_name}")
             # Load data from the parquet file
             df = spark.read.format("parquet").load(data_path)
 
