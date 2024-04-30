@@ -1,6 +1,6 @@
 from ..utils.SparkConnection import SparkConnection
 import logging
-from pyspark.sql.types import StructType, StructField,StringType, DoubleType, LongType
+from pyspark.sql.types import StructType, StructField,StringType, DoubleType, LongType, IntegerType
 
 class DemoIcebergTables():
     def __init__(self):
@@ -94,6 +94,61 @@ class DemoIcebergTables():
             df_july = self.spark.createDataFrame(data_july, schema_july)
             df_july.writeTo(f"{self.catalog}.carsales.july").append()
             return 200, "Created successfully"
+        except Exception as error:
+            logging.info(error)
+            return 500, "Internal Server Error"
+
+    def create_wildlife_database(self):
+        try:
+            animal_types = ['reptiles', 'birds', 'mammals', 'amphibians']
+            for animal_type in animal_types:
+                # Drop existing table if it exists
+                self.spark.sql(f"DROP TABLE IF EXISTS {self.catalog}.wildlife.{animal_type}")
+
+            # Define schema
+            schema = StructType([
+                StructField("id", IntegerType(), True),
+                StructField("common_name", StringType(), True),
+                StructField("scientific_name", StringType(), True),
+                StructField("conservation_status", StringType(), True),
+                StructField("habitat_type", StringType(), True),
+                StructField("geographic_distribution", StringType(), True)
+            ])
+
+            for animal_type in animal_types:
+                # Create an empty DataFrame with the defined schema
+                df = self.spark.createDataFrame([], schema)
+                df.writeTo(f"{self.catalog}.wildlife.{animal_type}").create()
+
+            # Sample data for each animal type with additional fields
+            data = {
+                'reptiles': [
+                    (1, "Eastern Box Turtle", "Terrapene carolina", "Not Threatened", "Woodlands", "Eastern USA"),
+                    (2, "American Alligator", "Alligator mississippiensis", "Least Concern", "Freshwater", "Southeast USA"),
+                    (3, "Gila Monster", "Heloderma suspectum", "Near Threatened", "Desert", "Southwestern USA")
+                ],
+                'birds': [
+                    (1, "Bald Eagle", "Haliaeetus leucocephalus", "Least Concern", "Lakes and Rivers", "North America"),
+                    (2, "Peregrine Falcon", "Falco peregrinus", "Least Concern", "Urban & Cliffs", "Worldwide"),
+                    (3, "California Condor", "Gymnogyps californianus", "Critically Endangered", "Rocky Shrubs",
+                             "California and Baja California")
+                ],
+                'mammals': [
+                    (1, "Gray Wolf", "Canis lupus", "Endangered", "Forests and Plains", "North America and Eurasia"),
+                    (2, "American Bison", "Bison bison", "Near Threatened", "Plains", "North America"),
+                    (3, "Florida Panther", "Puma concolor coryi", "Endangered", "Swamps and Forests", "Florida")
+                ],
+                'amphibians': [
+                    (1, "American Bullfrog", "Lithobates catesbeianus", "Least Concern", "Lakes and Ponds", "North America"),
+                    (2, "Axolotl", "Ambystoma mexicanum", "Critically Endangered", "Lakes", "Mexico"),
+                    (3, "Red-eyed Tree Frog", "Agalychnis callidryas", "Least Concern", "Rainforests", "Central America")
+                ]
+            }
+            # For each animal type, create DataFrame from data using the schema of the table and append it
+            for animal_type, entries in data.items():
+                df = self.spark.createDataFrame(entries, schema)
+                df.writeTo(f"{self.catalog}.wildlife.{animal_type}").append()
+            return 200, "Created wildlife database successfully."
         except Exception as error:
             logging.info(error)
             return 500, "Internal Server Error"
