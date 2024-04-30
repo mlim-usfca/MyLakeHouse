@@ -161,3 +161,66 @@ class DemoIcebergTables():
         except Exception as error:
             logging.info(error)
             return 500, "Internal Server Error"
+
+    def snapshots_branching_and_tagging(self):
+        try:
+            # Drop existing table if it exists
+            self.spark.sql("DROP TABLE IF EXISTS local.demo.my_iceberg_table")
+
+            # Create a new Iceberg table
+            self.spark.sql("""
+                        CREATE TABLE local.demo.my_iceberg_table (
+                            id INT,
+                            name STRING,
+                            score INT
+                        ) USING iceberg
+                    """)
+
+            # Insert data into the table to create 30 snapshots
+            for i in range(30):
+                # Simulate data insertion
+                self.spark.sql(f"INSERT INTO local.demo.my_iceberg_table VALUES ({i}, 'Student_{i}', {100 - i})")
+
+            # Retrieve the current table
+            table = self.spark.table("local.demo.my_iceberg_table")
+
+            # Get the snapshot ID after 30 inserts
+            current_snapshot_id = table.currentSnapshot().snapshotId()
+            logging.info(f"Current Snapshot ID after 30 inserts: {current_snapshot_id}")
+
+            # Tag the top 5 students with the highest scores
+            top_students = self.spark.sql("""
+                        SELECT id, name FROM local.demo.my_iceberg_table
+                        ORDER BY score DESC
+                        LIMIT 5
+                    """)
+
+            for student in top_students.collect():
+                tag_name = f"top_score_{student.name}"
+                table.updateProperties().set(tag_name, str(current_snapshot_id)).commit()
+
+            # Enable Write-Audit-Publish (WAP) before creating a branch
+            self.spark.sql("""
+                        ALTER TABLE local.demo.my_iceberg_table SET TBLPROPERTIES (
+                            'write.wap.enabled'='true'
+                        )
+                    """)
+
+            # Create an audit branch from the third snapshot
+            third_snapshot_id = table.history()[2].snapshotId()  # This is conceptual
+            self.spark.sql("SET spark.wap.branch = 'audit-branch'")
+            self.spark.sql(
+                f"CALL spark_catalog.system.branch('local.demo.my_iceberg_table', 'audit-branch', {third_snapshot_id})")
+
+            # Perform writes on the audit branch
+            self.spark.sql("INSERT INTO local.demo.my_iceberg_table VALUES (999, 'Audit_Student', 50)")
+
+            # A validation workflow can validate the state of the audit branch here
+            # Assuming validation passes, fast-forward main to the head of audit branch
+            self.spark.sql(
+                "CALL spark_catalog.system.fast_forward('local.demo.my_iceberg_table', 'main', 'audit-branch')")
+
+            return 200, "Operation completed successfully!"
+        except Exception as error:
+            logging.error(error)
+            return 500, "Internal Server Error"
