@@ -36,19 +36,20 @@ export const SearchDB = () => {
   };
 
   return (
-    <Box sx={{ width: '100%', typography: 'body1', padding: 2 }}>
+    <Box sx={{ width: '100%', padding:2 }}>
         <Typography className="glass-text" variant="subtitle2" align="right" sx={{paddingRight: 2, fontSize: 40}}>
             Search For Database
         </Typography>
       <SearchBar onSearch={handleSearch} />
-      <List>
-        {searchResults.map((result, index) => (
-          <ListItem key={index}>
-            <ListItemText primary={result} />
-            <Link to={`/searchtable/${result}`}>Enter Database</Link>
-          </ListItem>
-        ))}
-      </List>
+      <Box sx={{ width: '100%', paddingLeft: 2 }}>
+        <List>
+          {searchResults.map((result, index) => (
+            <ListItem key={"db-"+index}>
+              <Link to={`/searchtable/${result}`}>{result}</Link>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
     </Box>
   );
 };
