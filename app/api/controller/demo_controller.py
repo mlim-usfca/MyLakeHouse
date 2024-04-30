@@ -28,7 +28,8 @@ class DemoController():
     def create_demo_tables(self):
         try:
             #status_code, data = self.demo.create_car_sales_table()
-            status_code = self.demo.create_wildlife_database()
+            #status_code = self.demo.create_wildlife_database()
+            status_code, data = self.demo.create_demo_databases()
             if status_code == 200:
                 return {"message": "Created demo database/tables successfully"}
             else:
