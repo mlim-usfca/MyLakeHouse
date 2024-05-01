@@ -13,6 +13,7 @@ import {TableSettings} from "@/components/pages/tables/TableSettings.jsx";
 import { TablePage } from './components/pages/table/TablePage.jsx';
 import {RecentViewProvider} from "@/contexts/recent-view-history.jsx";
 import {MessageProvider} from "@/contexts/message.jsx";
+import "@/i18n.js"
 
 const theme = createTheme({
   components: {
