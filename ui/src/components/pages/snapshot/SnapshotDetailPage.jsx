@@ -1,25 +1,48 @@
 import {React, useState, useEffect} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,  Box, Typography, Button} from '@mui/material';
-import axios from 'axios';
-import { snapshotDetail } from '../../../assets/testdata.js';
+import { getSnapshoData } from '@/services/snapshot/services.js';
+import axios from "axios";
 
 export const SnapshotDetail = () => {
   const { database, table, id } = useParams();
-  const snapshotData = snapshotDetail;
-  // Mock data, replace this with your actual fetch logic
+  const [snapshotData, setSnapshotData] = useState({summary:{}});
+  const [tags, setTags] = useState([]);
+  const [branches, setBranches] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getSnapshoData(database, table, id);
+        const { snapshots, tags, branches } = data;
+        console.log(data);
+        setSnapshotData(snapshots[0]);
+        setTags(tags);
+        setBranches(branches);
+      } catch (error) {
+        console.error('Error fetching snapshots, tags, and branches:', error);
+      }
+    };
+    fetchData();
+  },[database, table,id]);
 
   const navigate = useNavigate();
 
   const handleDeleteSnapshot = async () => {
-    try {
-      const response = await axios.delete(`http://your-api-url/snapshots/${id}`);
-      console.log(response.data);
-      alert('Snapshot deleted successfully');
-      navigate('/');  // Adjust this to your needs, such as going back to the listing page
-    } catch (error) {
-      console.error('Failed to delete snapshot:', error);
-      alert('Failed to delete snapshot');
+    // Display confirmation dialog
+    const confirmDelete = window.confirm('Are you sure you want to delete this snapshot?');
+  
+    // Check if user confirmed deletion
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`http://your-api-url/snapshots/${id}`);
+        console.log(response.data);
+        alert('Snapshot deleted successfully');
+        navigate('/');  // Adjust this to your needs, such as going back to the listing page
+      } catch (error) {
+        console.error('Failed to delete snapshot:', error);
+        alert('Failed to delete snapshot');
+      }
     }
   };
 
@@ -53,6 +76,17 @@ export const SnapshotDetail = () => {
           </TableHead>
           <TableBody>
             <TableRow>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Branch</TableCell>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{branches.map((branch, index) => (
+    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}
+            </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Tags</TableCell>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{tags.map((branch, index) => (
+    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}</TableCell>
+            </TableRow>
+            <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Made Current At</TableCell>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.made_current_at}</TableCell>
             </TableRow>
@@ -62,7 +96,7 @@ export const SnapshotDetail = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Is Current Ancestor</TableCell>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.is_current_ancestor}</TableCell>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.is_current_ancestor ? 'True' : 'False'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Committed At</TableCell>

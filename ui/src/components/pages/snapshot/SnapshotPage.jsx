@@ -25,7 +25,11 @@ export const SnapshotPage = () => {
 
   const navigate = useNavigate();
 
-  const handleDoubleClick = (snapshotId) => {
+  const handleDoubleClick = (evt, snapshotId) => {
+    evt.stopPropagation();
+    navigate(`/snapshotDetails/${database}/${table}/${snapshotId}`);
+  };
+  const handleClick = (snapshotId) => {
     navigate(`/snapshotDetails/${database}/${table}/${snapshotId}`);
   };
 
@@ -36,7 +40,7 @@ export const SnapshotPage = () => {
         key={node.snapshot_id}
         nodeId={node.snapshot_id}
         label={`Snapshot ${node.snapshot_id}, Commited at: ${node.committed_at}, Opeation: ${node.operation}`}
-        onDoubleClick={() => handleDoubleClick(node.snapshot_id)}
+        onDoubleClick={(evt) => handleDoubleClick(evt, node.snapshot_id)}
       >
         {node.children && renderTree(node.children)}
       </TreeItem>
@@ -105,7 +109,7 @@ export const SnapshotPage = () => {
         <Box sx={{ p: 3 }}>
           <List >
         {tags.map((tag) => (
-          <ListItem button key={tag.name} onClick={() => handleDoubleClick(tag.snapshot_id)}>
+          <ListItem button key={tag.name} onClick={() => handleClick(tag.snapshot_id)}>
             <ListItemText primary={tag.name} secondary={`Snapshot ID: ${tag.snapshot_id}`} />
           </ListItem>
         ))}
@@ -116,7 +120,7 @@ export const SnapshotPage = () => {
         <Box sx={{ p: 3 }}>
           <List >
         {branches.map((branch) => (
-          <ListItem button key={branch.name} onClick={() => handleDoubleClick(branch.snapshot_id)}>
+          <ListItem button key={branch.name} onClick={() => handleClick(branch.snapshot_id)}>
             <ListItemText primary={branch.name} secondary={`Snapshot ID: ${branch.snapshot_id}`} />
           </ListItem>
         ))}
