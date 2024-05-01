@@ -1,12 +1,15 @@
 from ..utils.SparkConnection import SparkConnection
 import logging
 from pyspark.sql.types import StructType, StructField,StringType, DoubleType, LongType, IntegerType
+from pyiceberg.catalog import load_catalog
+
 
 class DemoIcebergTables():
     def __init__(self):
         spark_conn_obj = SparkConnection()
         self.spark = spark_conn_obj.get_spark_session()
         self.catalog = spark_conn_obj.get_catalog()
+        self.catalog_obj = load_catalog(self.catalog)
 
     def create_car_sales_table(self):
         try:
@@ -164,6 +167,7 @@ class DemoIcebergTables():
 
     def snapshots_branching_and_tagging(self):
         try:
+            table_name = "local.demo.my_iceberg_table"
             # Drop existing table if it exists
             self.spark.sql("DROP TABLE IF EXISTS local.demo.my_iceberg_table")
 
@@ -181,46 +185,80 @@ class DemoIcebergTables():
                 # Simulate data insertion
                 self.spark.sql(f"INSERT INTO local.demo.my_iceberg_table VALUES ({i}, 'Student_{i}', {100 - i})")
 
+
             # Retrieve the current table
-            table = self.spark.table("local.demo.my_iceberg_table")
+            table = self.catalog_obj.load_table('local.demo.my_iceberg_table')
 
-            # Get the snapshot ID after 30 inserts
-            current_snapshot_id = table.currentSnapshot().snapshotId()
-            logging.info(f"Current Snapshot ID after 30 inserts: {current_snapshot_id}")
+            snapshots = table.metadata.snapshots
 
-            # Tag the top 5 students with the highest scores
-            top_students = self.spark.sql("""
-                        SELECT id, name FROM local.demo.my_iceberg_table
-                        ORDER BY score DESC
-                        LIMIT 5
-                    """)
+            # Make branches from snapshot 3, 7 and 29
+            if snapshots is not None:
+                snapshot_id_3 = snapshots[2].snapshot_id
+                snapshot_id_7 = snapshots[6].snapshot_id
+                snapshot_id_28 = snapshots[27].snapshot_id
+                branch_from_3_command = f"ALTER TABLE {table_name} CREATE BRANCH test_from_3 AS OF VERSION {snapshot_id_3}"
+                branch_from_7_command = f"ALTER TABLE {table_name} CREATE BRANCH test_from_7 AS OF VERSION {snapshot_id_7}"
+                branch_from_28_command = f"ALTER TABLE {table_name} CREATE BRANCH test_from_28 AS OF VERSION {snapshot_id_28} with SNAPSHOT RETENTION 5 SNAPSHOTS"
+                self.spark.sql(branch_from_3_command)
+                self.spark.sql(branch_from_7_command)
+                self.spark.sql(branch_from_28_command)
 
-            for student in top_students.collect():
-                tag_name = f"top_score_{student.name}"
-                table.updateProperties().set(tag_name, str(current_snapshot_id)).commit()
+                # Insert records into branches
+                insert_31 = f"INSERT INTO TABLE {table_name}.branch_test_from_3 VALUES (99, 'Student_Ak', 67)"
+                insert_32 = f"INSERT INTO TABLE {table_name}.branch_test_from_3 VALUES (123, 'Student_Amy', 97)"
+                self.spark.sql(insert_31)
+                self.spark.sql(insert_32)
 
-            # Enable Write-Audit-Publish (WAP) before creating a branch
-            self.spark.sql("""
-                        ALTER TABLE local.demo.my_iceberg_table SET TBLPROPERTIES (
-                            'write.wap.enabled'='true'
-                        )
-                    """)
+                insert_71 = f"INSERT INTO TABLE {table_name}.branch_test_from_7 VALUES (129, 'Student_Rachel', 49)"
+                insert_72 = f"INSERT INTO TABLE {table_name}.branch_test_from_7 VALUES (165, 'Student_Akon', 84)"
+                self.spark.sql(insert_71)
+                self.spark.sql(insert_72)
 
-            # Create an audit branch from the third snapshot
-            third_snapshot_id = table.history()[2].snapshotId()  # This is conceptual
-            self.spark.sql("SET spark.wap.branch = 'audit-branch'")
-            self.spark.sql(
-                f"CALL spark_catalog.system.branch('local.demo.my_iceberg_table', 'audit-branch', {third_snapshot_id})")
-
-            # Perform writes on the audit branch
-            self.spark.sql("INSERT INTO local.demo.my_iceberg_table VALUES (999, 'Audit_Student', 50)")
-
-            # A validation workflow can validate the state of the audit branch here
-            # Assuming validation passes, fast-forward main to the head of audit branch
-            self.spark.sql(
-                "CALL spark_catalog.system.fast_forward('local.demo.my_iceberg_table', 'main', 'audit-branch')")
+            # Make tags from snapshots 2 and 5
+            if snapshots is not None:
+                snapshot_id_2 = snapshots[1].snapshot_id
+                snapshot_id_5 = snapshots[4].snapshot_id
+                logging.info(f"In tags {snapshot_id_2}  {snapshot_id_5}")
+                self.spark.sql(f"ALTER TABLE {table_name} CREATE TAG tag_3rd AS OF VERSION {snapshot_id_2}")
+                self.spark.sql(f"ALTER TABLE {table_name} CREATE TAG tag_5th AS OF VERSION {snapshot_id_5}")
 
             return 200, "Operation completed successfully!"
         except Exception as error:
-            logging.error(error)
+            logging.error(f"Error in snapshots_branching_and_tagging:  {error}")
+            return 500, "Internal Server Error"
+
+    def output_queries_to_file(self, table_name="local.demo.my_iceberg_table"):
+        def write_query_results_to_file(query, file):
+            result = self.spark.sql(query).collect()
+            if result:
+                headers = list(result[0].asDict().keys())
+                rows = [list(row.asDict().values()) for row in result]
+
+                # Write the query and headers
+                file.write(f"Results for query: {query}\n")
+                file.write("\t".join(headers) + "\n")
+
+                # Write rows
+                for row in rows:
+                    file.write("\t".join(map(str, row)) + "\n")
+
+                file.write("\n")  # Add a new line after each query's results
+            else:
+                file.write(f"\nNo results for query: {query}\n")
+        try:
+            queries = [
+                f"SELECT * FROM {table_name}",
+                f"SELECT * FROM {table_name} VERSION AS OF 'test_from_3'",
+                f"SELECT * FROM {table_name} VERSION AS OF 'test_from_7'",
+                f"SELECT * FROM {table_name} VERSION AS OF 'tag_3rd'",
+                f"SELECT * FROM {table_name} VERSION AS OF 'tag_5th'"
+            ]
+
+            # Write the results of each query to the file
+            with open("iceberg_branching.txt", "w") as file:
+                for query in queries:
+                    write_query_results_to_file(query, file)
+            return 200, "Ok"
+        except Exception as error:
+            logging.error(f"Error in output_queries_to_file:  {error}")
             return 500, "Internal Server Error"
