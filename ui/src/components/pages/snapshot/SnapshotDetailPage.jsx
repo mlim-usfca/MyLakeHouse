@@ -86,6 +86,17 @@ export const SnapshotDetail = () => {
     <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}</TableCell>
             </TableRow>
             <TableRow>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Branch</TableCell>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{branches.map((branch, index) => (
+    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}
+            </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Tags</TableCell>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{tags.map((branch, index) => (
+    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}</TableCell>
+            </TableRow>
+            <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Snapshot ID</TableCell>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.snapshot_id}</TableCell>
             </TableRow>
