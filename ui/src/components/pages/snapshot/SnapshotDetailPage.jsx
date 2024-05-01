@@ -1,7 +1,7 @@
 import {React, useState, useEffect} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,  Box, Typography, Button} from '@mui/material';
-import { getSnapshoData } from '@/services/snapshot/services.js';
+import { deleteSnapshot, getSnapshoData } from '@/services/snapshot/services.js';
 import axios from "axios";
 
 export const SnapshotDetail = () => {
@@ -35,10 +35,9 @@ export const SnapshotDetail = () => {
     // Check if user confirmed deletion
     if (confirmDelete) {
       try {
-        const response = await axios.delete(`http://your-api-url/snapshots/${id}`);
-        console.log(response.data);
+        const response = await deleteSnapshot(database, table, id);
         alert('Snapshot deleted successfully');
-        navigate('/');  // Adjust this to your needs, such as going back to the listing page
+        navigate(`/snapshot/${database}/${table}`);
       } catch (error) {
         console.error('Failed to delete snapshot:', error);
         alert('Failed to delete snapshot');
@@ -87,16 +86,8 @@ export const SnapshotDetail = () => {
     <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}</TableCell>
             </TableRow>
             <TableRow>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Made Current At</TableCell>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.made_current_at}</TableCell>
-            </TableRow>
-            <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Snapshot ID</TableCell>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.snapshot_id}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Is Current Ancestor</TableCell>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{snapshotData.is_current_ancestor ? 'True' : 'False'}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Committed At</TableCell>

@@ -76,8 +76,17 @@ export const SnapshotPage = () => {
         children: buildSnapshotTree(snapshots, child.snapshot_id)
       }));
     };
+  
+    // Find all parent IDs
+    const parentIds = snapshots.map(snapshot => snapshot.parent_id);
+    
+    // Filter out parent IDs that are not in the snapshots list
+    const rootParentId = parentIds.find(parentId => !snapshots.some(snapshot => snapshot.snapshot_id === parentId));
 
-    return buildSnapshotTree(snapshots);
+    console.log(rootParentId);
+  
+    // Build the snapshot tree with the root parent ID
+    return buildSnapshotTree(snapshots, rootParentId);
   }, [snapshots]);
 
   console.log(snapshotTree)
