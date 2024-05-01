@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: 21
           cache: 'yarn'
+          cache-dependency-path: './ui/yarn.lock'
 
       - name: Install dependencies
         run: |
@@ -38,6 +39,7 @@ jobs:
         with:
           node-version: 21
           cache: 'yarn'
+          cache-dependency-path: './ui/yarn.lock'
 
       - name: Install dependencies
         run: |

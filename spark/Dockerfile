@@ -76,6 +76,6 @@ RUN chmod +x /opt/spark/start-worker.sh
 # Set the PATH environment variable
 ENV PATH=/opt/spark/bin:$PATH
 
-User spark
+#User spark
 # Set the entrypoint
 ENTRYPOINT ["/opt/spark/entrypoint.sh"]
