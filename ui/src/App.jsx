@@ -47,9 +47,11 @@ export const App = () => {
         index,
     ) => {
         if (index === 1) {
-            navigate("/config")
+            navigate("/config");
         } else if (index === 0) {
-            navigate("/")
+            navigate("/");
+        } else if (index === 3) {
+            navigate("/spark-performance"); // Navigate to the Spark Performance route
         }
         setSelectedIndex(index);
     };
@@ -110,6 +112,12 @@ export const App = () => {
                                                 onClick={(event) => handleListItemClick(event, 2)}
                                             >
                                                 <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("recentActivity")}/>
+                                            </ListItemButton>
+                                            <ListItemButton
+                                                selected={selectedIndex === 3}
+                                                onClick={(event) => handleListItemClick(event, 3)}
+                                            >
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("Spark Performance")}/>
                                             </ListItemButton>
                                             <Divider/>
                                             {recentView?.tables?.map(rc => {
