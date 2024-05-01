@@ -13,5 +13,22 @@
     "spark.sql.catalog.local.catalog-impl": "org.apache.iceberg.rest.RESTCatalog",
     "spark.sql.catalog.local.uri": "http://rest:8181",
     "spark.sql.catalogImplementation": "in-memory"
+  },
+  "scheduler": {
+    "expire_snapshot_trigger": {
+      "day":"last",
+      "hour":23,
+      "minute":45
+    },
+    "compaction_trigger": {
+      "day":"last",
+      "hour":23,
+      "minute":50
+    },
+    "remove_orphan_trigger": {
+      "day":"last",
+      "hour":23,
+      "minute":55
+    }
   }
 }

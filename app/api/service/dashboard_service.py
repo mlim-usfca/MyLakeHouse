@@ -49,7 +49,7 @@ class DashboardService():
             elif db_name and table_name and branch_name:
                 # Return snapshot details from main branch
                 snapshots = spark.sql(
-                    f"select * from {self.catalog}.{db_name}.{table_name}.history h join {self.catalog}.{db_name}.{table_name}.snapshots s on h.snapshot_id = s.snapshot_id order by made_current_at;")
+                    f"select * from {self.catalog}.{db_name}.{table_name}.snapshots order by committed_at;")
                 # Convert DataFrame to JSON string
                 snapshots_json = snapshots.toJSON().collect()  # spark dataframe
                 # Convert json string to json
@@ -99,7 +99,7 @@ class DashboardService():
             for table in tables:
                 table_name = table.name
                 # Construct the query to access the snapshots table of the current table
-                snapshot_query = f"SELECT * FROM {db_name}.{table_name}.snapshots ORDER BY committed_at DESC LIMIT 1"
+                snapshot_query = f"SELECT * FROM {self.catalog}.{db_name}.{table_name}.snapshots ORDER BY committed_at DESC LIMIT 1"
 
                 # Execute the query
                 snapshot_df = spark.sql(snapshot_query)
@@ -133,7 +133,7 @@ class DashboardService():
             if not snapshot_id and not db_name and not table_name:
                 return 404, "snapshot_id, db_name and table_name cannot be empty or null."
 
-            expire_query = f'CALL local.system.expire_snapshots(table= > \'{db_name}.{table_name}\', snapshot_ids => ARRAY({snapshot_id}));'
+            expire_query = f'CALL {self.catalog}.system.expire_snapshots(table=> \'{db_name}.{table_name}\', snapshot_ids => ARRAY({snapshot_id}))'
             self.spark.sql(expire_query)
             return 200, "Snapshot expired successfully."
         except Exception as error:
@@ -151,7 +151,7 @@ class DashboardService():
 
             # Return snapshot details from main branch
             # snapshots = self.spark.sql(f'select * from local.{db_name}.{table_name}.snapshots where snapshot_id = {snapshot_id};')
-            get_snapshot_query = f'select * from local.{db_name}.{table_name}.history h join local.{db_name}.{table_name}.snapshots s on h.snapshot_id = s.snapshot_id order by made_current_at;'
+            get_snapshot_query = f'select * from {self.catalog}.{db_name}.{table_name}.snapshots order by committed_at;'
             snapshots = self.spark.sql(get_snapshot_query)
             # Convert DataFrame to JSON string
             snapshots_json = snapshots.toJSON().collect()  # spark dataframe
@@ -165,7 +165,7 @@ class DashboardService():
                         json_data['parent_id'] = str(json_data['parent_id'])
                     response_data.append(json_data)
             # Append branch names list
-            branches = self.spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"BRANCH\";")
+            branches = self.spark.sql(f"SELECT * FROM {self.catalog}.{db_name}.{table_name}.refs where type = \"BRANCH\" and snapshot_id = {snapshot_id};")
             branches_json = branches.toJSON().collect()
             branches_data = []
             for brch_json_str in branches_json:
@@ -174,7 +174,7 @@ class DashboardService():
                     brch_json_data['snapshot_id'] = str(brch_json_data['snapshot_id'])
                 branches_data.append(brch_json_data)
             # Append tag list
-            tags = self.spark.sql(f"SELECT * FROM local.{db_name}.{table_name}.refs where type = \"TAG\";")
+            tags = self.spark.sql(f"SELECT * FROM {self.catalog}.{db_name}.{table_name}.refs where type = \"TAG\" and snapshot_id = {snapshot_id};")
             tags_json = tags.toJSON().collect()
             tags_data = []
             for tags_json_str in tags_json:
