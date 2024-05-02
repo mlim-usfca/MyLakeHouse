@@ -38,7 +38,7 @@ mock.onGet(`${import.meta.env.VITE_HOST}/dashboard/list-tables?db_name=toyDb`).r
 
 test('renders search table', async() => {
     render(<MessageProvider>
-        <MemoryRouter initialEntries={['/searchtable/toyDb']}>
+        <MemoryRouter initialEntries={['/searchTable/toyDb']}>
             <SearchTable/>
         </MemoryRouter>
     </MessageProvider>)
