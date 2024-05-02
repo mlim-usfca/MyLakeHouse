@@ -19,3 +19,16 @@ test('renders content', () => {
     const element = screen.getByText('Caspian')
     expect(element).toBeDefined()
 })
+
+
+mock.onGet(`${import.meta.env.VITE_HOST}/list-database`).reply(200, { data: 'Mocked response' });
+
+test('renders content', () => {
+    render(<MessageProvider>
+        <MemoryRouter initialEntries={['/']}>
+            <App />
+        </MemoryRouter>
+    </MessageProvider>)
+    const element = screen.getByText('SEARCH FOR DATABASE')
+    expect(element).toBeDefined()
+})
