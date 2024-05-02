@@ -8,7 +8,7 @@ export const getSnapshotList = async (database, table) => {
       return response.data;
     } catch (error) {
       // Handle error
-      console.error("Error fetching database list:", error);
+      console.error("Error fetching snapshot list:", error);
       throw error; // Optionally rethrow the error
     }
   };
@@ -21,7 +21,19 @@ export const getSnapshotList = async (database, table) => {
       return response.data;
     } catch (error) {
       // Handle error
-      console.error("Error fetching database list:", error);
+      console.error("Error fetching snapshot detail:", error);
+      throw error; // Optionally rethrow the error
+    }
+  };
+
+  export const deleteSnapshot = async (database, table, id) => {
+    try {
+        const response = await axios.get(DEV + `dashboard/expire-snapshot?db_name=${database}&table_name=${table}&snapshot_id=${id}`);
+        console.log(response);
+      return response;
+    } catch (error) {
+      // Handle error
+      console.error("Error expire snapshot:", error);
       throw error; // Optionally rethrow the error
     }
   };
