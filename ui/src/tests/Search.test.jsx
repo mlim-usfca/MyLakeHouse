@@ -24,7 +24,7 @@ test('renders search database with db_list', async() => {
     });
 })
 
-mock.onGet(`${import.meta.env.VITE_HOST}/dashboard/list-tables?db_name=toyDb`).reply(200, 
+mock.onGet(`${import.meta.env.VITE_HOST}/dashboard/list-tables/?db_name=toyDb`).reply(200, 
     [
       {
         "table_name": "taxis1",
