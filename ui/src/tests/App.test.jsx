@@ -30,6 +30,6 @@ test('renders content', () => {
             <SearchDB/>
         </MemoryRouter>
     </MessageProvider>)
-    const element = screen.getByText('SEARCH FOR DATABASE')
+    const element = screen.getByText('Search For Database')
     expect(element).toBeDefined()
 })
