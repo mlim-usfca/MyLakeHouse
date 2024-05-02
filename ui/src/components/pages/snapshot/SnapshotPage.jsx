@@ -109,7 +109,7 @@ export const SnapshotPage = () => {
         <TreeView
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
-          sx={{ height: 240, flexGrow: 1, maxWidth: 800, overflowY: 'auto', marginLeft: '2rem' }}
+          sx={{maxHeight: "calc(100vh - 200px)",flexGrow: 1, maxWidth: 800, overflowY: 'auto', marginLeft: '2rem' }}
         >
           {renderTree(snapshotTree)}
         </TreeView>
