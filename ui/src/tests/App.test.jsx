@@ -22,7 +22,7 @@ test('renders content', () => {
 })
 
 
-mock.onGet(`${import.meta.env.VITE_HOST}/list-database`).reply(200, { data: 'Mocked response' });
+mock.onGet(`${import.meta.env.VITE_HOST}/dashboard/list-databases`).reply(200, { data: 'Mocked response' });
 
 test('renders search database with no db_list', () => {
     render(<MessageProvider>
@@ -34,7 +34,7 @@ test('renders search database with no db_list', () => {
     expect(element).toBeDefined()
 })
 
-mock.onGet(`${import.meta.env.VITE_HOST}/list-database`).reply(200, { data: {db_list: ["toyDb"] }});
+mock.onGet(`${import.meta.env.VITE_HOST}/dashboard/list-databases`).reply(200, { data: {db_list: ["toyDb"] }});
 
 test('renders search database with db_list', () => {
     render(<MessageProvider>
