@@ -2,13 +2,14 @@ import {React, useState, useEffect} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,  Box, Typography, Button} from '@mui/material';
 import { deleteSnapshot, getSnapshoData } from '@/services/snapshot/services.js';
-import axios from "axios";
+import {useToastMessageDispatch} from "@/contexts/message.jsx";
 
 export const SnapshotDetail = () => {
   const { database, table, id } = useParams();
   const [snapshotData, setSnapshotData] = useState({summary:{}});
   const [tags, setTags] = useState([]);
   const [branches, setBranches] = useState([]);
+  const toastDispatch = useToastMessageDispatch()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,11 +37,18 @@ export const SnapshotDetail = () => {
     if (confirmDelete) {
       try {
         const response = await deleteSnapshot(database, table, id);
-        alert('Snapshot deleted successfully');
+        toastDispatch({type: "success", value: {
+            msg: response.data,
+            delay: 3000,
+        }})
+     
         navigate(`/snapshot/${database}/${table}`);
       } catch (error) {
         console.error('Failed to delete snapshot:', error);
-        alert('Failed to delete snapshot');
+        toastDispatch({type: "error", value: {
+          msg: error,
+          delay: 3000,
+      }})
       }
     }
   };
@@ -82,19 +90,8 @@ export const SnapshotDetail = () => {
             </TableRow>
             <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Tags</TableCell>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{tags.map((branch, index) => (
-    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Branch</TableCell>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{branches.map((branch, index) => (
-    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}
-            </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Related Tags</TableCell>
-              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{tags.map((branch, index) => (
-    <span key={branch.name}>{branch.name}{index !== branches.length - 1 ? ', ' : ''}</span>))}</TableCell>
+              <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="right">{tags.map((tag, index) => (
+    <span key={tag.name}>{tag.name}{index !== tags.length - 1 ? ', ' : ''}</span>))}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">Snapshot ID</TableCell>
