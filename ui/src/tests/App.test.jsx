@@ -4,6 +4,7 @@ import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import { MemoryRouter, Route } from 'react-router-dom';
 import {MessageProvider} from "@/contexts/message.jsx";
+import { SearchDB } from '@/components/pages/search/SearchDB';
 
 
 const mock = new MockAdapter(axios);
@@ -26,7 +27,7 @@ mock.onGet(`${import.meta.env.VITE_HOST}/list-database`).reply(200, { data: 'Moc
 test('renders content', () => {
     render(<MessageProvider>
         <MemoryRouter initialEntries={['/']}>
-            <App />
+            <SearchDB/>
         </MemoryRouter>
     </MessageProvider>)
     const element = screen.getByText('SEARCH FOR DATABASE')
