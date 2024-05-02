@@ -24,12 +24,24 @@ test('renders content', () => {
 
 mock.onGet(`${import.meta.env.VITE_HOST}/list-database`).reply(200, { data: 'Mocked response' });
 
-test('renders content', () => {
+test('renders search database with no db_list', () => {
     render(<MessageProvider>
         <MemoryRouter initialEntries={['/']}>
             <SearchDB/>
         </MemoryRouter>
     </MessageProvider>)
     const element = screen.getByText('Search For Database')
+    expect(element).toBeDefined()
+})
+
+mock.onGet(`${import.meta.env.VITE_HOST}/list-database`).reply(200, { data: {db_list: ["toyDb"] }});
+
+test('renders search database with db_list', () => {
+    render(<MessageProvider>
+        <MemoryRouter initialEntries={['/']}>
+            <SearchDB/>
+        </MemoryRouter>
+    </MessageProvider>)
+    const element = screen.getByText('toyDb')
     expect(element).toBeDefined()
 })
