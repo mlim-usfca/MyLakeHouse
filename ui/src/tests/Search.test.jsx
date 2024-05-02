@@ -22,3 +22,27 @@ test('renders search database with db_list', async() => {
         expect(element).toBeDefined();
     });
 })
+
+mock.onGet(`${import.meta.env.VITE_HOST}/dashboard/list-tables?db_name=toyDb`).reply(200, 
+    [
+      {
+        "table_name": "taxis1",
+        "last_updated": "2024-05-02 at 14:25 PDT"
+      },
+      {
+        "table_name": "taxis2",
+        "last_updated": "2024-05-02 at 14:26 PDT"
+      }
+    ]);
+
+test('renders search table', async() => {
+    render(<MessageProvider>
+        <MemoryRouter initialEntries={['/searchtable/toyDb']}>
+            <SearchTable/>
+        </MemoryRouter>
+    </MessageProvider>)
+    await waitFor(() => {
+        const element = screen.getByText('taxis1');
+        expect(element).toBeDefined();
+    });
+})
