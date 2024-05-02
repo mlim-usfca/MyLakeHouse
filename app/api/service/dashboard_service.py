@@ -75,6 +75,7 @@ class DashboardService():
                 tags_data = []
                 for tags_json_str in tags_json:
                     tags_json_data = loads(tags_json_str)
+                    tags_json_data['snapshot_id'] = str(tags_json_data['snapshot_id'])
                     tags_data.append(tags_json_data)
                 response = {"snapshots": response_data, "branches": branches_data, "tags": tags_data}
             else:
@@ -179,6 +180,7 @@ class DashboardService():
             tags_data = []
             for tags_json_str in tags_json:
                 tags_json_data = loads(tags_json_str)
+                tags_json_data['snapshot_id'] = str(tags_json_data['snapshot_id'])
                 tags_data.append(tags_json_data)
             response = {"snapshots": response_data, "branches": branches_data, "tags": tags_data}
             return 200, response
