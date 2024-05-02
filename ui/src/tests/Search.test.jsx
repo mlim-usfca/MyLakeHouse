@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import {App} from '@/App.jsx'
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import { MemoryRouter, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import {MessageProvider} from "@/contexts/message.jsx";
 import { SearchDB } from '@/components/pages/search/SearchDB';
 import { SearchTable } from '@/components/pages/search/SearchTable';
