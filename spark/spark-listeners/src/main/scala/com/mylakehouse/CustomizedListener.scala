@@ -160,6 +160,11 @@ class CustomizedListener extends SparkListener{
 
     CustomizedListener.endedQueryMap.remove(queryId)
 
+    // set it to 1500 since the interval of testing prometheus is 1s
+    Thread.sleep(1500)
+
+    PushGateway.pushSQLQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getEndedQueryMap))
+
     // for testing purpose, print getEndedQueryMap
     println(CustomizedListener.getEndedQueryMap)
   }
