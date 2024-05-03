@@ -44,11 +44,14 @@ object CustomizedListener {
 }
 
 class CustomizedListener extends SparkListener{
-  private var curAppId = ""
+  //  private var curAppId = ""
+  private var curAppName = ""
 
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
-    curAppId = applicationStart.appId.get
-    CustomizedListener.applicationSet.add(curAppId)
+    //    curAppId = applicationStart.appId.get
+    curAppName = applicationStart.appName
+
+    CustomizedListener.applicationSet.add(curAppName)
     PushGateway.pushApplication(CustomizedListener.getApplicationSet)
 
     // print the HashSet after adding the ID of the application that has started
@@ -56,7 +59,7 @@ class CustomizedListener extends SparkListener{
   }
 
   override def onApplicationEnd(applicationEnd: SparkListenerApplicationEnd): Unit = {
-    CustomizedListener.applicationSet.remove(curAppId)
+    CustomizedListener.applicationSet.remove(curAppName)
     PushGateway.pushApplication(CustomizedListener.getApplicationSet)
 
     // print the HashSet after removing the ID of the application that has ended
@@ -80,11 +83,11 @@ class CustomizedListener extends SparkListener{
     val queryStartTime = event.time
 
     // add application ID to the runningQueryMap
-    CustomizedListener.runningQueryMap += (queryId -> mutable.HashMap[String, Any]("Application Id" -> curAppId))
+    CustomizedListener.runningQueryMap += (queryId -> mutable.HashMap[String, Any]("Application Name" -> curAppName))
 
     // create a map that stores the query ID and its associated application ID and start time
     val queryInfoAtStart = mutable.HashMap[String, Any](
-      "Application Id" -> curAppId,
+      "Application Name" -> curAppName,
       "Start Time" -> queryStartTime
     )
 
@@ -93,12 +96,12 @@ class CustomizedListener extends SparkListener{
     PushGateway.pushQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getRunningQueryMap))
 
     // for testing purposes, print the query ID, application ID, and start time of the query
-//    println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId, Start Time: $queryStartTime")
+    //    println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId, Start Time: $queryStartTime")
 
     // for testing purpose, print all entries in runningQueryMap
-//    CustomizedListener.runningQueryMap.foreach { case (key, value) =>
-//      println(s"Key: $key, Value: $value")
-//    }
+    //    CustomizedListener.runningQueryMap.foreach { case (key, value) =>
+    //      println(s"Key: $key, Value: $value")
+    //    }
 
     // for testing purpose, print getRunningQueryMap
     println(CustomizedListener.getRunningQueryMap)
@@ -134,7 +137,6 @@ class CustomizedListener extends SparkListener{
 
     PushGateway.pushQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getRunningQueryMap))
 
-
     // Append queryEndTime, duration, and queryContext to the endedQueryMap
     CustomizedListener.endedQueryMap.get(queryId) match {
       case Some(queryInfo) =>
@@ -149,12 +151,12 @@ class CustomizedListener extends SparkListener{
     PushGateway.pushSQLQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getEndedQueryMap))
 
     // for testing purpose, print the query ID, end time, duration, and query context of the query
-//    println(s"----------Query ended: Query ID: $queryId, End Time: $queryEndTime, Duration: $duration, Query Context: $queryContext")
+    //    println(s"----------Query ended: Query ID: $queryId, End Time: $queryEndTime, Duration: $duration, Query Context: $queryContext")
 
     // for testing purpose, print all entries in queryMap
-//    CustomizedListener.endedQueryMap.foreach { case (key, value) =>
-//      println(s"Key: $key, Value: $value")
-//    }
+    //    CustomizedListener.endedQueryMap.foreach { case (key, value) =>
+    //      println(s"Key: $key, Value: $value")
+    //    }
 
     CustomizedListener.endedQueryMap.remove(queryId)
 

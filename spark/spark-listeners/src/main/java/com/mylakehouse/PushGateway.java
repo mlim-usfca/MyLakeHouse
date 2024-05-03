@@ -33,8 +33,8 @@ public class PushGateway {
                 // Create a Gauge metric
                 Gauge gauge = Gauge.build()
                         .name("app_metric")
-                        .help("metric of app ID")
-                        .labelNames("app_ID")
+                        .help("metric of app name")
+                        .labelNames("app_name")
                         .register(registry);
 
                 // add another map to record which query is not running anymore
@@ -65,8 +65,8 @@ public class PushGateway {
         io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
 
         try {
-            pushGateway.pushAdd(registry, "application_ID");
-            System.out.println("Successfully pushed application ID with set + " + applicationSet);
+            pushGateway.pushAdd(registry, "application_name");
+            System.out.println("Successfully pushed application name with set + " + applicationSet);
         } catch (IOException e) {
             System.out.println("Failed to push application. Error message: " + e.getMessage());
         }
@@ -93,7 +93,7 @@ public class PushGateway {
                 // Create a Gauge metric
                 Gauge gauge = Gauge.build()
                         .name("query_app_metric")
-                        .help("metric of query ID with corresponding application ID")
+                        .help("metric of query ID with corresponding application name")
                         .labelNames("query", "application")
                         .register(registry);
 
@@ -106,7 +106,7 @@ public class PushGateway {
 
                     String appID = "";
                     for (Map.Entry<String, Object> labels : entry.getValue().entrySet()) {
-                        if (labels.getKey().equals("Application Id")) {
+                        if (labels.getKey().equals("Application Name")) {
                             appID = labels.getValue().toString();
                         }
                     }
@@ -164,8 +164,8 @@ public class PushGateway {
             try {
                 Gauge gauge = Gauge.build()
                         .name("sql_query_duration")
-                        .help("metric of query ID with corresponding application ID")
-                        .labelNames("app_ID", "query_ID", "SQL_context")
+                        .help("metric of query ID with corresponding application name")
+                        .labelNames("app_name", "query_ID", "SQL_context")
                         .register(registry);
 
                 // Set the value of the Gauge metric
@@ -177,7 +177,7 @@ public class PushGateway {
 
                     for (Map.Entry<String, Object> labels : entry.getValue().entrySet()) {
                         switch (labels.getKey()) {
-                            case "Application Id":
+                            case "Application Name":
                                 appID = labels.getValue().toString();
                                 break;
                             case "Duration(ms)":
