@@ -165,7 +165,7 @@ public class PushGateway {
                 Gauge gauge = Gauge.build()
                         .name("sql_query_duration")
                         .help("metric of query ID with corresponding application name")
-                        .labelNames("app_name", "query_ID", "SQL_context")
+                        .labelNames("app_name", "query_ID", "SQL_context", "duration_unit")
                         .register(registry);
 
                 // Set the value of the Gauge metric
@@ -181,7 +181,7 @@ public class PushGateway {
                                 appID = labels.getValue().toString();
                                 break;
                             case "Duration(ms)":
-                                duration = Double.parseDouble(labels.getValue().toString());
+                                duration = Double.parseDouble(labels.getValue().toString()) / 1000;
                                 break;
                             case "Query Context":
                                 SQLquery = labels.getValue().toString();
@@ -192,7 +192,7 @@ public class PushGateway {
 
                     System.out.println(SQLquery);
 
-                    gauge.labels(appID, queryID, SQLquery).set(duration);
+                    gauge.labels(appID, queryID, SQLquery, "second").set(duration);
                 }
             } catch (Exception e) {
                 System.out.println("Failed to build a gauge in pushSQLQuery()");
