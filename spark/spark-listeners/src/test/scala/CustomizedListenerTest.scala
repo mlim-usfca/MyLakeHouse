@@ -22,8 +22,6 @@ class CustomizedListenerTest extends AnyFunSuite {
       .config("spark.extraListeners", "com.mylakehouse.CustomizedListener")
       .getOrCreate()
 
-    spark.listenerManager.register(new CustomizedListener)
-
     // Create a sample dataset
     val data = Seq(
       (1, "John", 25),
@@ -43,16 +41,6 @@ class CustomizedListenerTest extends AnyFunSuite {
     val result1 = query1.collect()
     val result2 = query2.collect()
     val result3 = query3.collect()
-
-    // Print the results
-    //    println("Query 1 results:")
-    //    result1.foreach(println)
-
-    //    println("Query 2 results:")
-    //    result2.foreach(println)
-
-    //    println("Query 3 results:")
-    //    result3.foreach(println)
 
     // Stop the Spark session
     spark.stop()
