@@ -69,6 +69,27 @@ services:
       - "9091:9091"
     restart: always
 
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    networks:
+      iceberg_net:
+    ports:
+      - "3001:3000"
+    restart: always
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_ANONYMOUS_ORG_NAME=teamCaspian
+      - GF_AUTH_PROXY_ENABLED=true
+      - GF_AUTH_PROXY_HEADER_NAME="Authorization"
+      - GF_AUTH_PROXY_HEADER_PROPERTY="Bearer glsa_9ctpxoguuudd2CKn3EfrUwJXgQdQAL86_3724fa0b"
+      - GF_AUTH_PROXY_AUTO_SIGN_UP=true
+      - GF_SERVER_ROOT_URL=http://localhost:3001
+      - GF_REDIRECT_URL=http://localhost:3001/d/adju7v39wqo00a/test-dashboard?orgId=1&from=1714061239559&to=1714082839559
+    volumes:
+      - grafana:/var/lib/grafana
+
   rest:
     image: tabulario/iceberg-rest
     container_name: iceberg-rest
@@ -114,8 +135,11 @@ services:
     volumes:
       - ./init-minio.sh:/init-minio.sh
     entrypoint: [ "/bin/sh", "-c", "/init-minio.sh" ]
+    
 volumes:
   minio_data:
+  grafana:
+
 networks:
   iceberg_net:
     driver: bridge
