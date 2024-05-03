@@ -1,124 +1,18 @@
 package com.mylakehouse;
 
+import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import scala.Long;
-import scala.Tuple3;
 import scala.collection.Iterator;
-import scala.collection.JavaConverters;
 import scala.collection.immutable.Set;
-import io.prometheus.client.CollectorRegistry;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class PushGateway {
-    private static boolean[] appIDbool = new boolean[10]; // False as empty, True as occupied
-    private static Map<String, Integer> appMap = new HashMap<>();
-    private static boolean[] queryIDbool = new boolean[10]; // False as empty, True as occupied
-    private static Map<String, Integer> queryMap = new HashMap<>();
-
-    private static int getAppIdx(String appId) {
-        // If the query has been still running since last time we pushed the metric
-        if (appMap.containsKey(appId)) {
-            return appMap.get(appId);
-        }
-
-        // If the query is a new one, assign an unused index to it
-        for (int i = 0; i < appIDbool.length; i++) {
-            if (!appIDbool[i]) {
-                appIDbool[i] = true;
-                return i;
-            }
-        }
-
-        // if it is at capacity, extend the boolean array and assign the index of n + 1 to it
-        boolean[] copy = new boolean[appIDbool.length * 2];
-        for (int i = 0; i < appIDbool.length + 1; i++) {
-            copy[i] = true;
-        }
-
-        System.out.println("boolean array for application id extended, previous: " + appIDbool.length + " new: " + copy.length);
-
-        int ret = appIDbool.length + 1;
-        appIDbool = copy;
-
-        return ret;
-    }
-
-    private static void removeAppIdx(int idx) {
-        appIDbool[idx] = false;
-
-        if (appIDbool.length <= 10) {
-            return;
-        }
-
-        // if the second half of it is empty then shrink the array
-        for (int i = appIDbool.length - 1; i > appIDbool.length / 2; i--) {
-            if (appIDbool[i]) {
-                return;
-            }
-        }
-
-        boolean[] copy = new boolean[appIDbool.length / 2];
-        System.arraycopy(appIDbool, 0, copy, 0, copy.length);
-
-        System.out.println("boolean array for application id shrank, previous: " + appIDbool.length + " new: " + copy.length);
-        appIDbool = copy;
-    }
-
-    private static int getQueryIdx(String appId) {
-        // If the query has been still running since last time we pushed the metric
-        if (queryMap.containsKey(appId)) {
-            return queryMap.get(appId);
-        }
-
-        // If the query is a new one, assign an unused index to it
-        for (int i = 0; i < queryIDbool.length; i++) {
-            if (!queryIDbool[i]) {
-                queryIDbool[i] = true;
-                return i;
-            }
-        }
-
-        // if it is at capacity, extend the boolean array and assign the index of n + 1 to it
-        boolean[] copy = new boolean[queryIDbool.length * 2];
-        for (int i = 0; i < queryIDbool.length + 1; i++) {
-            copy[i] = true;
-        }
-
-        System.out.println("boolean array for application id extended, previous: " + queryIDbool.length + " new: " + copy.length);
-
-        int ret = queryIDbool.length + 1;
-        queryIDbool = copy;
-
-        return ret;
-    }
-
-    private static void removeQueryIdx(int idx) {
-        queryIDbool[idx] = false;
-
-        if (queryIDbool.length <= 10) {
-            return;
-        }
-
-        // if the second half of it is empty then shrink the array
-        for (int i = queryIDbool.length - 1; i > queryIDbool.length / 2; i--) {
-            if (queryIDbool[i]) {
-                return;
-            }
-        }
-
-        boolean[] copy = new boolean[queryIDbool.length / 2];
-        System.arraycopy(queryIDbool, 0, copy, 0, copy.length);
-
-        System.out.println("boolean array for query id shrank, previous: " + queryIDbool.length + " new: " + copy.length);
-        queryIDbool = copy;
-    }
-
     public static void pushApplication(Set<String> applicationSet) {
-        // System.out.println("Got set : " + applicationSet);
+        System.out.println("Got set : " + applicationSet);
 
         // Create a CollectorRegistry
         CollectorRegistry registry = new CollectorRegistry();
@@ -129,36 +23,43 @@ public class PushGateway {
                     .name("app_metric")
                     .help("An empty gauge")
                     .register(registry);
-            appMap = new HashMap<>();
-            appIDbool = new boolean[10];
+
+            IndexGenerator.setAppMap(new HashMap<>());
+            IndexGenerator.resetAppBool();
+
         } else {
             // System.out.println("else Got set : " + applicationSet);
-            // Create a Gauge metric
-            Gauge gauge = Gauge.build()
-                    .name("app_metric")
-                    .help("metric of app ID")
-                    .labelNames("app_ID")
-                    .register(registry);
+            try {
+                // Create a Gauge metric
+                Gauge gauge = Gauge.build()
+                        .name("app_metric")
+                        .help("metric of app ID")
+                        .labelNames("app_ID")
+                        .register(registry);
 
-            // add another map to record which query is not running anymore
-            Map<String, Integer> appMapTemp = new HashMap<>();
+                // add another map to record which query is not running anymore
+                Map<String, Integer> appMapTemp = new HashMap<>();
 
-            // Set the value of the Gauge metric
-            Iterator<String> iterator = applicationSet.iterator();
-            while (iterator.hasNext()) {
-                String element = iterator.next();
-                int idx = getAppIdx(element);
-                gauge.labels(element).set(idx + 1);
+                // Set the value of the Gauge metric
+                Iterator<String> iterator = applicationSet.iterator();
+                while (iterator.hasNext()) {
+                    String element = iterator.next();
+                    int idx = IndexGenerator.getAppIdx(element);
+                    gauge.labels(element).set(idx + 1);
 
-                appMapTemp.put(element, idx);
-                appMap.remove(element); // the rest will be queries not running anymore
+                    appMapTemp.put(element, idx);
+                    IndexGenerator.appMapRemove(element); // the rest will be queries not running anymore
+                }
+
+                for (Map.Entry<String, Integer> entry : IndexGenerator.getAppMap().entrySet()) {
+                    int id = entry.getValue();
+                    IndexGenerator.removeAppIdx(id);
+                }
+                IndexGenerator.setAppMap(appMapTemp);
+
+            } catch (Exception e) {
+                System.out.println("Failed to build a gauge in pushApplication()");
             }
-
-            for (Map.Entry<String, Integer> entry: appMap.entrySet()) {
-                int id = entry.getValue();
-                removeAppIdx(id);
-            }
-            appMap = appMapTemp;
         }
 
         io.prometheus.client.exporter.PushGateway pushGateway = new io.prometheus.client.exporter.PushGateway("pushgateway:9091");
@@ -171,46 +72,60 @@ public class PushGateway {
         }
     }
 
-    public static void pushQuery(scala.collection.immutable.Map<scala.Long, String> scalaMap) {
-        System.out.println("pushgateway + queryAppMap : " + scalaMap);
-        Map<Long, String> queryAppMap = JavaConverters.mapAsJavaMap(scalaMap);
+    public static void pushQuery(Map<Long, Map<String, Object>> appQueryMap) {
+        System.out.println("pushgateway + appQueryMap : " + appQueryMap);
 
         // Create a CollectorRegistry
         CollectorRegistry registry = new CollectorRegistry();
 
-        if (scalaMap.size() == 0) {
+        if (appQueryMap.size() == 0) {
+            System.out.println("query Application Map size is 0");
             // Create an empty Gauge metric
             Gauge gauge = Gauge.build()
                     .name("query_app_metric")
                     .help("An empty gauge")
                     .register(registry);
+
+            IndexGenerator.setAppQueryMap(new HashMap<>());
+            IndexGenerator.resetAppQueryBool();
         } else {
-            // Create a Gauge metric
-            Gauge gauge = Gauge.build()
-                    .name("query_app_metric")
-                    .help("metric of query ID with corresponding application ID")
-                    .labelNames("query", "application")
-                    .register(registry);
+            try {
+                // Create a Gauge metric
+                Gauge gauge = Gauge.build()
+                        .name("query_app_metric")
+                        .help("metric of query ID with corresponding application ID")
+                        .labelNames("query", "application")
+                        .register(registry);
 
-            // add another map to record which query is not running anymore
-            Map<String, Integer> queryMapTemp = new HashMap<>();
+                // add another map to record which query is not running anymore
+                Map<String, Integer> queryMapTemp = new HashMap<>();
 
-            // Set the value of the Gauge metric
-            for (Map.Entry<scala.Long, String> entry : queryAppMap.entrySet()) {
-                String query = String.valueOf(entry.getKey());
-                String app = entry.getValue();
-                int idx = getQueryIdx(query);
-                gauge.labels(query, app).set(idx + 1);
+                // Set the value of the Gauge metric
+                for (Map.Entry<Long, Map<String, Object>> entry : appQueryMap.entrySet()) {
+                    String queryID = String.valueOf(entry.getKey());
 
-                queryMapTemp.put(query, idx);
-                queryMap.remove(query); // the rest will be queries not running anymore
+                    String appID = "";
+                    for (Map.Entry<String, Object> labels : entry.getValue().entrySet()) {
+                        if (labels.getKey().equals("Application Id")) {
+                            appID = labels.getValue().toString();
+                        }
+                    }
+
+                    int idx = IndexGenerator.getQueryIdx(queryID);
+                    gauge.labels(queryID, appID).set(idx + 1);
+                    queryMapTemp.put(queryID, idx);
+                    IndexGenerator.appQueryMapRemove(queryID); // the rest will be queries not running anymore
+                }
+
+                for (Map.Entry<String, Integer> entry : IndexGenerator.getAppQueryMap().entrySet()) {
+                    int id = entry.getValue();
+                    IndexGenerator.removeQueryIdx(id);
+                }
+
+                IndexGenerator.setAppQueryMap(queryMapTemp);
+            } catch (Exception e) {
+                System.out.println("Failed to build a gauge in pushQuery()");
             }
-
-            for (Map.Entry<String, Integer> entry: queryMap.entrySet()) {
-                int id = entry.getValue();
-                removeQueryIdx(id);
-            }
-            queryMap = queryMapTemp;
         }
 
         // Push metrics to the Pushgateway
@@ -218,41 +133,69 @@ public class PushGateway {
 
         try {
             pushGateway.pushAdd(registry, "query_Application_ID");
-            System.out.println("Successfully pushed query_Application_ID with map" + queryAppMap);
+            System.out.println("Successfully pushed query_Application_ID with map" + appQueryMap);
         } catch (IOException e) {
             System.out.println("Failed to push query-application. Error message: " + e.getMessage());
         }
     }
 
-    public static void pushSQLQuery(scala.collection.immutable.Map<String, Tuple3<String, Long, String>> scalaMap) {
-        System.out.println("pushgateway + scalaMap : " + scalaMap);
-        Map<String, Tuple3<String, Long, String>> sqlDurationMap = JavaConverters.mapAsJavaMap(scalaMap);
+    public static void pushSQLQuery(Map<Long, Map<String, Object>> sqlDurationMap) {
+        System.out.println("pushgateway + pushSQLQuery + appQueryMap : " + sqlDurationMap);
+
+        for (Map.Entry<Long, Map<String, Object>> entry : sqlDurationMap.entrySet()) {
+            System.out.println(entry.getKey());
+            for (Map.Entry<String, Object> labels : entry.getValue().entrySet()) {
+                System.out.println(labels.getKey());
+                System.out.println(labels.getValue());
+            }
+        }
+
         // Create a CollectorRegistry
         CollectorRegistry registry = new CollectorRegistry();
 
         if (sqlDurationMap.size() == 0) {
             // Create an empty Gauge metric
             Gauge gauge = Gauge.build()
-                    .name("query_app_metric")
+                    .name("sql_query_duration")
                     .help("An empty gauge")
                     .register(registry);
         } else {
             // Create a Gauge metric
-            Gauge gauge = Gauge.build()
-                    .name("sql_query_duration")
-                    .help("metric of query ID with corresponding application ID")
-                    .labelNames("SQL_context", "application", "error_message")
-                    .register(registry);
+            try {
+                Gauge gauge = Gauge.build()
+                        .name("sql_query_duration")
+                        .help("metric of query ID with corresponding application ID")
+                        .labelNames("app_ID", "query_ID", "SQL_context")
+                        .register(registry);
 
-            // Set the value of the Gauge metric
-            for (Map.Entry<String, Tuple3<String, Long, String>> entry : sqlDurationMap.entrySet()) {
-                String sqlQuery = entry.getKey();
-                Tuple3<String, Long, String> info = entry.getValue();
-                String appID = info._1();
-                double duration = Double.parseDouble(String.valueOf(info._2()));
-                String errorMsg = info._3();
+                // Set the value of the Gauge metric
+                for (Map.Entry<Long, Map<String, Object>> entry : sqlDurationMap.entrySet()) {
+                    String queryID = String.valueOf(entry.getKey());
+                    String appID = "";
+                    double duration = 0;
+                    String SQLquery = "";
 
-                gauge.labels(sqlQuery, appID, errorMsg).set(duration);
+                    for (Map.Entry<String, Object> labels : entry.getValue().entrySet()) {
+                        switch (labels.getKey()) {
+                            case "Application Id":
+                                appID = labels.getValue().toString();
+                                break;
+                            case "Duration(ms)":
+                                duration = Double.parseDouble(labels.getValue().toString());
+                                break;
+                            case "Query Context":
+                                SQLquery = labels.getValue().toString();
+                                SQLquery = SQLquery.replace("\n", "");
+                                break;
+                        }
+                    }
+
+                    System.out.println(SQLquery);
+
+                    gauge.labels(appID, queryID, SQLquery).set(duration);
+                }
+            } catch (Exception e) {
+                System.out.println("Failed to build a gauge in pushSQLQuery()");
             }
         }
 
