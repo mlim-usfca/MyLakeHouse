@@ -3,8 +3,8 @@ package com.mylakehouse
 import com.mylakehouse.CustomizedListener.getApplicationSet
 import org.apache.spark.scheduler.{SparkListener, SparkListenerApplicationEnd, SparkListenerApplicationStart, SparkListenerEvent, SparkListenerTaskEnd, SparkListenerTaskStart}
 import org.apache.spark.sql.execution.ui.{SparkListenerSQLExecutionEnd, SparkListenerSQLExecutionStart}
-import org.apache.spark.sql.util.QueryExecutionListener
 import org.apache.spark.sql.execution.QueryExecution
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 
 import scala.collection.mutable
 import scala.reflect.runtime.universe.{TermName, runtimeMirror, typeOf}
@@ -22,8 +22,8 @@ object CustomizedListener {
   private val runningQueryMap: mutable.HashMap[Long, mutable.HashMap[String, Any]] = mutable.HashMap.empty
 
   // create a method to return an immutable deep copy of runningQueryMap
-  def getRunningQueryMap(): Map[Long, Map[String, Any]] = {
-    getRunningQueryMap.map { case (queryId, queryInfo) =>
+  def getRunningQueryMap: Map[Long, Map[String, Any]] = {
+    runningQueryMap.map { case (queryId, queryInfo) =>
       queryId -> queryInfo.toMap
     }.toMap
   }
@@ -35,7 +35,7 @@ object CustomizedListener {
   private val endedQueryMap: mutable.HashMap[Long, mutable.HashMap[String, Any]] = mutable.HashMap.empty
 
   // create a method to return an immutable deep copy of endedQueryMap
-  def getEndedQueryMap(): Map[Long, Map[String, Any]] = {
+  def getEndedQueryMap: Map[Long, Map[String, Any]] = {
     endedQueryMap.map { case (queryId, queryInfo) =>
       queryId -> queryInfo.toMap
     }.toMap
@@ -90,7 +90,7 @@ class CustomizedListener extends SparkListener{
 
     CustomizedListener.endedQueryMap += (queryId -> queryInfoAtStart)
 
-    //    PushGateway.pushQuery(CustomizedListener.getRunningQueryMap)
+    PushGateway.pushQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getRunningQueryMap))
 
     // for testing purposes, print the query ID, application ID, and start time of the query
     println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId, Start Time: $queryStartTime")
@@ -130,7 +130,8 @@ class CustomizedListener extends SparkListener{
     // remove the query ID from the runningQueryMap
     CustomizedListener.runningQueryMap.remove(queryId)
 
-    //    PushGateway.pushQuery(CustomizedListener.getRunningQueryMap)
+    PushGateway.pushQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getRunningQueryMap))
+
 
     // Append queryEndTime, duration, and queryContext to the endedQueryMap
     CustomizedListener.endedQueryMap.get(queryId) match {
@@ -143,8 +144,7 @@ class CustomizedListener extends SparkListener{
         println(s"Query ID $queryId not found in the queryMap")
     }
 
-    //    PushGateway.pushQuery(CustomizedListener.getEndedQueryMap)
-
+    PushGateway.pushSQLQuery(ScalaToJavaInterop.convertToJavaMap(CustomizedListener.getEndedQueryMap))
 
     // for testing purpose, print the query ID, end time, duration, and query context of the query
 //    println(s"----------Query ended: Query ID: $queryId, End Time: $queryEndTime, Duration: $duration, Query Context: $queryContext")
@@ -155,5 +155,11 @@ class CustomizedListener extends SparkListener{
 //    }
 
     CustomizedListener.endedQueryMap.remove(queryId)
+  }
+}
+
+object ScalaToJavaInterop {
+  def convertToJavaMap(scalaMap: Map[Long, Map[String, Any]]): java.util.Map[Long, java.util.Map[String, AnyRef]] = {
+    scalaMap.mapValues(_.mapValues(_.asInstanceOf[AnyRef]).asJava).asJava
   }
 }
