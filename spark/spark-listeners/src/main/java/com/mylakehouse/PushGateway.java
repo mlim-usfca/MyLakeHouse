@@ -12,109 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PushGateway {
-    private static boolean[] appIDbool = new boolean[10]; // False as empty, True as occupied
-    private static Map<String, Integer> appMap = new HashMap<>();
-    private static boolean[] queryIDbool = new boolean[10]; // False as empty, True as occupied
-    private static Map<String, Integer> queryMap = new HashMap<>();
-
-    private static int getAppIdx(String appId) {
-        // If the query has been still running since last time we pushed the metric
-        if (appMap.containsKey(appId)) {
-            return appMap.get(appId);
-        }
-
-        // If the query is a new one, assign an unused index to it
-        for (int i = 0; i < appIDbool.length; i++) {
-            if (!appIDbool[i]) {
-                appIDbool[i] = true;
-                return i;
-            }
-        }
-
-        // if it is at capacity, extend the boolean array and assign the index of n + 1 to it
-        boolean[] copy = new boolean[appIDbool.length * 2];
-        for (int i = 0; i < appIDbool.length + 1; i++) {
-            copy[i] = true;
-        }
-
-        System.out.println("boolean array for application id extended, previous: " + appIDbool.length + " new: " + copy.length);
-
-        int ret = appIDbool.length + 1;
-        appIDbool = copy;
-
-        return ret;
-    }
-
-    private static void removeAppIdx(int idx) {
-        appIDbool[idx] = false;
-
-        if (appIDbool.length <= 10) {
-            return;
-        }
-
-        // if the second half of it is empty then shrink the array
-        for (int i = appIDbool.length - 1; i > appIDbool.length / 2; i--) {
-            if (appIDbool[i]) {
-                return;
-            }
-        }
-
-        boolean[] copy = new boolean[appIDbool.length / 2];
-        System.arraycopy(appIDbool, 0, copy, 0, copy.length);
-
-        System.out.println("boolean array for application id shrank, previous: " + appIDbool.length + " new: " + copy.length);
-        appIDbool = copy;
-    }
-
-    private static int getQueryIdx(String appId) {
-        // If the query has been still running since last time we pushed the metric
-        if (queryMap.containsKey(appId)) {
-            return queryMap.get(appId);
-        }
-
-        // If the query is a new one, assign an unused index to it
-        for (int i = 0; i < queryIDbool.length; i++) {
-            if (!queryIDbool[i]) {
-                queryIDbool[i] = true;
-                return i;
-            }
-        }
-
-        // if it is at capacity, extend the boolean array and assign the index of n + 1 to it
-        boolean[] copy = new boolean[queryIDbool.length * 2];
-        for (int i = 0; i < queryIDbool.length + 1; i++) {
-            copy[i] = true;
-        }
-
-        System.out.println("boolean array for application id extended, previous: " + queryIDbool.length + " new: " + copy.length);
-
-        int ret = queryIDbool.length + 1;
-        queryIDbool = copy;
-
-        return ret;
-    }
-
-    private static void removeQueryIdx(int idx) {
-        queryIDbool[idx] = false;
-
-        if (queryIDbool.length <= 10) {
-            return;
-        }
-
-        // if the second half of it is empty then shrink the array
-        for (int i = queryIDbool.length - 1; i > queryIDbool.length / 2; i--) {
-            if (queryIDbool[i]) {
-                return;
-            }
-        }
-
-        boolean[] copy = new boolean[queryIDbool.length / 2];
-        System.arraycopy(queryIDbool, 0, copy, 0, copy.length);
-
-        System.out.println("boolean array for query id shrank, previous: " + queryIDbool.length + " new: " + copy.length);
-        queryIDbool = copy;
-    }
-
     public static void pushApplication(Set<String> applicationSet) {
         System.out.println("Got set : " + applicationSet);
 
@@ -127,9 +24,12 @@ public class PushGateway {
                     .name("app_metric")
                     .help("An empty gauge")
                     .register(registry);
-            appMap = new HashMap<>();
-            appIDbool = new boolean[10];
+
+            IndexGenerator.setAppMap(new HashMap<>());
+            IndexGenerator.resetAppBool();
+
         } else {
+            // System.out.println("else Got set : " + applicationSet);
             try {
                 // Create a Gauge metric
                 Gauge gauge = Gauge.build()
@@ -145,18 +45,19 @@ public class PushGateway {
                 Iterator<String> iterator = applicationSet.iterator();
                 while (iterator.hasNext()) {
                     String element = iterator.next();
-                    int idx = getAppIdx(element);
+                    int idx = IndexGenerator.getAppIdx(element);
                     gauge.labels(element).set(idx + 1);
 
                     appMapTemp.put(element, idx);
-                    appMap.remove(element); // the rest will be queries not running anymore
+                    IndexGenerator.appMapRemove(element); // the rest will be queries not running anymore
                 }
 
-                for (Map.Entry<String, Integer> entry: appMap.entrySet()) {
+                for (Map.Entry<String, Integer> entry : IndexGenerator.getAppMap().entrySet()) {
                     int id = entry.getValue();
-                    removeAppIdx(id);
+                    IndexGenerator.removeAppIdx(id);
                 }
-                appMap = appMapTemp;
+                IndexGenerator.setAppMap(appMapTemp);
+
             } catch (Exception e) {
                 System.out.println("Failed to build a gauge in pushApplication()");
             }
@@ -173,20 +74,21 @@ public class PushGateway {
     }
 
     public static void pushQuery(Map<scala.Long, Map<String, Object>> appQueryMap) {
-        System.out.println("pushgateway + queryAppMap : " + appQueryMap);
+        System.out.println("pushgateway + appQueryMap : " + appQueryMap);
 
         // Create a CollectorRegistry
         CollectorRegistry registry = new CollectorRegistry();
 
         if (appQueryMap.size() == 0) {
+            System.out.println("query Application Map size is 0");
             // Create an empty Gauge metric
             Gauge gauge = Gauge.build()
                     .name("query_app_metric")
                     .help("An empty gauge")
                     .register(registry);
 
-            queryMap = new HashMap<>();
-            queryIDbool = new boolean[10];
+            IndexGenerator.setAppQueryMap(new HashMap<>());
+            IndexGenerator.resetAppQueryBool();
         } else {
             try {
                 // Create a Gauge metric
@@ -210,18 +112,18 @@ public class PushGateway {
                         }
                     }
 
-                    int idx = getQueryIdx(queryID);
+                    int idx = IndexGenerator.getQueryIdx(queryID);
                     gauge.labels(queryID, appID).set(idx + 1);
-
                     queryMapTemp.put(queryID, idx);
-                    queryMap.remove(queryID); // the rest will be queries not running anymore
+                    IndexGenerator.appQueryMapRemove(queryID); // the rest will be queries not running anymore
                 }
 
                 for (Map.Entry<String, Integer> entry : IndexGenerator.getAppQueryMap().entrySet()) {
                     int id = entry.getValue();
-                    removeQueryIdx(id);
+                    IndexGenerator.removeQueryIdx(id);
                 }
-                queryMap = queryMapTemp;
+
+                IndexGenerator.setAppQueryMap(queryMapTemp);
             } catch (Exception e) {
                 System.out.println("Failed to build a gauge in pushQuery()");
             }
