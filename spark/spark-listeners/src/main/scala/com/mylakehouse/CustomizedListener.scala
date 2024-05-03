@@ -7,6 +7,7 @@ import org.apache.spark.sql.util.QueryExecutionListener
 import org.apache.spark.sql.execution.QueryExecution
 
 import scala.collection.mutable
+import scala.reflect.runtime.universe.{TermName, runtimeMirror, typeOf}
 
 // this object contains all static variables and methods that are shared among all instances of the com.mylakehouse.CustomizedListener class
 object CustomizedListener {
@@ -14,35 +15,36 @@ object CustomizedListener {
   // create a mutable HashSet to store all IDs of applications that are currently running
   private val applicationSet = mutable.Set.empty[String]
 
-  // create a mutable HashMap to store all IDs of queries that are currently running and the their associated application IDs
-  private val queryMap = mutable.HashMap.empty[Long, String]
-
-  // create a mutable HashMap to store all IDs of tasks that are currently running and the their associated application IDs
-  private val taskMap = mutable.HashMap.empty[Long, String]
-
-  // create a mutable HashMap to store the SQL context of a query (as the key)
-  // and its application ID, duration/execution time, and error message if failed (as the value)
-  private val sqlMap = mutable.HashMap.empty[String, (String, Long, String)]
-
   // create a method to return an immutable deep copy of applicationSet
   def getApplicationSet: Set[String] = applicationSet.toSet
 
-  // create a method to return an immutable deep copy of queryMap
-  def getQueryMap: Map[Long, String] = queryMap.toMap
+  // create a mutable HashMap to store all queries that are currently running
+  private val runningQueryMap: mutable.HashMap[Long, mutable.HashMap[String, Any]] = mutable.HashMap.empty
 
-  // create a method to return an immutable deep copy of taskMap
-  def getTaskMap: Map[Long, String] = taskMap.toMap
+  // create a method to return an immutable deep copy of runningQueryMap
+  def getRunningQueryMap(): Map[Long, Map[String, Any]] = {
+    getRunningQueryMap.map { case (queryId, queryInfo) =>
+      queryId -> queryInfo.toMap
+    }.toMap
+  }
 
-  // create a method to return an immutable deep copy of sqlMap
-  def getSQLMap: Map[String, (String, Long, String)] = sqlMap.toMap
+  // create a mutable HashMap named endedQueryMap to store all detailed query info when a query ends
+  // where key is the query id,
+  // and value is another mutable hashmap that contains more detailed info about this query
+  // (its application ID, start time, end time, duration, SQL context)
+  private val endedQueryMap: mutable.HashMap[Long, mutable.HashMap[String, Any]] = mutable.HashMap.empty
+
+  // create a method to return an immutable deep copy of endedQueryMap
+  def getEndedQueryMap(): Map[Long, Map[String, Any]] = {
+    endedQueryMap.map { case (queryId, queryInfo) =>
+      queryId -> queryInfo.toMap
+    }.toMap
+  }
+
 }
 
-class CustomizedListener extends SparkListener with QueryExecutionListener{
+class CustomizedListener extends SparkListener{
   private var curAppId = ""
-
-  //  private var jvmGCTime = 0L
-  //  private var totalRecordRead = 0L
-  //  private var totalRecordWritten = 0L
 
   override def onApplicationStart(applicationStart: SparkListenerApplicationStart): Unit = {
     curAppId = applicationStart.appId.get
@@ -59,113 +61,99 @@ class CustomizedListener extends SparkListener with QueryExecutionListener{
 
     // print the HashSet after removing the ID of the application that has ended
     println(s"Application ended: ${getApplicationSet}")
-
-    //    println(s"Total JVM GC time: ${jvmGCTime}")
-    //    println(s"Total records read: ${totalRecordRead}")
-    //    println(s"Total records written: ${totalRecordWritten}")
-  }
-
-  override def onTaskStart(taskStart: SparkListenerTaskStart): Unit = {
-    val taskId = taskStart.taskInfo.taskId;
-    val executorId = taskStart.taskInfo.executorId;
-//    println(s"----------Task started: Task ID: ${taskId}, Executor ID: ${executorId}")
-    CustomizedListener.taskMap.put(taskId, curAppId)
-  }
-
-  override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
-    val taskId = taskEnd.taskInfo.taskId
-//    println(s"----------Task ended: Task ID: $taskId")
-    CustomizedListener.taskMap.remove(taskId)
-
-    //    val metrics = taskEnd.taskMetrics
-    //    val cpuTime = metrics.executorCpuTime
-    //    jvmGCTime += metrics.jvmGCTime
-    //    totalRecordRead += metrics.inputMetrics.recordsRead
-    //    totalRecordWritten += metrics.outputMetrics.recordsWritten
-    //    println(s"CPU Time: ${cpuTime}")
-    //    println(s"JVM GC Time: ${jvmGCTime}")
-    //    println(s"Total records read: ${totalRecordRead}")
-    //    println(s"Total records written: ${totalRecordWritten}")
-    //    println(s"Ended task with message: ${taskEnd}")
   }
 
   // override the onOtherEvent method to capture SQL-query events
   override def onOtherEvent(event: SparkListenerEvent): Unit = event match {
     case e: SparkListenerSQLExecutionStart => onSQLExecutionStart(e)
     case e: SparkListenerSQLExecutionEnd => onSQLExecutionEnd(e)
-    case _ =>
   }
 
-  // when a SQL query starts, create a method to capture its query Id and associate application Id
-  // and add it to the queryMap which stores all currently running queries
+
+  // when a query starts, this method will capture its query info, store it to runningQueryMap and endedQueryMap,
+  // and send it to the PushGateway
   private def onSQLExecutionStart(event: SparkListenerSQLExecutionStart): Unit = {
+    // get query ID
     val queryId = event.executionId
-    CustomizedListener.queryMap.put(queryId, curAppId)
-    PushGateway.pushQuery(CustomizedListener.getQueryMap)
-//    println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId")
 
-    // print all entries in HashMap after adding the query that has started
-    //    println(s"HashMap after adding the query: ${CustomizedListener.getQueryMap}")
+    // get the application ID of the query
+    val queryStartTime = event.time
+
+    // add application ID to the runningQueryMap
+    CustomizedListener.runningQueryMap += (queryId -> mutable.HashMap[String, Any]("Application Id" -> curAppId))
+
+    // create a map that stores the query ID and its associated application ID and start time
+    val queryInfoAtStart = mutable.HashMap[String, Any](
+      "Application Id" -> curAppId,
+      "Start Time" -> queryStartTime
+    )
+
+    CustomizedListener.endedQueryMap += (queryId -> queryInfoAtStart)
+
+    //    PushGateway.pushQuery(CustomizedListener.getRunningQueryMap)
+
+    // for testing purposes, print the query ID, application ID, and start time of the query
+    println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId, Start Time: $queryStartTime")
+
+    // for testing purpose, print all entries in runningQueryMap
+    CustomizedListener.runningQueryMap.foreach { case (key, value) =>
+      println(s"Key: $key, Value: $value")
+    }
+
   }
 
-  // when a SQL query ends, remove it from the queryMap
+  // when a query ends, this method will capture its query info, add it to endedQueryMap,
+  // remove it from the runningQueryMap, push both maps to the PushGateway, and remove it from endedQueryMap
   private def onSQLExecutionEnd(event: SparkListenerSQLExecutionEnd): Unit = {
+    Thread.sleep(5000)
+
+    // get query ID
     val queryId = event.executionId
-    CustomizedListener.queryMap.remove(queryId)
-    PushGateway.pushQuery(CustomizedListener.getQueryMap)
-//    println(s"----------Query ended: Query ID: $queryId")
 
-    // print all entries in HashMap after removing the query that has ended
-    //    println(s"HashMap after removing the query: ${CustomizedListener.getQueryMap}")
-  }
-  override def onSuccess(funcName: String, qe: QueryExecution, durationNs: Long): Unit = {
-    println("=========================================")
-    println("                 Print on success                 ")
+    // get the end time of the query
+    val queryEndTime = event.time
 
-    val sqlContext = qe.logical.origin.sqlText.getOrElse(qe.logical.toString())
-    println(s"SQL query: $sqlContext")
+    // get the duration of the query
+    val queryStartTime = CustomizedListener.endedQueryMap(queryId)("Start Time").asInstanceOf[Long]
+    val duration = queryEndTime - queryStartTime
 
-    val sqlDuration = durationNs / 1000000
-    println(s"Duration: $sqlDuration ms")
+    // use reflection to get the private field qe from the event
+    // since we can get the query context from qe
+    val mirror = runtimeMirror(getClass.getClassLoader)
+    val instanceMirror = mirror.reflect(event)
+    val qeField = typeOf[SparkListenerSQLExecutionEnd].decl(TermName("qe")).asTerm
+    val value = instanceMirror.reflectField(qeField).get.asInstanceOf[QueryExecution]
 
-    // since the query has succeeded, there is no error message
-    val errorMsg = "No error"
-    println(s"Error message: $errorMsg")
+    // get the query context
+    val queryContext = value.logical.origin.sqlText.getOrElse(value.logical.toString())
 
-    // put the sqlContext and its associated application ID, duration/execution time, and error message into the sqlMap
-    CustomizedListener.sqlMap.put(sqlContext, (curAppId, sqlDuration, errorMsg))
+    // remove the query ID from the runningQueryMap
+    CustomizedListener.runningQueryMap.remove(queryId)
 
-//    PushGateway.pushQuery(CustomizedListener.getSQLMap)
+    //    PushGateway.pushQuery(CustomizedListener.getRunningQueryMap)
 
-    // remove the sqlContext from the sqlMap
-    CustomizedListener.sqlMap.remove(sqlContext)
+    // Append queryEndTime, duration, and queryContext to the endedQueryMap
+    CustomizedListener.endedQueryMap.get(queryId) match {
+      case Some(queryInfo) =>
+        queryInfo += ("End Time" -> queryEndTime)
+        queryInfo += ("Duration(ms)" -> duration)
+        queryInfo += ("Query Context" -> queryContext)
+      case None =>
+        // Handle the case when the queryId is not found in the queryMap
+        println(s"Query ID $queryId not found in the queryMap")
+    }
 
-    println("=========================================")
-  }
+    //    PushGateway.pushQuery(CustomizedListener.getEndedQueryMap)
 
-  override def onFailure(funcName: String, qe: QueryExecution, exception: Exception): Unit = {
-    println("=========================================")
-    println("                 Print on failure                 ")
 
-    val sqlContext = qe.logical.origin.sqlText.getOrElse("Not a SQL query")
-    println(s"SQL query: $sqlContext")
+    // for testing purpose, print the query ID, end time, duration, and query context of the query
+//    println(s"----------Query ended: Query ID: $queryId, End Time: $queryEndTime, Duration: $duration, Query Context: $queryContext")
 
-    // set the duration time to be 0 to indicate that the query has failed
-    val sqlDuration = 0
-    println(s"Duration: $sqlDuration ms")
+    // for testing purpose, print all entries in queryMap
+//    CustomizedListener.endedQueryMap.foreach { case (key, value) =>
+//      println(s"Key: $key, Value: $value")
+//    }
 
-    // since the query has failed, there is an error message
-    val errorMsg = exception.getMessage
-    println(s"Error message: $errorMsg")
-
-    // put the sqlContext and its associated application ID, duration/execution time, and error message into the sqlMap
-    CustomizedListener.sqlMap.put(sqlContext, (curAppId, sqlDuration, errorMsg))
-
-    //    PushGateway.pushQuery(CustomizedListener.getSQLMap)
-
-    // remove the sqlContext from the sqlMap
-    CustomizedListener.sqlMap.remove(sqlContext)
-
-    println("=========================================")
+    CustomizedListener.endedQueryMap.remove(queryId)
   }
 }
