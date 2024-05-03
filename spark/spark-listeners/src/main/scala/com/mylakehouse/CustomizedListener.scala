@@ -22,8 +22,8 @@ object CustomizedListener {
   private val runningQueryMap: mutable.HashMap[Long, mutable.HashMap[String, Any]] = mutable.HashMap.empty
 
   // create a method to return an immutable deep copy of runningQueryMap
-  def getRunningQueryMap(): Map[Long, Map[String, Any]] = {
-    getRunningQueryMap.map { case (queryId, queryInfo) =>
+  def getRunningQueryMap: Map[Long, Map[String, Any]] = {
+    runningQueryMap.map { case (queryId, queryInfo) =>
       queryId -> queryInfo.toMap
     }.toMap
   }
@@ -35,7 +35,7 @@ object CustomizedListener {
   private val endedQueryMap: mutable.HashMap[Long, mutable.HashMap[String, Any]] = mutable.HashMap.empty
 
   // create a method to return an immutable deep copy of endedQueryMap
-  def getEndedQueryMap(): Map[Long, Map[String, Any]] = {
+  def getEndedQueryMap: Map[Long, Map[String, Any]] = {
     endedQueryMap.map { case (queryId, queryInfo) =>
       queryId -> queryInfo.toMap
     }.toMap
@@ -93,13 +93,15 @@ class CustomizedListener extends SparkListener{
     //    PushGateway.pushQuery(CustomizedListener.getRunningQueryMap)
 
     // for testing purposes, print the query ID, application ID, and start time of the query
-    println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId, Start Time: $queryStartTime")
+//    println(s"---------Query started: Query ID: $queryId, Application ID: $curAppId, Start Time: $queryStartTime")
 
     // for testing purpose, print all entries in runningQueryMap
-    CustomizedListener.runningQueryMap.foreach { case (key, value) =>
-      println(s"Key: $key, Value: $value")
-    }
+//    CustomizedListener.runningQueryMap.foreach { case (key, value) =>
+//      println(s"Key: $key, Value: $value")
+//    }
 
+    // for testing purpose, print getRunningQueryMap
+    println(CustomizedListener.getRunningQueryMap)
   }
 
   // when a query ends, this method will capture its query info, add it to endedQueryMap,
@@ -155,5 +157,8 @@ class CustomizedListener extends SparkListener{
 //    }
 
     CustomizedListener.endedQueryMap.remove(queryId)
+
+    // for testing purpose, print getEndedQueryMap
+    println(CustomizedListener.getEndedQueryMap)
   }
 }
