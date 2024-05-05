@@ -24,7 +24,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
               # Now we have got the access of EC2 and we will start the deploy .
               cd /home/ubuntu/MyLakeHouse &&
-              docker system prune -f ; docker volume prune -f ;docker rm -f -v $(docker ps -q -a) &&
+              docker system prune -f ; docker volume prune -f ;docker rm -f -v $(docker ps -q -a) || true &&
               git checkout main &&
               git fetch --all &&
               git reset --hard origin/main &&
