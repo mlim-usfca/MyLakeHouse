@@ -1,5 +1,5 @@
-import React, {useEffect} from 'react'
-import {Outlet} from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { Outlet } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -19,11 +19,11 @@ import AddchartIcon from '@mui/icons-material/Addchart';
 import axios from "axios"
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
-import {useRecentView, useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
+import { useRecentView, useRecentViewDispatch } from "@/contexts/recent-view-history.jsx";
 import IconButton from "@mui/material/IconButton";
 import Snackbar from '@mui/material/Snackbar';
-import {Slide} from "@mui/material";
-import {useToastMessage, useToastMessageDispatch} from "@/contexts/message.jsx";
+import { Slide } from "@mui/material";
+import { useToastMessage, useToastMessageDispatch } from "@/contexts/message.jsx";
 import { useTranslation } from "react-i18next";
 import Button from "@mui/material/Button";
 import InputLabel from '@mui/material/InputLabel';
@@ -36,7 +36,7 @@ function SlideTransition(props) {
 }
 
 export const App = () => {
-    const {t, i18n} = useTranslation();
+    const { t, i18n } = useTranslation();
     const toastMsgProps = useToastMessage();
     const toastDispatch = useToastMessageDispatch();
     const [selectedIndex, setSelectedIndex] = React.useState(1);
@@ -58,22 +58,24 @@ export const App = () => {
     };
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_HOST}/test`).then(data => console.log(data))
+        axios.get(`${import.meta.env.VITE_HOST}:8090/test`).then(data => console.log(data))
     }, []);
 
 
     return (
         <>
-            <CssBaseline/>
+            <CssBaseline />
             <div className="shape"></div>
-            <Container maxWidth={false} disableGutters style={{height: '100vh',position: 'relative',
-                zIndex: 1}}>
+            <Container maxWidth={false} disableGutters style={{
+                height: '100vh', position: 'relative',
+                zIndex: 1
+            }}>
                 <Box sx={{
                     background: 'radial-gradient(ellipse at top, #1E7D5B, transparent),\n' +
                         '            radial-gradient(ellipse at bottom, #155D78, transparent)',
                     height: "100%", padding: "20px 12px"
                 }}>
-                    <Grid container columnSpacing={4} style={{height: "100%", width: "100%"}}>
+                    <Grid container columnSpacing={4} style={{ height: "100%", width: "100%" }}>
                         <Grid item xs={3}>
                             <Box height="100%">
                                 <Paper style={{
@@ -81,62 +83,62 @@ export const App = () => {
                                     boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
                                     marginLeft: "1rem",
                                     height: '100%',
-                                    backdropFilter:"blur(8px)",
+                                    backdropFilter: "blur(8px)",
                                     display: "flex", flexDirection: "column",
                                 }}>
                                     <Typography className="glass-text" variant="subtitle2" align="right"
-                                                sx={{padding: "8px 16px 0 0", fontSize: 16}}>
+                                        sx={{ padding: "8px 16px 0 0", fontSize: 16 }}>
                                         Caspian
                                     </Typography>
-                                    <Box sx={{width: '100%', bgcolor: 'transparent'}}>
+                                    <Box sx={{ width: '100%', bgcolor: 'transparent' }}>
                                         <List component="nav" aria-label="main mailbox folders">
                                             <ListItemButton
                                                 selected={selectedIndex === 0}
                                                 onClick={(event) => handleListItemClick(event, 0)}
                                             >
                                                 <ListItemIcon>
-                                                    <SearchIcon/>
+                                                    <SearchIcon />
                                                 </ListItemIcon>
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("searchMenu")}/>
+                                                <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("searchMenu")} />
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 1}
                                                 onClick={(event) => handleListItemClick(event, 1)}
                                             >
                                                 <ListItemIcon>
-                                                    <PublicIcon/>
+                                                    <PublicIcon />
                                                 </ListItemIcon>
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("globalSettings")}/>
+                                                <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("globalSettings")} />
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 2}
                                                 onClick={(event) => handleListItemClick(event, 2)}
                                             >
                                                 <ListItemIcon>
-                                                    <AddchartIcon/>
+                                                    <AddchartIcon />
                                                 </ListItemIcon>
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("Spark Performance")}/>
+                                                <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("Spark Performance")} />
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 3}
                                                 onClick={(event) => handleListItemClick(event, 3)}
                                             >
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("recentActivity")}/>
+                                                <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("recentActivity")} />
                                             </ListItemButton>
-                                            <Divider/>
+                                            <Divider />
                                             {recentView?.tables?.map(rc => {
-                                                return  <ListItemButton key={"rc-view-" + rc.table}
+                                                return <ListItemButton key={"rc-view-" + rc.table}
                                                     onClick={(event) => navigate(`/table/${rc.db}/${rc.table}`)}
                                                 >
-                                                    <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={`${rc.db}.${rc.table}`}/>
-                                                    <IconButton onClick={() => recentViewDispatch({type: "remove", value: {db: rc.db, table: rc.table}})}>
+                                                    <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={`${rc.db}.${rc.table}`} />
+                                                    <IconButton onClick={() => recentViewDispatch({ type: "remove", value: { db: rc.db, table: rc.table } })}>
                                                         <DeleteIcon />
                                                     </IconButton>
                                                 </ListItemButton>
                                             })}
                                         </List>
                                     </Box>
-                                    <Box sx={{padding: "8px", fontSize: 16, marginTop: "auto", textAlign: "right", display: "flex", alignItems: "center", justifyContent: "right"}}>
+                                    <Box sx={{ padding: "8px", fontSize: 16, marginTop: "auto", textAlign: "right", display: "flex", alignItems: "center", justifyContent: "right" }}>
                                         <FormControl>
                                             <Select
                                                 variant="standard"
@@ -160,22 +162,22 @@ export const App = () => {
                                     background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px',
                                     boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
                                     height: '100%',
-                                    backdropFilter:"blur(8px)",
+                                    backdropFilter: "blur(8px)",
                                 }}>
                                     {/* Your content here */}
-                                    <Outlet/>
+                                    <Outlet />
                                 </Paper>
                             </Box>
                         </Grid>
                     </Grid>
                 </Box>
             </Container>
-            { toastMsgProps.isOpen &&
+            {toastMsgProps.isOpen &&
                 <Snackbar
                     anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                     open={toastMsgProps.isOpen}
                     onClose={() => {
-                        toastDispatch({type: "reset", value: {}})
+                        toastDispatch({ type: "reset", value: {} })
                     }}
                     TransitionComponent={SlideTransition}
                     message={toastMsgProps.msg}

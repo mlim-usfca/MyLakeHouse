@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,16 +10,16 @@ import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import {properties} from "@/assets/default-properties.js";
+import { properties } from "@/assets/default-properties.js";
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import {useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
-import {updateProp} from "@/services/table-properties/service.js"
+import { updateProp } from "@/services/table-properties/service.js"
 import Grid from "@mui/material/Unstable_Grid2";
-import {useToastMessageDispatch} from "@/contexts/message.jsx";
+import { useToastMessageDispatch } from "@/contexts/message.jsx";
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 
@@ -31,9 +31,9 @@ export const TableSettings = () => {
     const [filteredData, setFilteredData] = useState(data)
     const toastDispatch = useToastMessageDispatch()
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_HOST}/props/getTableProps?db_name=${db}&table_name=${tbl}`)
+        axios.get(`${import.meta.env.VITE_HOST}:8090/props/getTableProps?db_name=${db}&table_name=${tbl}`)
             .then(data => {
-                setData( prevState => {
+                setData(prevState => {
                     Object.entries(data?.data).forEach(([name, value]) => {
                         const prop = prevState.find(p => p.property === name)
                         if (prop) {
@@ -42,7 +42,7 @@ export const TableSettings = () => {
                     })
                     return [...prevState]
                 })
-                setFilteredData( prevState => {
+                setFilteredData(prevState => {
                     Object.entries(data?.data).forEach(([name, value]) => {
                         const prop = prevState.find(p => p.property === name)
                         if (prop) {
@@ -53,24 +53,28 @@ export const TableSettings = () => {
                 })
             })
     }, [db, tbl]);
-    const handleSearch = ({target: {value}}) => {
+    const handleSearch = ({ target: { value } }) => {
         setFilteredData(data.filter(p => p.property.includes(value)))
     };
 
     const onChange = async (e) => {
-        const {name, value} = e.target
-        const res = await updateProp({db, tbl, props: [{[name]: value}]});
+        const { name, value } = e.target
+        const res = await updateProp({ db, tbl, props: [{ [name]: value }] });
 
         if (res?.data === "Table properties altered successfully.") {
-            toastDispatch({type: "success", value: {
-                msg: res.data,
-                    delay: 3000,
-                }})
-        } else {
-            toastDispatch({type: "error", value: {
+            toastDispatch({
+                type: "success", value: {
                     msg: res.data,
                     delay: 3000,
-                }})
+                }
+            })
+        } else {
+            toastDispatch({
+                type: "error", value: {
+                    msg: res.data,
+                    delay: 3000,
+                }
+            })
         }
 
         setData(prevState => {
@@ -95,11 +99,11 @@ export const TableSettings = () => {
             Table Properties
         </Typography>
 
-        <Box sx={{ flexGrow: 1}}>
+        <Box sx={{ flexGrow: 1 }}>
             <Grid container spacing={2}>
                 <Grid xs={8}>
                     <TextField
-                        sx={{marginBottom: 2}}
+                        sx={{ marginBottom: 2 }}
                         variant="outlined"
                         placeholder="Search..."
                         onChange={handleSearch}
@@ -114,31 +118,33 @@ export const TableSettings = () => {
                 </Grid>
                 <Grid xs={4}>
                     <Typography className="glass-text" variant="subtitle2" align="right"
-                                sx={{fontSize: 24, marginBottom: 4}}>
+                        sx={{ fontSize: 24, marginBottom: 4 }}>
                         {`${db}.${tbl}`}
                     </Typography>
                 </Grid>
             </Grid>
         </Box>
         <Box sx={{ flexGrow: 5 }}>
-            <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
+            <TableContainer component={Paper} sx={{
+                backgroundColor: 'transparent', width: '100%',
                 maxHeight: "calc(100vh - 200px)",
-                scrollBehavior: 'smooth'}}>
-                <Table sx={{minWidth: 650}} aria-label="simple table">
+                scrollBehavior: 'smooth'
+            }}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}}>
+                            <TableCell sx={{ borderBottom: "1px solid rgba(0, 0, 0, .1)" }}>
                                 <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
                                     Property
                                 </Typography>
                             </TableCell>
-                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left">
+                            <TableCell sx={{ borderBottom: "1px solid rgba(0, 0, 0, .1)" }} align="left">
                                 <Typography fontSize={18} className="glass-text-12" variant="subtitle2" align="left" >
                                     Configuration
                                 </Typography>
                             </TableCell>
-                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left"></TableCell>
-                            <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} align="left"></TableCell>
+                            <TableCell sx={{ borderBottom: "1px solid rgba(0, 0, 0, .1)" }} align="left"></TableCell>
+                            <TableCell sx={{ borderBottom: "1px solid rgba(0, 0, 0, .1)" }} align="left"></TableCell>
 
                         </TableRow>
                     </TableHead>
@@ -146,9 +152,9 @@ export const TableSettings = () => {
                         {filteredData.map((row) => (
                             <TableRow
                                 key={row.property}
-                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell sx={{borderBottom: "1px solid rgba(0, 0, 0, .1)"}} component="th" scope="row">
+                                <TableCell sx={{ borderBottom: "1px solid rgba(0, 0, 0, .1)" }} component="th" scope="row">
                                     <Typography fontSize={14} className="glass-text-12" variant="subtitle2" align="left" >
                                         {row.property}
                                         <Tooltip title={row.description} placement="right">
