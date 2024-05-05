@@ -110,7 +110,6 @@ class CustomizedListener extends SparkListener{
   // when a query ends, this method will capture its query info, add it to endedQueryMap,
   // remove it from the runningQueryMap, push both maps to the PushGateway, and remove it from endedQueryMap
   private def onSQLExecutionEnd(event: SparkListenerSQLExecutionEnd): Unit = {
-    Thread.sleep(5000)
 
     // get query ID
     val queryId = event.executionId
