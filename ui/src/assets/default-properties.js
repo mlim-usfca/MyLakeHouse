@@ -5,7 +5,9 @@ export const properties = [
   "value": 128,
   "unit": "MB",
   "options": [128],
-  "type": "read"
+  "type": "read",
+  "input-type": "text",
+  "default": 128
 },
   {
     "property": "read.split.metadata-target-size",
@@ -13,7 +15,9 @@ export const properties = [
     "value": 32,
     "unit": "MB",
     "options": [32],
-    "type": "read"
+    "type": "read",
+    "input-type": "text",
+    "default": 32
   },
   {
     "property": "read.split.planning-lookback",
@@ -21,7 +25,9 @@ export const properties = [
     "value": 10,
     "unit": "",
     "options": [10],
-    "type": "read"
+    "type": "read",
+    "input-type": "text",
+    "default": 10
   },
   {
     "property": "read.split.open-file-cost",
@@ -29,7 +35,9 @@ export const properties = [
     "value": 4,
     "unit": "MB",
     "options": [4],
-    "type": "read"
+    "type": "read",
+    "input-type": "text",
+    "default": 10
   },
   {
     "property": "read.parquet.vectorization.enabled",
@@ -37,7 +45,8 @@ export const properties = [
     "value": "true",
     "unit": "",
     "options": ["true", "false"],
-    "type": "read"
+    "type": "read",
+    "default": "true"
   },
   {
     "property": "read.parquet.vectorization.batch-size",
@@ -45,7 +54,9 @@ export const properties = [
     "value": 5000,
     "unit": "",
     "options": [5000],
-    "type": "read"
+    "type": "read",
+    "input-type": "text",
+    "default": 5000
   },
   {
     "property": "read.orc.vectorization.enabled",
@@ -61,7 +72,9 @@ export const properties = [
     "value": 5000,
     "unit": "",
     "options": [5000],
-    "type": "read"
+    "type": "read",
+    "input-type": "text",
+    "default": 5000
   },
 
   {
@@ -70,7 +83,8 @@ export const properties = [
     "value": "parquet",
     "unit": "",
     "options": ["parquet"],
-    "type": "write"
+    "type": "write",
+    "default": "parquet"
   },
   {
     "property": "write.delete.format.default",
@@ -78,7 +92,8 @@ export const properties = [
     "value": "data file format",
     "unit": "",
     "options": ["data file format"],
-    "type": "write"
+    "type": "write",
+    "default": "data file format"
   },
   {
     "property": "write.parquet.row-group-size-bytes",
@@ -86,7 +101,9 @@ export const properties = [
     "value": 128,
     "unit": "MB",
     "options": [128],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 128
   },
   {
     "property": "write.parquet.page-size-bytes",
@@ -94,7 +111,9 @@ export const properties = [
     "value": 1,
     "unit": "MB",
     "options": [1],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 1
   },
   {
     "property": "write.parquet.page-row-limit",
@@ -102,7 +121,9 @@ export const properties = [
     "value": 20000,
     "unit": "",
     "options": [20000],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 20000
   },
   {
     "property": "write.parquet.dict-size-bytes",
@@ -110,7 +131,9 @@ export const properties = [
     "value": 2,
     "unit": "MB",
     "options": [2],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 2
   },
   {
     "property": "write.parquet.compression-codec",
@@ -118,7 +141,8 @@ export const properties = [
     "value": "zstd",
     "unit": "",
     "options": ["zstd", "brotli", "lz4", "gzip", "snappy", "uncompressed"],
-    "type": "write"
+    "type": "write",
+    "default": "zstd"
   },
   {
     "property": "write.parquet.compression-level",
@@ -126,7 +150,8 @@ export const properties = [
     "value": "null",
     "unit": "",
     "options": ["null"],
-    "type": "write"
+    "type": "write",
+    "default": "null"
   },
   {
     "property": "write.parquet.bloom-filter-enabled.column.col1\t",
@@ -134,7 +159,8 @@ export const properties = [
     "value": "(not set)",
     "unit": "",
     "options": ["(not set)"],
-    "type": "write"
+    "type": "write",
+    "default": "(not set)"
   },
   {
     "property": "write.parquet.bloom-filter-max-bytes",
@@ -142,7 +168,9 @@ export const properties = [
     "value": 1,
     "unit": "MB",
     "options": [1],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 1
   },
   {
     "property": "write.avro.compression-codec",
@@ -150,7 +178,8 @@ export const properties = [
     "value": "gzip",
     "unit": "",
     "options": ["gzip", "zstd", "snappy", "uncompressed"],
-    "type": "write"
+    "type": "write",
+    "default": "gzip"
   },
   {
     "property": "write.avro.compression-level",
@@ -166,7 +195,9 @@ export const properties = [
     "value": 64,
     "unit": "MB",
     "options": [64],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 64
   },
   {
     "property": "write.orc.block-size-bytes",
@@ -174,7 +205,9 @@ export const properties = [
     "value": 256,
     "unit": "MB",
     "options": [256],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 64
   },
   {
     "property": "write.orc.compression-codec",
@@ -182,7 +215,8 @@ export const properties = [
     "value": "zlib",
     "unit": "",
     "options": ["zlib", "zstd", "lz4", "lzo", "snappy", "none"],
-    "type": "write"
+    "type": "write",
+    "default": "zlib"
   },
   {
     "property": "write.orc.compression-strategy",
@@ -190,7 +224,9 @@ export const properties = [
     "value": "speed",
     "unit": "",
     "options": ["speed", "compression"],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": "speed"
   },
   {
     "property": "write.orc.bloom.filter.columns",
@@ -198,7 +234,8 @@ export const properties = [
     "value": "(not set)",
     "unit": "",
     "options": ["(not set)"],
-    "type": "write"
+    "type": "write",
+    "default": "(not set)"
   },
   {
     "property": "write.orc.bloom.filter.fpp",
@@ -206,7 +243,8 @@ export const properties = [
     "value": 0.05,
     "unit": "",
     "options": [0.05],
-    "type": "write"
+    "type": "write",
+    "default": .05
   },
   {
     "property": "write.location-provider.impl",
@@ -214,7 +252,9 @@ export const properties = [
     "value": "null",
     "unit": "",
     "options": ["null"],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": "speed"
   },
   {
     "property": "write.metadata.compression-codec",
@@ -222,7 +262,8 @@ export const properties = [
     "value": "none",
     "unit": "",
     "options": ["none", "gzip"],
-    "type": "write"
+    "type": "write",
+    "default": "none"
   },
   {
     "property": "write.metadata.metrics.max-inferred-column-defaults",
@@ -230,7 +271,9 @@ export const properties = [
     "value": 100,
     "unit": "",
     "options": [100],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 100
   },
   {
     "property": "write.metadata.metrics.default",
@@ -238,7 +281,8 @@ export const properties = [
     "value": 16,
     "unit": "",
     "options": ["none","full", 16],
-    "type": "write"
+    "type": "write",
+    "default": "16"
   },
   {
     "property": "write.metadata.metrics.column.col1",
@@ -246,7 +290,8 @@ export const properties = [
     "value": "",
     "unit": "",
     "options": ["none", "full"],
-    "type": "write"
+    "type": "write",
+    "default": "none"
   },
   {
     "property": "write.target-file-size-bytes",
@@ -254,7 +299,9 @@ export const properties = [
     "value": 64,
     "unit": "MB",
     "options": [64],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 64
   },
   {
     "property": "write.distribution-mode",
@@ -262,7 +309,9 @@ export const properties = [
     "value": "none",
     "unit": "",
     "options": ["none"],
-    "type": "write"
+    "type": "write",
+    "default": "none",
+
   },
   {
     "property": "write.delete.distribution-mode",
@@ -270,7 +319,9 @@ export const properties = [
     "value": 0.05,
     "unit": "",
     "options": [0.05],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": .05
   },
   {
     "property": "write.update.distribution-mode",
@@ -278,7 +329,9 @@ export const properties = [
     "value": "hash",
     "unit": "",
     "options": ["hash"],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": .05
   },
   {
     "property": "write.merge.distribution-mode",
@@ -286,7 +339,8 @@ export const properties = [
     "value": "none",
     "unit": "",
     "options": ["none"],
-    "type": "write"
+    "type": "write",
+    "default": "none"
   },
   {
     "property": "write.wap.enabled",
@@ -294,7 +348,9 @@ export const properties = [
     "value": "false",
     "unit": "",
     "options": ["true", "false"],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": "false"
   },
   {
     "property": "write.summary.partition-limit",
@@ -302,7 +358,8 @@ export const properties = [
     "value": 0,
     "unit": "",
     "options": [0],
-    "type": "write"
+    "type": "write",
+    "default": 0
   },
   {
     "property": "write.metadata.delete-after-commit.enabled",
@@ -310,7 +367,8 @@ export const properties = [
     "value": "false",
     "unit": "",
     "options": ["true", "false"],
-    "type": "write"
+    "type": "write",
+    "default": "false"
   },
   {
     "property": "write.metadata.previous-versions-max",
@@ -318,7 +376,9 @@ export const properties = [
     "value": 100,
     "unit": "",
     "options": [100],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": 100
   },
   {
     "property": "write.spark.fanout.enabled",
@@ -326,7 +386,9 @@ export const properties = [
     "value": "false",
     "unit": "",
     "options": ["true", "false"],
-    "type": "write"
+    "type": "write",
+    "input-type": "text",
+    "default": "false"
   },
   {
     "property": "write.object-storage.enabled",
@@ -334,7 +396,8 @@ export const properties = [
     "value": "false",
     "unit": "",
     "options": ["true", "false"],
-    "type": "write"
+    "type": "write",
+    "default": "false"
   },
   {
     "property": "write.data.path",
@@ -342,7 +405,8 @@ export const properties = [
     "value": "table location + /data",
     "unit": "",
     "options": ["table location + /data"],
-    "type": "write"
+    "type": "write",
+    "default": "table location + /data"
   },
   {
     "property": "write.metadata.path",
@@ -350,7 +414,8 @@ export const properties = [
     "value": "table location + /metadata",
     "unit": "",
     "options": ["table location + /metadata"],
-    "type": "write"
+    "type": "write",
+    "default": "table location + /metadata"
   },
   {
     "property": "write.delete.mode",
@@ -358,7 +423,8 @@ export const properties = [
     "value": "copy-on-write",
     "unit": "",
     "options": ["copy-on-write"],
-    "type": "write"
+    "type": "write",
+    "default": "copy-on-write"
   },
   {
     "property": "write.delete.isolation-level",
@@ -366,7 +432,8 @@ export const properties = [
     "value": "serializable",
     "unit": "",
     "options": ["serializable"],
-    "type": "write"
+    "type": "write",
+    "default": "serializable"
   },
   {
     "property": "write.update.mode",
@@ -374,7 +441,8 @@ export const properties = [
     "value": "copy-on-write",
     "unit": "",
     "options": ["copy-on-write"],
-    "type": "write"
+    "type": "write",
+    "default": "copy-on-write"
   },
   {
     "property": "write.update.isolation-level",
@@ -382,7 +450,8 @@ export const properties = [
     "value": "serializable",
     "unit": "",
     "options": ["serializable"],
-    "type": "write"
+    "type": "write",
+    "default": "serializable"
   },
   {
     "property": "write.merge.mode",
@@ -390,7 +459,8 @@ export const properties = [
     "value": "copy-on-write",
     "unit": "",
     "options": ["copy-on-write"],
-    "type": "write"
+    "type": "write",
+    "default": "copy-on-write"
   },
   {
     "property": "write.merge.isolation-level",
@@ -398,6 +468,7 @@ export const properties = [
     "value": "serializable",
     "unit": "",
     "options": ["serializable"],
-    "type": "write"
+    "type": "write",
+    "default": "serializable"
   }
 ]
