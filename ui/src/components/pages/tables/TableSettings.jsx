@@ -161,22 +161,30 @@ export const TableSettings = () => {
                                 <TableCell align="left" sx={{ minWidth: 120, borderBottom: "1px solid rgba(0, 0, 0, .1)" }}>
                                     <Box>
                                         <FormControl fullWidth>
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                name={row.property}
-                                                value={row.value ? row.value.toString() : "null"}
-                                                renderValue={(selected) => (
-                                                    <Typography fontSize={16} className="glass-text-12" variant="subtitle2" align="right" >
-                                                        {selected}
-                                                    </Typography>
-                                                )}
-                                                onChange={onChange}
-                                            >
-                                                {row.options.map((op) => {
-                                                    return <MenuItem key={row.property + "-" + op} value={op}>{op}</MenuItem>
-                                                })}
-                                            </Select>
+                                            {
+                                                row?.['input-type'] === "text" ?
+                                                    <TextField className="glass-text-12"
+                                                               inputProps={{min: 0, style: { textAlign: 'right' }}}
+                                                               id="outlined-basic" variant="standard"
+                                                               value={row.value ? row.value.toString() : "null"}
+                                                    />:
+                                                    <Select
+                                                        labelId="demo-simple-select-label"
+                                                        id="demo-simple-select"
+                                                        name={row.property}
+                                                        value={row.value ? row.value.toString() : "null"}
+                                                        renderValue={(selected) => (
+                                                            <Typography fontSize={16} className="glass-text-12" variant="subtitle2" align="right" >
+                                                                {row.default === row.value ? `(Default) ${selected}` : selected}
+                                                            </Typography>
+                                                        )}
+                                                        onChange={onChange}
+                                                    >
+                                                        {row.options.map((op) => {
+                                                            return <MenuItem key={row.property + "-" + op} value={op}>{op}</MenuItem>
+                                                        })}
+                                                    </Select>
+                                            }
                                         </FormControl>
                                     </Box>
                                 </TableCell>
