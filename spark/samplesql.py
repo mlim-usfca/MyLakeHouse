@@ -45,26 +45,26 @@ WHERE RatecodeID IS NOT NULL
 GROUP BY RatecodeID
 ORDER BY RatecodeID
 """)
-result1.show()
-result2.show()
-result3.show()
-result4.show()
+result1.collect()
+result2.collect()
+result3.collect()
+result4.collect()
 
-result5.show()
-result6.show()
+result5.collect()
+result6.collect()
 
 
 windowSpec = Window.partitionBy("VendorID").orderBy("tpep_pickup_datetime").rowsBetween(-10, 0)
 df = spark.table("local.nyc.taxis")
 result = df.withColumn("running_avg_fare", F.avg("fare_amount").over(windowSpec))
 
-result.show()
+result.collect()
 
 records = spark.sql("""
 SELECT * FROM local.nyc.taxis
 WHERE passenger_count > 2
 """)
-records.show()
+records.collect()
 
 spark.sql("""
 UPDATE local.nyc.taxis
@@ -76,6 +76,6 @@ updated_records = spark.sql("""
 SELECT * FROM local.nyc.taxis
 WHERE passenger_count > 2
 """)
-updated_records.show()
+updated_records.collect()
 
 spark.stop()

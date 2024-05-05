@@ -87,6 +87,7 @@ services:
       - GF_AUTH_PROXY_AUTO_SIGN_UP=true
       - GF_SERVER_ROOT_URL=http://localhost:3001
       - GF_REDIRECT_URL=http://localhost:3001/d/adju7v39wqo00a/test-dashboard?orgId=1&from=1714061239559&to=1714082839559
+      - GF_SECURITY_ALLOW_EMBEDDING=true
     volumes:
       - grafana:/var/lib/grafana
 

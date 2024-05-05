@@ -75,7 +75,7 @@ def create_nyc_iceberg_database(spark):
         logging.error(f"Error creating nyc database: {error}")
 
 if __name__ == "__main__":
-    # Initialize Spark session
+    # Initialize Spark sessionToy Iceberg Database Creator
     spark = SparkSession.builder.appName("Toy Iceberg Database Creator").getOrCreate()
 
     # Call the function to create the database

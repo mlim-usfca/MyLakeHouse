@@ -11,9 +11,11 @@ import { SearchDB } from './components/pages/search/SearchDB.jsx';
 import { SearchTable } from './components/pages/search/SearchTable.jsx';
 import {TableSettings} from "@/components/pages/tables/TableSettings.jsx";
 import { TablePage } from './components/pages/table/TablePage.jsx';
+import { SparkPerformance } from "./components/pages/spark/SparkPerformance";
 import {RecentViewProvider} from "@/contexts/recent-view-history.jsx";
 import {MessageProvider} from "@/contexts/message.jsx";
 import "@/i18n.js"
+
 
 const theme = createTheme({
   components: {
@@ -60,6 +62,10 @@ const router = createBrowserRouter([
       {
         path: '/:db/:tbl/properties',
         element: <TableSettings/>,
+      },
+{
+        path: '/spark-performance',
+        element: <SparkPerformance/>,
       },
     ],
   },
