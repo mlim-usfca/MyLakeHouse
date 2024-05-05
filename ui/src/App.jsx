@@ -13,6 +13,7 @@ import Divider from '@mui/material/Divider';
 import PublicIcon from '@mui/icons-material/Public';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddchartIcon from '@mui/icons-material/Addchart';
 
 // import { styled } from '@mui/material/styles';
 import axios from "axios"
@@ -50,7 +51,7 @@ export const App = () => {
             navigate("/config");
         } else if (index === 0) {
             navigate("/");
-        } else if (index === 3) {
+        } else if (index === 2) {
             navigate("/spark-performance"); // Navigate to the Spark Performance route
         }
         setSelectedIndex(index);
@@ -111,13 +112,16 @@ export const App = () => {
                                                 selected={selectedIndex === 2}
                                                 onClick={(event) => handleListItemClick(event, 2)}
                                             >
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("recentActivity")}/>
+                                                <ListItemIcon>
+                                                    <AddchartIcon/>
+                                                </ListItemIcon>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("Spark Performance")}/>
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 3}
                                                 onClick={(event) => handleListItemClick(event, 3)}
                                             >
-                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("Spark Performance")}/>
+                                                <ListItemText className={"glass-text-12"} sx={{textAlign: "left", textTransform: "none"}}  primary={t("recentActivity")}/>
                                             </ListItemButton>
                                             <Divider/>
                                             {recentView?.tables?.map(rc => {
