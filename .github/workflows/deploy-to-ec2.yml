@@ -1,0 +1,33 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Build & Deploy
+        env:
+            PRIVATE_KEY: ${{ secrets.EC2_INSTANCE_PRIVATE_KEY }}
+            HOSTNAME: 3.90.53.242
+            USER_NAME: ubuntu
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+              # Now we have got the access of EC2 and we will start the deploy .
+              cd /home/ubuntu/MyLakeHouse &&
+              docker system prune -f ; docker volume prune -f ;docker rm -f -v $(docker ps -q -a) || true &&
+              git checkout main &&
+              git fetch --all &&
+              git reset --hard origin/main &&
+              git pull origin main &&
+              docker-compose -f docker-compose1.yml -f docker-compose2-prod.yml up --build -d
+              '

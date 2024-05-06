@@ -51,6 +51,7 @@ services:
 
   prometheus:
     image: prom/prometheus
+    user: root
     networks:
       iceberg_net:
     ports:
@@ -140,6 +141,7 @@ services:
 volumes:
   minio_data:
   grafana:
+  prometheus:
 
 networks:
   iceberg_net:
