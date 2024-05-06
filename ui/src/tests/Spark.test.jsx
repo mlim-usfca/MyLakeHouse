@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { SparkPerformance } from './SparkPerformance';
+import { SparkPerformance } from '@components/pages/spark/SparkPerformance.jsx';
 
 test('renders the Grafana dashboard iframe', () => {
     render(
