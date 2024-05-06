@@ -431,7 +431,7 @@ export const properties = [
     "description": "Isolation level for delete commands: serializable or snapshot",
     "value": "serializable",
     "unit": "",
-    "options": ["serializable"],
+    "options": ["serializable", "snapshot"],
     "type": "write",
     "default": "serializable"
   },
@@ -449,7 +449,7 @@ export const properties = [
     "description": "Isolation level for update commands: serializable or snapshot",
     "value": "serializable",
     "unit": "",
-    "options": ["serializable"],
+    "options": ["serializable", "snapshot"],
     "type": "write",
     "default": "serializable"
   },
