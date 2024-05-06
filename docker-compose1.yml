@@ -140,6 +140,7 @@ services:
 volumes:
   minio_data:
   grafana:
+  prometheus:
 
 networks:
   iceberg_net:
