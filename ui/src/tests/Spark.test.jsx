@@ -3,10 +3,12 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { SparkPerformance } from '@/components/pages/spark/SparkPerformance.jsx';
 
-test('renders the Grafana dashboard iframe', () => {
+test('renders the Grafana dashboard', () => {
     render(
         <MemoryRouter initialEntries={['/spark-performance']}>
-            <Route path="/spark-performance" element={<SparkPerformance />} />
+            <Routes>
+                <Route path="/spark-performance" element={<SparkPerformance />} />
+            </Routes>
         </MemoryRouter>
     );
 
