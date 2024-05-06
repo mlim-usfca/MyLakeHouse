@@ -422,7 +422,7 @@ export const properties = [
     "description": "Mode used for delete commands: copy-on-write or merge-on-read (v2 only)\n",
     "value": "copy-on-write",
     "unit": "",
-    "options": ["copy-on-write"],
+    "options": ["copy-on-write", "merge-on-read"],
     "type": "write",
     "default": "copy-on-write"
   },
@@ -440,7 +440,7 @@ export const properties = [
     "description": "Mode used for update commands: copy-on-write or merge-on-read (v2 only)",
     "value": "copy-on-write",
     "unit": "",
-    "options": ["copy-on-write"],
+    "options": ["copy-on-write", "merge-on-read"],
     "type": "write",
     "default": "copy-on-write"
   },
@@ -458,7 +458,7 @@ export const properties = [
     "description": "Mode used for merge commands: copy-on-write or merge-on-read (v2 only)",
     "value": "copy-on-write",
     "unit": "",
-    "options": ["copy-on-write"],
+    "options": ["copy-on-write", "merge-on-read"],
     "type": "write",
     "default": "copy-on-write"
   },
