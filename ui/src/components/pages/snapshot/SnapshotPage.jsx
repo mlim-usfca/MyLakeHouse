@@ -39,7 +39,7 @@ export const SnapshotPage = () => {
       <TreeItem
         key={node.snapshot_id}
         nodeId={node.snapshot_id}
-        label={`Snapshot ${node.snapshot_id}, Commited at: ${node.committed_at}, Opeation: ${node.operation}`}
+        label={`Snapshot ${node.snapshot_id}, Commited at: ${node.committed_at}, Operation: ${node.operation}`}
         onDoubleClick={(evt) => handleDoubleClick(evt, node.snapshot_id)}
       >
         {node.children && renderTree(node.children)}
