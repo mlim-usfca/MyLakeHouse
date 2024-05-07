@@ -7,35 +7,40 @@ const resources = {
         translation: {
             searchMenu: "Search",
             globalSettings: "Global Settings",
-            recentActivity: "Recent Activity"
+            recentActivity: "Recent Activity",
+            sparkPerformance: "Spark Performance"
         }
     },
     es: {
         translation: {
             searchMenu: "Busqueda",
             globalSettings: "Configuración Global",
-            recentActivity: "Actividad Reciente"
+            recentActivity: "Actividad Reciente",
+            sparkPerformance: "Rendimiento de Spark"
         }
     },
     fr: {
         translation: {
             searchMenu: "Recherche",
             globalSettings: "Paramètres globaux",
-            recentActivity: "Activité Récente"
+            recentActivity: "Activité Récente",
+            sparkPerformance: "Performance de Spark"
         }
     },
     cn: {
         translation: {
             searchMenu: "搜索",
             globalSettings: "全局设置",
-            recentActivity: "近期活动"
+            recentActivity: "近期活动",
+            sparkPerformance: "Spark性能"
         },
     },
     it: {
         translation: {
             searchMenu: "Ricerca",
             globalSettings: "Impostazioni globali",
-            recentActivity: "Attività Recente"
+            recentActivity: "Attività Recente",
+            sparkPerformance: "Prestazioni di Spark"
         }
     }
 }
