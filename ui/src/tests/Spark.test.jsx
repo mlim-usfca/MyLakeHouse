@@ -1,5 +1,6 @@
 import React from 'react';
-import { MemoryRouter, Route } from 'react-router-dom';
+import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom';
 import { SparkPerformance } from '@/components/pages/spark/SparkPerformance.jsx';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
