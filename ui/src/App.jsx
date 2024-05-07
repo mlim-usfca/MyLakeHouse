@@ -117,7 +117,7 @@ export const App = () => {
                                                 <ListItemIcon>
                                                     <AddchartIcon />
                                                 </ListItemIcon>
-                                                <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("Spark Performance")} />
+                                                <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("sparkPerformance")} />
                                             </ListItemButton>
                                             <ListItemButton
                                                 selected={selectedIndex === 3}
