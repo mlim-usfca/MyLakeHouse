@@ -1,10 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom';
 import { SparkPerformance } from '@/components/pages/spark/SparkPerformance.jsx';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
-import {MessageProvider} from "@/contexts/message.jsx";
 
 
 const mock = new MockAdapter(axios);
@@ -12,11 +10,8 @@ const mock = new MockAdapter(axios);
 mock.onGet(`${import.meta.env.VITE_HOST}/test`).reply(200, { data: 'Mocked response' });
 
 test('renders the Grafana dashboard', () => {
-    render(<MessageProvider>
-        <MemoryRouter initialEntries={['/spark-performance']}>
-            <SparkPerformance />
-        </MemoryRouter>
-    </MessageProvider>)
+    render(
+            <SparkPerformance />);
 
     const iframe = screen.getByRole('iframe');
     expect(iframe).toBeInTheDocument();
