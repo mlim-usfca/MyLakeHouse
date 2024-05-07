@@ -13,7 +13,7 @@ test('renders the Grafana dashboard', () => {
     render(
             <SparkPerformance />);
 
-    const iframe = screen.getByRole('iframe');
+    const iframe = screen.getByTitle('iframe spark');
     expect(iframe).toBeInTheDocument();
     expect(iframe).toHaveAttribute(
         'src',
