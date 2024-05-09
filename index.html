@@ -48,13 +48,23 @@
             <li>Table Management</li>
             <li>Snapshot Management</li>
             <li>Maintenance and Configuration</li>
+            <li>Performance Monitoring Dashboard</li>
         </ul>
 
         <h2>Technical Specifications</h2>
         <ul>
             <li>Web Application Architecture: Built as a web application to ensure accessible, real-time data interaction.</li>
-            <li>Frontend: Uses modern web technologies to create a responsive and intuitive user interface.</li>
-            <li>Backend: Leverages FastAPI for efficient backend management, interfacing with Minio object store and Iceberg REST catalog for data handling.</li>
+            <li>Frontend</li>
+            <ul>
+                <li>Uses modern web technologies to create a responsive and intuitive user interface.</li>
+                <li>Grafana Dashboard to visually display the monitored performance metrics.</li>
+            </ul>
+            <li>Backend</li>
+            <ul>
+                <li>Leverages FastAPI for efficient backend management, interfacing with Minio object store and Iceberg REST catalog for data handling.</li>
+                <li>Creates a spark listener to actively monitor the performance of running applications and quries.</li>
+                <li>Integrates the listener with PushGateway for making metrics data, Prometheus for time series data, and Grafana for visualization and analysis.</li>
+            </ul>
         </ul>
 
         <h2>User Interaction and Accessibility</h2>
