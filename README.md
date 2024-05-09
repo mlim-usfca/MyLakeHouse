@@ -51,8 +51,8 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up --build
 - Check UI at [http://0.0.0.0:3000](http://0.0.0.0:3000)
 - Once the containers are composed up, you have a empty catalog. 
 - For seeing some demo databases. In [Swagger UI](http://0.0.0.0:8090/docs), please execute following API calls:
-  * POST/demo/create_demo_tables
-  * POST/demo/create_snapshot_demo_tables
+  * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
+  * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
 
 
 #### Shutdown and remove the container
