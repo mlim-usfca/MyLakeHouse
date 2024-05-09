@@ -39,7 +39,7 @@
         <h2>Purpose and Core Functionality</h2>
         <p>
             Facilitates viewing and management of Iceberg tables, including details, properties, and snapshot management.<br>
-            Supports analytics dashboards to visualize the performance of all Spark queries.
+            Supports analytics dashboards to visualize the performance of user's Spark.
         </p>
 
         <h2>Key Features</h2>
@@ -48,7 +48,7 @@
             <li>Table Management</li>
             <li>Snapshot Management</li>
             <li>Maintenance and Configuration</li>
-            <li>Performance Monitoring Dashboard</li>
+            <li>Monitoring Spark Performance</li>
         </ul>
 
         <h2>Technical Specifications</h2>
@@ -56,22 +56,20 @@
             <li>Web Application Architecture: Built as a web application to ensure accessible, real-time data interaction.</li>
             <li>Frontend</li>
             <ul>
-                <li>Uses modern web technologies to create a responsive and intuitive user interface.</li>
-                <li>Grafana Dashboard to visually display the monitored performance metrics.</li>
+                <li>Using modern web technologies such as React and Vite to create a responsive and intuitive user interface.</li>
+                <li>Displaying the monitored performance metrics of Spark using Grafana Dashboard.</li>
             </ul>
             <li>Backend</li>
             <ul>
-                <li>Leverages FastAPI for efficient backend management, interfacing with Minio object store and Iceberg REST catalog for data handling.</li>
-                <li>Creates a spark listener to actively monitor the performance of running applications and quries.</li>
-                <li>Integrates the listener with PushGateway for making metrics data, Prometheus for time series data, and Grafana for visualization and analysis.</li>
+                <li>Leveraging FastAPI for efficient backend management, interfacing with Minio object store and Iceberg REST catalog for data handling.</li>
+                <li>Creating a spark listener to actively monitor the performance of all running applications and SQL queries.</li>
+                <li>Integrating the listener with PushGateway for making metrics data, Prometheus for time series data, and Grafana for visualization and analysis.</li>
             </ul>
         </ul>
 
         <h2>User Interaction and Accessibility</h2>
         <p>
-            Designed to support various user interactions with the data, including explorations of data files and configurations.<br>
-            Integrated with Grafana for a full dashboard experience with spark monitoring.
-            Features like the search tool are enhanced with filtering to streamline user workflows.
+            The website is designed to support various user interactions with the data, including exploration of data files and configurations. It is integrated with Grafana to provide a comprehensive dashboard experience with Spark monitoring. Features such as the search tool have been enhanced with filtering options to streamline user workflows.
         </p>
 
         <p>Check out our <a href="https://github.com/mlim-usfca/MyLakeHouse/wiki">wiki</a> for more information.</p>
