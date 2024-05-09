@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyLakeHouse - Web Application Overview</title>
+    <style>
+        /* Simple CSS for styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to MyLakeHouse</h1>
+        <h2>Project Summary</h2>
+        <p>MyLakeHouse is a robust web application designed for efficient management and visualization of Apache Iceberg tables and monitoring of Apache Spark.</p>
+
+        <h2>Purpose and Core Functionality</h2>
+        <p>
+            Facilitates viewing and management of Iceberg tables, including details, properties, and snapshot management.<br>
+            Supports analytics dashboards to visualize the performance of all Spark queries.
+        </p>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li>Dashboard and Search Capabilities</li>
+            <li>Table Management</li>
+            <li>Snapshot Management</li>
+            <li>Maintenance and Configuration</li>
+        </ul>
+
+        <h2>Technical Specifications</h2>
+        <ul>
+            <li>Web Application Architecture: Built as a web application to ensure accessible, real-time data interaction.</li>
+            <li>Frontend: Uses modern web technologies to create a responsive and intuitive user interface.</li>
+            <li>Backend: Leverages FastAPI for efficient backend management, interfacing with Minio object store and Iceberg REST catalog for data handling.</li>
+        </ul>
+
+        <h2>User Interaction and Accessibility</h2>
+        <p>
+            Designed to support various user interactions with the data, including explorations of data files and configurations.<br>
+            Integrated with Grafana for a full dashboard experience with spark monitoring.
+            Features like the search tool are enhanced with filtering to streamline user workflows.
+        </p>
+
+        <p>Check out our <a href="https://github.com/mlim-usfca/MyLakeHouse/wiki">wiki</a> for more information.</p>
+    </div>
+</body>
+</html>
