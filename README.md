@@ -27,6 +27,9 @@ Brings up:
 * FastAPI Backend: ```8090:8090```
 * Minio Object Store UI: ```9001:9001```
 * Iceberg REST Catalog: ```8181:8181```
+* PushGateway: ```9091:9091```
+* Prometheus: ```9090:9090```
+* Grafana: ```3001:3000```
 
 To run all containers together, use the following commands:
 
