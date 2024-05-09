@@ -47,10 +47,14 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up --build
 * compose2.yml bring up backend(fast-api) and frontend(ui)
 
 #### After compose up:
-- Check FastAPI Doc at [http://0.0.0.0:8090/docs](http://0.0.0.0:8090/docs)
-- Check UI at [http://0.0.0.0:3000](http://0.0.0.0:3000)
+- Please create a .env.dev file within the ui folder of the project and insert the following line into it:
+  ```
+  VITE_HOST=http://localhost.
+  ```
+- Check FastAPI Doc at [Swagger UI](http://localhost:8090/docs)
+- Check UI at [http://localhost:3000](http://localhost:3000)
 - Once the containers are composed up, you have a empty catalog. 
-- For seeing some demo databases. In [Swagger UI](http://0.0.0.0:8090/docs), please execute following API calls:
+- For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute following API calls:
   * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
   * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
 
