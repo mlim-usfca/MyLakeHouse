@@ -75,3 +75,8 @@ Above instructions let you test our service using a mock datalake, if you would 
 Please see our wiki:
 * [Add Custom Listener to Your Spark](https://github.com/mlim-usfca/MyLakeHouse/wiki/How-to-add-Listener-to-your-spark)
 * [Catalog and Object Store Configuration in FastAPI application](https://github.com/mlim-usfca/MyLakeHouse/wiki/Catalog-and-Object-Store-Configuration-in-FastAPI-application)
+
+### API Documentation
+```
+http://0.0.0.0:8090/docs
+```
