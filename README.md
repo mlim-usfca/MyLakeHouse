@@ -46,6 +46,10 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up --build
 * compose1.yml bring up spark with listener, prometheus, pushgateway, rest, minio, mc
 * compose2.yml bring up backend(fast-api) and frontend(ui)
 
+#### After compose up:
+- Check FastAPI Doc at [http://0.0.0.0:8090/docs](http://0.0.0.0:8090/docs)
+- Check UI at [http://0.0.0.0:3000](http://0.0.0.0:3000)
+
 #### Shutdown and remove the container
 
 ```bash
