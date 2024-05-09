@@ -1,3 +1,10 @@
+# Description
+Web application to manage iceberg tables and view the performance of Spark queries.
+
+# Running the App
+The application has multiple docker files that start up containers for Iceberg REST Catalog, Spark Listener, FastAPI backend, React UI, Prometheus Time Series Graph, Pushaway gateway, Minio Object Store. 
+
+To run all the containers together use the following commands:
 ## Run two compose files together
 
 ```bash
