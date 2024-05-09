@@ -1,1 +1,1 @@
-export const DEV = `${import.meta.env.VITE_HOST}:8090/`
+export const DEV = `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_BE_API_PORT}/`

@@ -10,7 +10,7 @@ import { SearchTable } from '@/components/pages/search/SearchTable';
 
 const mock = new MockAdapter(axios);
 
-mock.onGet(`${import.meta.env.VITE_HOST}:8090/dashboard/list-databases`).reply(200, { db_list: ["toyDb"] });
+mock.onGet(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_BE_API_PORT}/dashboard/list-databases`).reply(200, { db_list: ["toyDb"] });
 
 test('renders search database with db_list', async () => {
     render(<MessageProvider>
@@ -24,7 +24,7 @@ test('renders search database with db_list', async () => {
     });
 })
 
-mock.onGet(`${import.meta.env.VITE_HOST}:8090/dashboard/list-tables/?db_name=toyDb`).reply(200,
+mock.onGet(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_BE_API_PORT}/dashboard/list-tables/?db_name=toyDb`).reply(200,
     [
         {
             "table_name": "taxis1",
