@@ -84,7 +84,7 @@ docker exec -it {ID-of-spark-master-1} spark-submit --master spark://spark-maste
 docker exec -it {ID-of-spark-master-1} spark-submit --master spark://spark-master:7077 samplesql.py
 ```
 Run samplesql.py multiple times to get a line chart.
-Check the graph in the tab `spark performance`.
+Check the graph in the tab `spark performance` in the UI.
 
 
 #### Shutdown and remove the container
