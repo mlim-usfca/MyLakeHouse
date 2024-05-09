@@ -15,7 +15,7 @@ export const DataFilesTable = ({ database, table, setCollapsed }) => {
     const fetchDataFiles = async () => {
       try {
         const offset = (currentPage - 1) * rowsPerPage;
-        const response = await fetch(`${import.meta.env.VITE_HOST}:8090/metadata/getDataFiles?db_name=${database}&table_name=${table}&limit=${rowsPerPage}&offset=${offset}`);
+        const response = await fetch(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_BE_API_PORT}/metadata/getDataFiles?db_name=${database}&table_name=${table}&limit=${rowsPerPage}&offset=${offset}`);
         const data = await response.json();
         setDataFiles(data);
         // Check if the next page is available

@@ -58,7 +58,7 @@ export const App = () => {
     };
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_HOST}:8090/test`).then(data => console.log(data))
+        axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_BE_API_PORT}/test`).then(data => console.log(data))
     }, []);
 
 
