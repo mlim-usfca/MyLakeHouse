@@ -6,6 +6,17 @@ My Lakehouse is a web application designed for managing iceberg tables and monit
 ## Running the App
 The application utilizes multiple Docker files to launch containers for various components including Iceberg REST Catalog, Spark Listener, FastAPI backend, React UI, Prometheus Time Series Graph, Pushgateway, and Minio Object Store.
 
+## ENV
+
+# FE ENV Variables
+
+``` 
+VITE_HOST=http://localhost
+VITE_BE_API_PORT=8090
+VITE_GRAFANA_PORT=3001
+```
+
+
 ### Docker Compose Files
 
 #### docker-compose1.yml
