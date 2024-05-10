@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyLakeHouse - Web Application Overview</title>
+    <style>
+        /* Simple CSS for styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to MyLakeHouse</h1>
+        <h2>Project Summary</h2>
+        <p>MyLakeHouse is a robust web application designed for efficient management and visualization of Apache Iceberg tables and monitoring of Apache Spark.</p>
+
+        <h2>Purpose and Core Functionality</h2>
+        <p>
+            Facilitates viewing and management of Iceberg tables, including details, properties, and snapshot management.<br>
+            Supports analytics dashboards to visualize the performance of user's Spark.
+        </p>
+
+        <h2>Key Features</h2>
+        <ul>
+            <li>Dashboard and Search Capabilities</li>
+            <li>Table Management</li>
+            <li>Snapshot Management</li>
+            <li>Maintenance and Configuration</li>
+            <li>Monitoring Spark Performance</li>
+        </ul>
+
+        <h2>Technical Specifications</h2>
+        <ul>
+            <li>Web Application Architecture: Built as a web application to ensure accessible, real-time data interaction.</li>
+            <li>Frontend</li>
+            <ul>
+                <li>Using modern web technologies such as React and Vite to create a responsive and intuitive user interface.</li>
+                <li>Displaying the monitored performance metrics of Spark using Grafana Dashboard.</li>
+            </ul>
+            <li>Backend</li>
+            <ul>
+                <li>Leveraging FastAPI for efficient backend management, interfacing with Minio object store and Iceberg REST catalog for data handling.</li>
+                <li>Creating a spark listener to actively monitor the performance of all running applications and SQL queries.</li>
+                <li>Integrating the listener with PushGateway for making metrics data, Prometheus for time series data, and Grafana for visualization and analysis.</li>
+            </ul>
+        </ul>
+
+        <h2>User Interaction and Accessibility</h2>
+        <p>
+            The website is designed to support various user interactions with the data, including exploration of data files and configurations. It is integrated with Grafana to provide a comprehensive dashboard experience with Spark monitoring. Features such as the search tool have been enhanced with filtering options to streamline user workflows.
+        </p>
+
+        <p>Check out our <a href="https://github.com/mlim-usfca/MyLakeHouse/wiki">wiki</a> for more information.</p>
+    </div>
+</body>
+</html>
