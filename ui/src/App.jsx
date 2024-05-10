@@ -33,7 +33,7 @@ function SlideTransition(props) {
 export const App = () => {
     const buildShapes = () => {
         return [...Array(13)].map(i => <div key={`shape-${i}`} className="shape"
-                                            style={{top: `${(Math.random() * 100) - 10}%`, left: `${(Math.random() * 100) - 10}%`, background: "#40E0D0", opacity: .3}}></div>)
+                                            style={{top: `${(Math.random() * 100) - 15}%`, left: `${(Math.random() * 100) - 15}%`, background: "#40E0D0", opacity: .3}}></div>)
     }
     const {pathname} = useLocation();
     const [shapes] = useState(() => buildShapes())

@@ -25,14 +25,14 @@ export const GlobalConfigPage = () => {
                     Snapshot Retention Policy
                 </Typography>
                 <Divider sx={{marginBottom: 1}}/>
-                <Typography className="glass-text-12" textAlign="left" gutterBottom>
+                <Typography className="glass-text-12" textAlign="left" sx={{textTransform: 'none'}} gutterBottom>
                     Regularly expiring snapshots is recommended to delete data files that are no longer needed, and to keep the size of table metadata small.
                 </Typography>
 
                 <FormControl sx={{ m: 1, minWidth: 120}}>
                     <Stack spacing={2}>
                         <Box sx={{width: "100%", display: 'flex', flexDirection: "column"}}>
-                            <Typography variant="p" gutterBottom>
+                            <Typography className="glass-text-12" sx={{textAlign: 'left'}} variant="p" gutterBottom>
                                 Time Frequency
                             </Typography>
                             <Select
@@ -58,13 +58,13 @@ export const GlobalConfigPage = () => {
                     Compaction Policy
                 </Typography>
                 <Divider sx={{marginBottom: 1}}/>
-                <Typography className="glass-text-12" textAlign="left" gutterBottom>
+                <Typography className="glass-text-12" textAlign="left" sx={{textTransform: 'none'}} gutterBottom>
                     Iceberg tracks each data file in a table. More data files leads to more metadata stored in manifest files, and small data files causes an unnecessary amount of metadata and less efficient queries from file open costs.
                     Iceberg can compact data files in parallel using Spark with the rewriteDataFiles action. This will combine small files into larger files to reduce metadata overhead and runtime file open cost.                </Typography>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
                     <Stack spacing={2}>
                         <Box sx={{width: "100%", display: 'flex', flexDirection: "column"}}>
-                            <Typography variant="p" gutterBottom>
+                            <Typography className="glass-text-12" textAlign="left" variant="p" gutterBottom>
                                 Policy
                             </Typography>
                             <Select
