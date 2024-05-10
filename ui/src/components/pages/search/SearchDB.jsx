@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { SearchBar } from './SearchBar.jsx';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
 import { getDatabaseList } from '@/services/search/services.js';
 
@@ -19,7 +18,6 @@ export const SearchDB = () => {
   const fetchDatabaseList = async () => {
     try {
       const response =await getDatabaseList();
-      console.log(response);
       setDatabaseList(response.db_list ?? []); // Update database list state
       setSearchResults(response.db_list ?? []); // Initialize search results with the fetched data
     } catch (error) {
@@ -28,7 +26,6 @@ export const SearchDB = () => {
   };
 
   const handleSearch = (searchTerm) => {
-    console.log('Searching for:', searchTerm);
     const filteredResults = databaseList.filter(item =>
       item.toLowerCase().includes(searchTerm.toLowerCase())
     );

@@ -21,15 +21,12 @@ export const GlobalConfigPage = () => {
 
         <Box sx={{ width: '50%', padding: 2}}>
             <Box sx={{marginBottom: 4}}>
-                <Typography variant="h5" gutterBottom>
+                <Typography className="glass-text" sx={{fontSize: 24, textAlign: "left"}} gutterBottom>
                     Snapshot Retention Policy
                 </Typography>
                 <Divider sx={{marginBottom: 1}}/>
-                <Typography variant="body1" gutterBottom>
-                    body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-                    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-                    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-                    quasi quidem quibusdam.
+                <Typography className="glass-text-12" textAlign="left" gutterBottom>
+                    Regularly expiring snapshots is recommended to delete data files that are no longer needed, and to keep the size of table metadata small.
                 </Typography>
 
                 <FormControl sx={{ m: 1, minWidth: 120}}>
@@ -57,16 +54,13 @@ export const GlobalConfigPage = () => {
                 </FormControl>
             </Box>
             <Box sx={{marginBottom: 4}}>
-                <Typography variant="h5" gutterBottom>
+                <Typography className="glass-text" sx={{fontSize: 24, textAlign: "left"}} gutterBottom>
                     Compaction Policy
                 </Typography>
                 <Divider sx={{marginBottom: 1}}/>
-                <Typography variant="body1" gutterBottom>
-                    body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-                    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-                    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-                    quasi quidem quibusdam.
-                </Typography>
+                <Typography className="glass-text-12" textAlign="left" gutterBottom>
+                    Iceberg tracks each data file in a table. More data files leads to more metadata stored in manifest files, and small data files causes an unnecessary amount of metadata and less efficient queries from file open costs.
+                    Iceberg can compact data files in parallel using Spark with the rewriteDataFiles action. This will combine small files into larger files to reduce metadata overhead and runtime file open cost.                </Typography>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
                     <Stack spacing={2}>
                         <Box sx={{width: "100%", display: 'flex', flexDirection: "column"}}>

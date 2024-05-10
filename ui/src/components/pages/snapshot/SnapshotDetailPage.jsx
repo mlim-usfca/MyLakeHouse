@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,  Box, Typography, Button} from '@mui/material';
 import { deleteSnapshot, getSnapshoData } from '@/services/snapshot/services.js';
@@ -16,7 +16,6 @@ export const SnapshotDetail = () => {
       try {
         const data = await getSnapshoData(database, table, id);
         const { snapshots, tags, branches } = data;
-        console.log(data);
         setSnapshotData(snapshots[0]);
         setTags(tags);
         setBranches(branches);

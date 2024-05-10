@@ -3,11 +3,8 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import { SearchBar } from './SearchBar.jsx';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import { Box, Typography } from '@mui/material';
-import ListItemButton from "@mui/material/ListItemButton";
 import {useRecentViewDispatch} from "@/contexts/recent-view-history.jsx";
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { getTableList } from '@/services/search/services.js';
 
 export const SearchTable = () => {
@@ -23,7 +20,6 @@ export const SearchTable = () => {
   const fetchTableList = async (dbName) => {
     try {
       const response = await getTableList(dbName);
-      console.log(response);
       setTableList(response); // Update table list state
       setSearchResults(response); // Initialize search results with the fetched data
     } catch (error) {
@@ -32,7 +28,6 @@ export const SearchTable = () => {
   };
 
   const handleSearch = (searchTerm) => {
-    console.log('Searching for:', searchTerm);
     const filteredResults = tableList.filter(item =>
       item.table_name.toLowerCase().includes(searchTerm.toLowerCase())
     );

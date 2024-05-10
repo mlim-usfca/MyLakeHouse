@@ -16,7 +16,6 @@ export const TablePage = () => {
 
   const fetchTableInfo = async (database, table ) => {
     try {
-      console.log(table);
       const { tableInfoData, schemaData } = await fetchData(database, table);
       setTableInfo(tableInfoData);
       setSchema(schemaData); 

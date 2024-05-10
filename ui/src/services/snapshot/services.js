@@ -17,7 +17,6 @@ export const getSnapshotList = async (database, table) => {
   export const getSnapshoData = async (database, table, id) => {
     try {
         const response = await axios.get(DEV + `dashboard/snapshot?db_name=${database}&table_name=${table}&snapshot_id=${id}`);
-        console.log(response.data);
       return response.data;
     } catch (error) {
       // Handle error
@@ -29,7 +28,6 @@ export const getSnapshotList = async (database, table) => {
   export const deleteSnapshot = async (database, table, id) => {
     try {
         const response = await axios.get(DEV + `dashboard/expire-snapshot?db_name=${database}&table_name=${table}&snapshot_id=${id}`);
-        console.log(response);
       return response;
     } catch (error) {
       // Handle error
