@@ -90,7 +90,7 @@ export const App = () => {
                                    background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px', boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
                                     marginLeft: "1rem",
                                     height: '100%',
-                                    backdropFilter: "blur(8px)",
+                                    backdropFilter: "blur(3px)",
                                     display: "flex", flexDirection: "column",
                                 }}>
                                     <Typography className="glass-text" variant="subtitle2" align="right"
@@ -169,7 +169,7 @@ export const App = () => {
                                     background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px',
                                     boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
                                     height: '100%',
-                                    backdropFilter: "blur(8px)",
+                                    backdropFilter: "blur(3px)",
                                 }}>
                                     {/* Your content here */}
                                     <Outlet />
