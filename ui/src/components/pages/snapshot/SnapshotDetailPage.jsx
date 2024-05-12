@@ -1,4 +1,4 @@
-import {React, useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,  Box, Typography, Button} from '@mui/material';
 import { deleteSnapshot, getSnapshoData } from '@/services/snapshot/services.js';
@@ -16,7 +16,6 @@ export const SnapshotDetail = () => {
       try {
         const data = await getSnapshoData(database, table, id);
         const { snapshots, tags, branches } = data;
-        console.log(data);
         setSnapshotData(snapshots[0]);
         setTags(tags);
         setBranches(branches);
@@ -62,7 +61,7 @@ export const SnapshotDetail = () => {
   ));
 
   return (
-    <Box sx={{width: '100%', padding: 2}}>
+    <Box sx={{width: '100%', padding: 2, overflow: "hidden"}}>
       <Typography className="glass-text" variant="subtitle2" align="right" >
         Snapshot {id}
       </Typography>
@@ -72,7 +71,7 @@ export const SnapshotDetail = () => {
       </Typography>
       <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
             padding: '16px',
-            maxHeight: '550px',
+            maxHeight: "calc(100vh - 200px)",
             scrollBehavior: 'smooth'}}>
         <Table aria-label="Snapshot Details">
           <TableHead>

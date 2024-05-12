@@ -83,13 +83,9 @@ export const SnapshotPage = () => {
     // Filter out parent IDs that are not in the snapshots list
     const rootParentId = parentIds.find(parentId => !snapshots.some(snapshot => snapshot.snapshot_id === parentId));
 
-    console.log(rootParentId);
-  
     // Build the snapshot tree with the root parent ID
     return buildSnapshotTree(snapshots, rootParentId);
   }, [snapshots]);
-
-  console.log(snapshotTree)
 
   return (
     <Box sx={{ width: '100%', padding: 2}}>

@@ -34,7 +34,6 @@ export const recentViewReducer = (recentView, action) => {
         }
         case 'remove': {
             const curr = [...recentView.tables]
-            console.log(action)
             const index = curr.findIndex(rc => rc.table === action.value.table)
             if (index >= 0) {
                 curr.splice(index, 1);

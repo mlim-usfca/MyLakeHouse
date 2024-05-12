@@ -34,6 +34,15 @@ Brings up:
 To run all containers together, use the following commands:
 
 ### Running Locally
+
+## FE env.dev (/ui/env.dev)
+
+``` 
+VITE_HOST=http://localhost
+VITE_BE_API_PORT=8090
+VITE_GRAFANA_PORT=3001
+```
+
 ```bash
 docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up 
 ```

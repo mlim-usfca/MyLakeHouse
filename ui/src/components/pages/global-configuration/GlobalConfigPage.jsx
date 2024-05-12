@@ -14,28 +14,26 @@ export const GlobalConfigPage = () => {
     const handleChange = (event) => {
         setSettings(() => ({...settings, [event.target.name]: event.target.value }));
     };
-    return <Box sx={{ width: '100%'}}>
+    return <Box sx={{ width: '100%', overflow: "hidden"}}>
         <Typography className="glass-text" variant="subtitle2" align="right" sx={{paddingRight: 2, fontSize: 40}}>
             Settings
         </Typography>
 
-        <Box sx={{ width: '50%', padding: 2}}>
+        <Box sx={{ width: '50%', padding: 2, maxHeight: "calc(100vh - 100px)",
+            scrollBehavior: 'smooth'}}>
             <Box sx={{marginBottom: 4}}>
-                <Typography variant="h5" gutterBottom>
+                <Typography className="glass-text" sx={{fontSize: 24, textAlign: "left"}} gutterBottom>
                     Snapshot Retention Policy
                 </Typography>
                 <Divider sx={{marginBottom: 1}}/>
-                <Typography variant="body1" gutterBottom>
-                    body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-                    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-                    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-                    quasi quidem quibusdam.
+                <Typography className="glass-text-12" textAlign="left" sx={{textTransform: 'none'}} gutterBottom>
+                    Regularly expiring snapshots is recommended to delete data files that are no longer needed, and to keep the size of table metadata small.
                 </Typography>
 
                 <FormControl sx={{ m: 1, minWidth: 120}}>
                     <Stack spacing={2}>
                         <Box sx={{width: "100%", display: 'flex', flexDirection: "column"}}>
-                            <Typography variant="p" gutterBottom>
+                            <Typography className="glass-text-12" sx={{textAlign: 'left'}} variant="p" gutterBottom>
                                 Time Frequency
                             </Typography>
                             <Select
@@ -48,30 +46,27 @@ export const GlobalConfigPage = () => {
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={1}>1 day</MenuItem>
+                                <MenuItem value={7}>7 days</MenuItem>
+                                <MenuItem value={30}>30 days</MenuItem>
                             </Select>
                         </Box>
                     </Stack>
                 </FormControl>
             </Box>
             <Box sx={{marginBottom: 4}}>
-                <Typography variant="h5" gutterBottom>
+                <Typography className="glass-text" sx={{fontSize: 24, textAlign: "left"}} gutterBottom>
                     Compaction Policy
                 </Typography>
                 <Divider sx={{marginBottom: 1}}/>
-                <Typography variant="body1" gutterBottom>
-                    body1. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-                    blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-                    neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-                    quasi quidem quibusdam.
-                </Typography>
+                <Typography className="glass-text-12" textAlign="left" sx={{textTransform: 'none'}} gutterBottom>
+                    Iceberg tracks each data file in a table. More data files leads to more metadata stored in manifest files, and small data files causes an unnecessary amount of metadata and less efficient queries from file open costs.
+                    Iceberg can compact data files in parallel using Spark with the rewriteDataFiles action. This will combine small files into larger files to reduce metadata overhead and runtime file open cost.                </Typography>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
                     <Stack spacing={2}>
                         <Box sx={{width: "100%", display: 'flex', flexDirection: "column"}}>
-                            <Typography variant="p" gutterBottom>
-                                Policy
+                            <Typography className="glass-text-12" textAlign="left" variant="p" gutterBottom>
+                                Threshold
                             </Typography>
                             <Select
                                 labelId="demo-simple-select-helper-label"
@@ -83,9 +78,9 @@ export const GlobalConfigPage = () => {
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={10}>10</MenuItem>
+                                <MenuItem value={20}>20</MenuItem>
+                                <MenuItem value={30}>30</MenuItem>
                             </Select>
                         </Box>
                     </Stack>

@@ -1,3 +1,12 @@
+# ENV Variables
+
+``` 
+VITE_HOST=http://localhost
+VITE_BE_API_PORT=8090
+VITE_GRAFANA_PORT=3001
+```
+
+
 # Manual Build
 
 Run in UI folder (Root Directory where Docker file is located)

@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Outlet } from 'react-router-dom';
+import React, {useState} from 'react'
+import {Outlet, useLocation, useParams} from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -14,9 +14,6 @@ import PublicIcon from '@mui/icons-material/Public';
 import SearchIcon from '@mui/icons-material/Search';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddchartIcon from '@mui/icons-material/Addchart';
-
-// import { styled } from '@mui/material/styles';
-import axios from "axios"
 import Typography from '@mui/material/Typography';
 import { useNavigate } from "react-router-dom";
 import { useRecentView, useRecentViewDispatch } from "@/contexts/recent-view-history.jsx";
@@ -25,8 +22,6 @@ import Snackbar from '@mui/material/Snackbar';
 import { Slide } from "@mui/material";
 import { useToastMessage, useToastMessageDispatch } from "@/contexts/message.jsx";
 import { useTranslation } from "react-i18next";
-import Button from "@mui/material/Button";
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
@@ -36,10 +31,27 @@ function SlideTransition(props) {
 }
 
 export const App = () => {
+    const buildShapes = () => {
+        return [...Array(13)].map(i => <div key={`shape-${i}`} className="shape"
+                                            style={{top: `${(Math.random() * 100) - 15}%`, left: `${(Math.random() * 100) - 15}%`, background: "#40E0D0", opacity: .3}}></div>)
+    }
+    const {pathname} = useLocation();
+    const [shapes] = useState(() => buildShapes())
     const { t, i18n } = useTranslation();
     const toastMsgProps = useToastMessage();
     const toastDispatch = useToastMessageDispatch();
-    const [selectedIndex, setSelectedIndex] = React.useState(1);
+    const [selectedIndex, setSelectedIndex] = React.useState(() => {
+        switch (pathname) {
+            case "/config":
+                return 1;
+            case "/search":
+                return 0;
+            case "/spark-performance":
+                return 2;
+            default:
+                return 0;
+        }
+    });
     const navigate = useNavigate();
     const recentView = useRecentView();
     const recentViewDispatch = useRecentViewDispatch();
@@ -57,33 +69,28 @@ export const App = () => {
         setSelectedIndex(index);
     };
 
-    useEffect(() => {
-        axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_BE_API_PORT}/test`).then(data => console.log(data))
-    }, []);
-
 
     return (
         <>
-            <CssBaseline />
-            <div className="shape"></div>
+            {shapes}
+            <CssBaseline/>
             <Container maxWidth={false} disableGutters style={{
                 height: '100vh', position: 'relative',
                 zIndex: 1
             }}>
                 <Box sx={{
-                    background: 'radial-gradient(ellipse at top, #1E7D5B, transparent),\n' +
-                        '            radial-gradient(ellipse at bottom, #155D78, transparent)',
+                    // background: 'radial-gradient(ellipse at top, #1E7D5B, transparent),\n' +
+                     //   '            radial-gradient(ellipse at bottom, #155D78, transparent)',
                     height: "100%", padding: "20px 12px"
                 }}>
                     <Grid container columnSpacing={4} style={{ height: "100%", width: "100%" }}>
                         <Grid item xs={3}>
                             <Box height="100%">
                                 <Paper style={{
-                                    background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px',
-                                    boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
+                                   background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px', boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
                                     marginLeft: "1rem",
                                     height: '100%',
-                                    backdropFilter: "blur(8px)",
+                                    backdropFilter: "blur(3px)",
                                     display: "flex", flexDirection: "column",
                                 }}>
                                     <Typography className="glass-text" variant="subtitle2" align="right"
@@ -102,6 +109,7 @@ export const App = () => {
                                                 <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("searchMenu")} />
                                             </ListItemButton>
                                             <ListItemButton
+                                                disabled
                                                 selected={selectedIndex === 1}
                                                 onClick={(event) => handleListItemClick(event, 1)}
                                             >
@@ -162,7 +170,7 @@ export const App = () => {
                                     background: 'rgba(255, 255, 255, 0.2)', borderRadius: '10px',
                                     boxShadow: '0 8px 32px 0 rgba( 31, 38, 135, 0.37 )',
                                     height: '100%',
-                                    backdropFilter: "blur(8px)",
+                                    backdropFilter: "blur(3px)",
                                 }}>
                                     {/* Your content here */}
                                     <Outlet />
