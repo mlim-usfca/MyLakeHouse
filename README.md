@@ -35,7 +35,7 @@ To run all containers together, use the following commands:
 
 ### Running Locally
 
-## env.dev
+## FE env.dev (/ui/env.dev)
 
 ``` 
 VITE_HOST=http://localhost
