@@ -61,7 +61,7 @@ export const SnapshotDetail = () => {
   ));
 
   return (
-    <Box sx={{width: '100%', padding: 2}}>
+    <Box sx={{width: '100%', padding: 2, overflow: "hidden"}}>
       <Typography className="glass-text" variant="subtitle2" align="right" >
         Snapshot {id}
       </Typography>
@@ -71,7 +71,7 @@ export const SnapshotDetail = () => {
       </Typography>
       <TableContainer component={Paper} sx={{backgroundColor: 'transparent', width: '100%',
             padding: '16px',
-            maxHeight: '550px',
+            maxHeight: "calc(100vh - 200px)",
             scrollBehavior: 'smooth'}}>
         <Table aria-label="Snapshot Details">
           <TableHead>

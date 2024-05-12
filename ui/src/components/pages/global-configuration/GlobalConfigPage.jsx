@@ -14,12 +14,13 @@ export const GlobalConfigPage = () => {
     const handleChange = (event) => {
         setSettings(() => ({...settings, [event.target.name]: event.target.value }));
     };
-    return <Box sx={{ width: '100%'}}>
+    return <Box sx={{ width: '100%', overflow: "hidden"}}>
         <Typography className="glass-text" variant="subtitle2" align="right" sx={{paddingRight: 2, fontSize: 40}}>
             Settings
         </Typography>
 
-        <Box sx={{ width: '50%', padding: 2}}>
+        <Box sx={{ width: '50%', padding: 2, maxHeight: "calc(100vh - 100px)",
+            scrollBehavior: 'smooth'}}>
             <Box sx={{marginBottom: 4}}>
                 <Typography className="glass-text" sx={{fontSize: 24, textAlign: "left"}} gutterBottom>
                     Snapshot Retention Policy
@@ -45,9 +46,9 @@ export const GlobalConfigPage = () => {
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={1}>1 day</MenuItem>
+                                <MenuItem value={7}>7 days</MenuItem>
+                                <MenuItem value={30}>30 days</MenuItem>
                             </Select>
                         </Box>
                     </Stack>
@@ -65,7 +66,7 @@ export const GlobalConfigPage = () => {
                     <Stack spacing={2}>
                         <Box sx={{width: "100%", display: 'flex', flexDirection: "column"}}>
                             <Typography className="glass-text-12" textAlign="left" variant="p" gutterBottom>
-                                Policy
+                                Threshold
                             </Typography>
                             <Select
                                 labelId="demo-simple-select-helper-label"
@@ -77,9 +78,9 @@ export const GlobalConfigPage = () => {
                                 <MenuItem value="">
                                     <em>None</em>
                                 </MenuItem>
-                                <MenuItem value={10}>Ten</MenuItem>
-                                <MenuItem value={20}>Twenty</MenuItem>
-                                <MenuItem value={30}>Thirty</MenuItem>
+                                <MenuItem value={10}>10</MenuItem>
+                                <MenuItem value={20}>20</MenuItem>
+                                <MenuItem value={30}>30</MenuItem>
                             </Select>
                         </Box>
                     </Stack>

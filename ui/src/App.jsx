@@ -109,6 +109,7 @@ export const App = () => {
                                                 <ListItemText className={"glass-text-12"} sx={{ textAlign: "left", textTransform: "none" }} primary={t("searchMenu")} />
                                             </ListItemButton>
                                             <ListItemButton
+                                                disabled
                                                 selected={selectedIndex === 1}
                                                 onClick={(event) => handleListItemClick(event, 1)}
                                             >
