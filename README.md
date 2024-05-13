@@ -85,22 +85,6 @@ docker-compose -f docker-compose1.yml -f docker-compose2-prod.yml up --build
 * compose1.yml bring up spark with listener, prometheus, pushgateway, rest, minio, mc
 * compose2.yml bring up backend(fast-api) and frontend(ui)
 
-### Listener testing
-#### Run two testing python files
-```bash
-# get the id for spark-master-1
-docker ps
-
-# run createdb.py in spark-master-1
-docker exec -it {ID-of-spark-master-1} spark-submit --master spark://spark-master:7077 createdb.py
-
-# run samplesql.py in spark-master-1
-docker exec -it {ID-of-spark-master-1} spark-submit --master spark://spark-master:7077 samplesql.py
-```
-Run samplesql.py multiple times to get a line chart.
-Check the graph in the tab `spark performance` in the UI.
-
-
 #### Shutdown and remove the container
 
 ```bash
