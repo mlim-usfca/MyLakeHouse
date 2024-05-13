@@ -60,11 +60,12 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
 #### After compose up:
 - Check FastAPI Doc at [Swagger UI](http://localhost:8090/docs)
 - Check UI at [http://localhost:3000](http://localhost:3000)
-- Once the containers are composed up, you have a empty catalog. 
-- For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute following API calls:
+- Once the containers are composed up, you have an empty catalog. 
+- For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute the following API calls:
   * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
   * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
-- Follow [this instruction](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for PushGateway and Prometheus setting
+- Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for PushGateway and Prometheus setting
+- Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Grafana-setting) for Grafana setting
 
 #### Shutdown and remove the container
 
