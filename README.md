@@ -35,22 +35,24 @@ To run all containers together, use the following commands:
 
 ### Running Locally
 
-#### add env.dev file (path: /ui/env.dev)
+#### add .env.dev file (path: /ui/.env.dev)
 
 ``` 
 VITE_HOST=http://localhost
 VITE_BE_API_PORT=8090
 VITE_GRAFANA_PORT=3001
 ```
+
+#### Run the container with build to update the image 
+```bash
+docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up --build 
+```
+
 #### Run the container
 ```bash
 docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up 
 ```
-#### Run the container with build to update the image 
-```bash
-docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up --build 
 
-```
 
 * compose1.yml bring up spark with listener, prometheus, pushgateway, rest, minio, mc
 * compose2.yml bring up backend(fast-api) and frontend(ui)
