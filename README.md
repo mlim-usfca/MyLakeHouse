@@ -80,7 +80,10 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
       ```
       Run samplesql.py multiple times to get a line chart.\
       Check the graph in the tab `spark performance` in the UI.
-   - Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Grafana-setting) for Grafana setting
+   - Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Grafana-setting) for instruction of Grafana, including
+     - Login grafana
+     - Connect to a data source
+     - Create and setup a dashboard
 
 #### Shutdown and remove the container
 
