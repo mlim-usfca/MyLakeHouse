@@ -83,7 +83,7 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
         - associated application name
    - Here is the instruction on how to attach your Spark with our customized listener:
      -Add the listener folder in this repo to your Spark image in your Docker. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Customized-Spark-Listener-Usage) to see a sample code.
-   - Note: Please make sure both Prometheus image and Grafana image are added and up with up with your Spark and in same network to visualize the listener data.
+   - Note: Please make sure both Prometheus image and Grafana image are added and up with up with your Spark and in same network to visualize the listener data. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Customized-Spark-Listener-Usage) to see a sample code.
    - The default settings for PushGateway and Prometheus is all set. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for more customized setting
    - Run these two python files to generate demo application and query data
       ```bash
