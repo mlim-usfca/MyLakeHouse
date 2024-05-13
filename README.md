@@ -64,9 +64,9 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
 - For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute the following API calls:
   * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
   * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
-- Listener testing
-   - Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for PushGateway and Prometheus setting
-   - Run two testing python files
+- Monitoring Spark Performance
+   - The default settings for PushGateway and Prometheus is all set. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for more customized setting
+   - Run these two python files to generate demo application and query data
       ```bash
       # get the container id for spark-master-1
       docker ps
