@@ -114,8 +114,8 @@ Please see our wiki:
 * [Catalog and Object Store Configuration in FastAPI application](https://github.com/mlim-usfca/MyLakeHouse/wiki/Catalog-and-Object-Store-Configuration-in-FastAPI-application)
 
 ## Documentation
-FastAPI APIs
+To view all the FastAPI APIs, go to:
 ```
 http://0.0.0.0:8090/docs
 ```
-Refer to the [Wiki pages](https://github.com/mlim-usfca/MyLakeHouse/wiki/Home) for detailed information about the implementation of different components in the application.
+Please refer to the [Wiki pages](https://github.com/mlim-usfca/MyLakeHouse/wiki/Home) for detailed information about the architecture and implementation of different components in the application.
