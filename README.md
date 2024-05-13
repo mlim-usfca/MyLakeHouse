@@ -61,9 +61,10 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
 - Check FastAPI Doc at [Swagger UI](http://localhost:8090/docs)
 - Check UI at [http://localhost:3000](http://localhost:3000)
 - Once the containers are composed up, you have an empty catalog. 
-- For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute the following API calls:
+- For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute the following API calls(In following API pages, Click try it out and then click execute):
   * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
   * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
+- You can click on the database name and table name and double click the snapshot tree to see details now. Know more about our page's routes, please see [Frontend Wiki](https://github.com/mlim-usfca/MyLakeHouse/wiki/Frontend)
 - Monitoring Spark Performance
    - The default settings for PushGateway and Prometheus is all set. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for more customized setting
    - Run these two python files to generate demo application and query data
