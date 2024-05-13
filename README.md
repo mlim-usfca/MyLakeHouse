@@ -64,8 +64,23 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
 - For seeing some demo databases. In [Swagger UI](http://localhost:8090/docs), please execute the following API calls:
   * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
   * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
-- Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for PushGateway and Prometheus setting
-- Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Grafana-setting) for Grafana setting
+- Listener testing
+   - Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for PushGateway and Prometheus setting
+   - Run two testing python files
+      ```bash
+      # get the container id for spark-master-1
+      docker ps
+      
+      # run createdb.py in spark-master-1
+      docker exec -it {containerID-of-spark-master-1} spark-submit --master spark://spark-master:7077 createdb.py
+   
+      # after running createdb.py
+      # run samplesql.py in spark-master-1
+      docker exec -it {containerID-of-spark-master-1} spark-submit --master spark://spark-master:7077 samplesql.py
+      ```
+      Run samplesql.py multiple times to get a line chart.\
+      Check the graph in the tab `spark performance` in the UI.
+   - Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Grafana-setting) for Grafana setting
 
 #### Shutdown and remove the container
 
