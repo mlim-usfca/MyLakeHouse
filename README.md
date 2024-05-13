@@ -84,6 +84,7 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
      - Login grafana
      - Connect to a data source
      - Create and setup a dashboard
+- Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Maintenance-(Scheduler-Jobs)) to start and schedule maintenance jobs. 
 
 #### Shutdown and remove the container
 
