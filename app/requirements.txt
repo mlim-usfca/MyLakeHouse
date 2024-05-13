@@ -9,3 +9,4 @@ fastapi_router_controller
 pyiceberg[pyarrow,duckdb]
 apscheduler
 httpx
+pytest
