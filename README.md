@@ -65,7 +65,25 @@ docker-compose -f docker-compose1.yml -f docker-compose2-dev.yml up
   * [POST/demo/create_demo_tables](http://localhost:8090/docs#/demo-controller/create_demo_tables_demo_create_demo_tables_post)
   * [POST/demo/create_snapshot_demo_tables](http://localhost:8090/docs#/demo-controller/create_snapshot_demo_table_demo_create_snapshot_demo_tables_post)
 - You can click on the database name and table name and double click the snapshot tree to see details now. Know more about our page's routes, please see [Frontend Wiki](https://github.com/mlim-usfca/MyLakeHouse/wiki/Frontend)
-- Monitoring Spark Performance
+- Things that you need to know about "Monitoring Spark Performance" feature:
+   - Here are all performance metrics that your Spark can monitored by our customized Spark Listener:
+     1. Application-level:
+        - application name
+        - application ID
+        - application start time
+        - application end time
+        
+     2. SQL Query (job-level):
+        - SQL query content
+        - SQL query start time
+        - SQL query end time
+        - SQL query duration
+        - SQL query id
+        - associated application ID
+        - associated application name
+   - Here is the instruction on how to attach your Spark with our customized listener:
+     -Add the listener folder in this repo to your Spark image in your Docker. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/Customized-Spark-Listener-Usage) to see a sample code.
+   - Note: Please make sure both Prometheus image and Grafana image are added and up with up with your Spark and in same network to visualize the listener data.
    - The default settings for PushGateway and Prometheus is all set. Click [here](https://github.com/mlim-usfca/MyLakeHouse/wiki/PushGateway-and-Prometheus) for more customized setting
    - Run these two python files to generate demo application and query data
       ```bash
