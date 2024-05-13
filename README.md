@@ -107,13 +107,15 @@ Check the graph in the tab `spark performance` in the UI.
 docker-compose -f docker-compose1.yml -f docker-compose2-prod.yml down
 ```
 
-### Run on your own Datalake
+## Run on your own Datalake
 Above instructions let you test our service using a mock datalake, if you would like to use our service in your own datalake
 Please see our wiki:
 * [Add Custom Listener to Your Spark](https://github.com/mlim-usfca/MyLakeHouse/wiki/Customized-Spark-Listener-Usage)
 * [Catalog and Object Store Configuration in FastAPI application](https://github.com/mlim-usfca/MyLakeHouse/wiki/Catalog-and-Object-Store-Configuration-in-FastAPI-application)
 
-### API Documentation
+## Documentation
+FastAPI APIs
 ```
 http://0.0.0.0:8090/docs
 ```
+Refer to the [Wiki pages](https://github.com/mlim-usfca/MyLakeHouse/wiki/Home) for detailed information about the implementation of different components in the application.
